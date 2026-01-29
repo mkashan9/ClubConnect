@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClubConnect – All-in-One Sports Club Management Platform</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="description" content="ClubConnect helps football, cricket, basketball and hockey clubs manage teams, schedules, payments, performance and communication in one modern platform.">
+</head>
+<body>
+    <!-- Source Code Protection -->
+    <script src="protection.js"></script>
+    <!-- Header -->
+    <header class="header" id="header">
+  <nav class="nav container">
+    <div class="nav-logo">
+  <a href="index.html">
+      <img src="logo.png" alt="ClubConnect Logo" class="logo-img">
+  </a>
+</div>
+
+    <div class="nav-right">
+      <ul class="nav-menu" id="navMenu">
+        <li class="nav-item">
+          <a href="index.html" class="nav-link active">Home</a>
+        </li>
+        <li class="nav-item">
+          <a href="features.html" class="nav-link">Features</a>
+        </li>
+        <li class="nav-item">
+          <a href="#programs" class="nav-link">Programs</a>
+        </li>
+        <li class="nav-item">
+          <a href="teams.html" class="nav-link">Teams</a>
+        </li>
+        <li class="nav-item">
+          <a href="#pricing" class="nav-link">Pricing</a>
+        </li>
+        <li class="nav-item">
+          <a href="leaderboards.html" class="nav-link">Leaderboards</a>
+        </li>
+        <li class="nav-item">
+          <a href="contact.html" class="nav-link">Contact</a>
+        </li>
+      </ul>
+      <button class="btn btn-login" onclick="window.location.href='login.html'">
+        Login
+      </button>
+    </div>
+    <div class="nav-toggle" id="navToggle">
+      <i class="fas fa-bars"></i>
+    </div>
+  </nav>
+</header>
+
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <video autoplay muted loop playsinline preload="auto" class="hero-video">
+            <source src="v_back.mp4" type="video/mp4">
+        </video>
+        <div class="hero-overlay"></div>
+        <div class="container hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title animate-fade-in">
+                    Run Your Football, Cricket, Basketball &amp; Hockey Clubs in One Place
+                </h1>
+                <p class="hero-subtitle animate-fade-in-delay">
+                    ClubConnect is the all-in-one platform to manage squads, fixtures, payments, and performance across every team in your club.
+                </p>
+                <div class="hero-buttons animate-fade-in-delay-2">
+                    <button class="btn btn-primary btn-lg"
+                            onclick="window.location.href='signup.html'">
+                        Start Free Trial
+                    </button>
+                    <button class="btn btn-secondary btn-lg" onclick="window.location.href='demo.html'">
+    <i class="fas fa-play-circle"></i> Watch Demo
+</button>
+
+                </div>
+                <p class="hero-note">No credit card required • 14-day free trial • Built for multi-sport clubs</p>
+            </div>
+            <div class="hero-image animate-slide-up">
+  <div class="hero-dashboard-stack">
+    <!-- Club Owner preview -->
+    <div class="hero-dashboard-card" data-role="owner">
+      <img src="owner-dashboard.png" alt="Club Owner dashboard preview">
+      <div class="hero-dashboard-label">
+        <i class="fas fa-shield-alt"></i>
+        Club Owner Dashboard
+      </div>
+    </div>
+
+    <!-- Coach preview -->
+    <div class="hero-dashboard-card" data-role="coach">
+      <img src="coach-dashboard.png" alt="Coach dashboard preview">
+      <div class="hero-dashboard-label">
+        <i class="fas fa-chalkboard-teacher"></i>
+        Coach Dashboard
+      </div>
+    </div>
+
+    <!-- Player preview -->
+    <div class="hero-dashboard-card" data-role="player">
+      <img src="player-dashboard.png" alt="Player dashboard preview">
+      <div class="hero-dashboard-label">
+        <i class="fas fa-user"></i>
+        Player Dashboard
+      </div>
+    </div>
+  </div>
+</div>
+
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Powerful Features for Modern Sports Clubs</h2>
+                <p class="section-subtitle">
+                    Everything you need to manage football, cricket, basketball and hockey programs from one clean dashboard.
+                </p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="feature-title">Team &amp; Squad Management</h3>
+                    <p class="feature-description">
+                        Build rosters by age group and sport, track player status, and keep coaches aligned on every squad.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <h3 class="feature-title">Schedules &amp; Fixtures</h3>
+                    <p class="feature-description">
+                        Organize practices, league fixtures and tournaments with automatic updates to players and parents.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <h3 class="feature-title">Fees &amp; Club Finance</h3>
+                    <p class="feature-description">
+                        Track subscriptions, registrations, and dues with clear visibility on who has paid and who is overdue.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3 class="feature-title">Communication Hub</h3>
+                    <p class="feature-description">
+                        Send targeted announcements, match-day information and urgent alerts from a single, secure channel.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="feature-title">Performance Tracking</h3>
+                    <p class="feature-description">
+                        Record goals, assists, minutes played and training attendance to build simple yet powerful player profiles.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Mobile Friendly</h3>
+                    <p class="feature-description">
+                        Coaches, players, and parents can access everything from any device — no spreadsheets, no confusion.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3 class="feature-title">Leagues &amp; Tournaments</h3>
+                    <p class="feature-description">
+                        Create competitions, manage brackets and keep live standings updated across all your club programs.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3 class="feature-title">Club Analytics</h3>
+                    <p class="feature-description">
+                        Understand growth, retention and engagement across every sport with clear visual reports.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Programs Section -->
+    <section class="programs" id="programs">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Sports Programs We Support</h2>
+                <p class="section-subtitle">Optimized for multi-sport academies and clubs.</p>
+            </div>
+            <div class="programs-grid">
+                <div class="program-card">
+                    <div class="program-image">
+                        <i class="fas fa-futbol"></i>
+                    </div>
+                    <div class="program-content">
+                        <h3 class="program-title">Football</h3>
+                        <p class="program-description">Manage age-group squads, league fixtures and trials effortlessly.</p>
+                        <button class="btn btn-outline" onclick="document.getElementById('pricing').scrollIntoView({behavior: 'smooth'});">
+                            Learn More
+                        </button>
+                    </div>
+                </div>
+                <div class="program-card">
+                    <div class="program-image">
+                        <i class="fas fa-basketball-ball"></i>
+                    </div>
+                    <div class="program-content">
+                        <h3 class="program-title">Basketball</h3>
+                        <p class="program-description">Track training blocks, tournaments and player workload in one view.</p>
+                        <button class="btn btn-outline" onclick="document.getElementById('pricing').scrollIntoView({behavior: 'smooth'});">
+                            Learn More
+                        </button>
+                    </div>
+                </div>
+                <div class="program-card">
+                    <div class="program-image">
+                        <!-- Using baseball icon previously – switching to a more cricket-relevant style if available -->
+                        <i class="fas fa-baseball-ball"></i>
+                    </div>
+                    <div class="program-content">
+                        <h3 class="program-title">Cricket</h3>
+                        <p class="program-description">Handle squads, overs, series and practice sessions with clean structure.</p>
+                        <button class="btn btn-outline" onclick="document.getElementById('pricing').scrollIntoView({behavior: 'smooth'});">
+                            Learn More
+                        </button>
+                    </div>
+                </div>
+                <div class="program-card">
+                    <div class="program-image">
+                        <i class="fas fa-hockey-puck"></i>
+                    </div>
+                    <div class="program-content">
+                        <h3 class="program-title">Hockey</h3>
+                        <p class="program-description">Plan fixtures, track player fitness and keep parents always in the loop.</p>
+                        <button class="btn btn-outline" onclick="document.getElementById('pricing').scrollIntoView({behavior: 'smooth'});">
+                            Learn More
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="statistics">
+        <div class="container">
+            <div class="statistics-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="stat-number" data-target="500">0</div>
+                    <div class="stat-label">Active Clubs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-running"></i>
+                    </div>
+                    <div class="stat-number" data-target="50000">0</div>
+                    <div class="stat-label">Athletes Managed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-futbol"></i>
+                    </div>
+                    <div class="stat-number" data-target="4">0</div>
+                    <div class="stat-label">Core Sports</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-smile"></i>
+                    </div>
+                    <div class="stat-number" data-target="99">0</div>
+                    <div class="stat-label">Satisfaction Rate</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <!-- Testimonials Section -->
+<section class="testimonials">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Loved by Clubs, Coaches &amp; Players</h2>
+      <p class="section-subtitle">
+        Real stories from football, cricket, basketball and hockey programs using ClubConnect every day.
+      </p>
+    </div>
+
+    <div class="testimonials-carousel">
+      <div class="testimonial-track" id="testimonialTrack">
+
+        <!-- Slide 1 -->
+        <div class="testimonial-slide">
+          <div class="testimonial-card">
+            <div class="testimonial-quote-icon">
+              <i class="fas fa-quote-left"></i>
+            </div>
+            <div class="testimonial-rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <p class="testimonial-text">
+              “ClubConnect cleaned up our entire operations stack. Fixtures, fees, and squads are finally in one place instead of five different apps.”
+            </p>
+            <div class="testimonial-footer">
+              <div class="author-left">
+                <div class="author-avatar-circle">
+                  <span>JM</span>
+                </div>
+                <div class="author-info">
+                  <h4 class="author-name">John Martinez</h4>
+                  <p class="author-role">Head Coach • Elite Football Academy</p>
+                </div>
+              </div>
+              <div class="author-tag">
+                <i class="fas fa-futbol"></i> Football
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card">
+            <div class="testimonial-quote-icon">
+              <i class="fas fa-quote-left"></i>
+            </div>
+            <div class="testimonial-rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <p class="testimonial-text">
+              “Parents love the app. They get schedules, updates and payment reminders without spammy WhatsApp groups.”
+            </p>
+            <div class="testimonial-footer">
+              <div class="author-left">
+                <div class="author-avatar-circle">
+                  <span>SJ</span>
+                </div>
+                <div class="author-info">
+                  <h4 class="author-name">Sarah Johnson</h4>
+                  <p class="author-role">Club Manager • City Basketball Club</p>
+                </div>
+              </div>
+              <div class="author-tag">
+                <i class="fas fa-basketball-ball"></i> Basketball
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="testimonial-slide">
+          <div class="testimonial-card">
+            <div class="testimonial-quote-icon">
+              <i class="fas fa-quote-left"></i>
+            </div>
+            <div class="testimonial-rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <p class="testimonial-text">
+              “Attendance and performance tracking helped us spot which players needed more one-to-one support. Huge impact on results.”
+            </p>
+            <div class="testimonial-footer">
+              <div class="author-left">
+                <div class="author-avatar-circle">
+                  <span>MC</span>
+                </div>
+                <div class="author-info">
+                  <h4 class="author-name">Mike Chen</h4>
+                  <p class="author-role">Athletic Director • Sports Plus Academy</p>
+                </div>
+              </div>
+              <div class="author-tag">
+                <i class="fas fa-chart-line"></i> Multi-Sport
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card">
+            <div class="testimonial-quote-icon">
+              <i class="fas fa-quote-left"></i>
+            </div>
+            <div class="testimonial-rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <p class="testimonial-text">
+              “For our cricket program, fee collection and trial registrations were always a headache. ClubConnect automated 90% of it.”
+            </p>
+            <div class="testimonial-footer">
+              <div class="author-left">
+                <div class="author-avatar-circle">
+                  <span>AK</span>
+                </div>
+                <div class="author-info">
+                  <h4 class="author-name">Adeel Khan</h4>
+                  <p class="author-role">Director • Lahore Cricket Pathway</p>
+                </div>
+              </div>
+              <div class="author-tag">
+                <i class="fas fa-baseball-ball"></i> Cricket
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="testimonial-slide">
+          <div class="testimonial-card">
+            <div class="testimonial-quote-icon">
+              <i class="fas fa-quote-left"></i>
+            </div>
+            <div class="testimonial-rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <p class="testimonial-text">
+              “We run hockey, football and basketball. ClubConnect keeps all three branches under one clean reporting dashboard.”
+            </p>
+            <div class="testimonial-footer">
+              <div class="author-left">
+                <div class="author-avatar-circle">
+                  <span>NR</span>
+                </div>
+                <div class="author-info">
+                  <h4 class="author-name">Nimra Rahman</h4>
+                  <p class="author-role">Operations Lead • MultiSport Performance Club</p>
+                </div>
+              </div>
+              <div class="author-tag">
+                <i class="fas fa-hockey-puck"></i> Hockey
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card">
+            <div class="testimonial-quote-icon">
+              <i class="fas fa-quote-left"></i>
+            </div>
+            <div class="testimonial-rating">
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+              <i class="fas fa-star"></i>
+            </div>
+            <p class="testimonial-text">
+              “Setup took less than two weeks. Our staff actually enjoy using it — which never happens with software.”
+            </p>
+            <div class="testimonial-footer">
+              <div class="author-left">
+                <div class="author-avatar-circle">
+                  <span>HS</span>
+                </div>
+                <div class="author-info">
+                  <h4 class="author-name">Hamza Shah</h4>
+                  <p class="author-role">Club Owner • Starline Sports Academy</p>
+                </div>
+              </div>
+              <div class="author-tag">
+                <i class="fas fa-user-tie"></i> Club Owner
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <button class="carousel-btn carousel-prev" id="carouselPrev">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <button class="carousel-btn carousel-next" id="carouselNext">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+      <div class="carousel-dots" id="carouselDots"></div>
+    </div>
+  </div>
+</section>
+
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Simple, Transparent Pricing</h2>
+                <p class="section-subtitle">Choose the plan that fits your club today – and scales as you grow.</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-title">Starter</h3>
+                        <div class="pricing-price">
+                            <span class="price-amount">$29</span>
+                            <span class="price-period">/month</span>
+                        </div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Up to 50 members</li>
+                        <li><i class="fas fa-check"></i> 1–2 sports</li>
+                        <li><i class="fas fa-check"></i> Team &amp; schedule management</li>
+                        <li><i class="fas fa-check"></i> Email support</li>
+                    </ul>
+                    <button
+  class="btn btn-primary pay-crypto-btn"
+  data-plan-id="basic-monthly"
+  data-plan-name="Basic Plan – Monthly"
+  data-amount-eth="0.0005"
+  onclick="window.location.href='login.html'"
+>
+  Pay with Crypto
+</button>
+
+
+
+                </div>
+                <div class="pricing-card pricing-card-recommended">
+                    <div class="pricing-badge">Most Popular</div>
+                    <div class="pricing-header">
+                        <h3 class="pricing-title">Club Pro</h3>
+                        <div class="pricing-price">
+                            <span class="price-amount">$79</span>
+                            <span class="price-period">/month</span>
+                        </div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Up to 200 members</li>
+                        <li><i class="fas fa-check"></i> All 4 core sports</li>
+                        <li><i class="fas fa-check"></i> Finance &amp; payments</li>
+                        <li><i class="fas fa-check"></i> Priority support</li>
+                        <li><i class="fas fa-check"></i> Analytics &amp; reports</li>
+                    </ul>
+                    <button
+  class="btn btn-primary pay-crypto-btn"
+  data-plan-id="pro"
+  data-plan-name="Pro Club Plan Pro"
+  data-amount-eth="0.0005"
+  onclick="window.location.href='login.html'"
+>
+  Pay with Crypto
+</button>
+
+
+                </div>
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-title">Enterprise</h3>
+                        <div class="pricing-price">
+                            <span class="price-amount">Custom</span>
+                            <span class="price-period">contact us</span>
+                        </div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> Unlimited members</li>
+                        <li><i class="fas fa-check"></i> All Pro features</li>
+                        <li><i class="fas fa-check"></i> Dedicated account manager</li>
+                        <li><i class="fas fa-check"></i> API &amp; integrations</li>
+                        <li><i class="fas fa-check"></i> White-label option</li>
+                    </ul>
+                    <button class="btn btn-outline btn-block" onclick="window.location.href='contact.html'">
+                        Contact Sales
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2 class="cta-title">Ready to Transform Your Sports Club?</h2>
+                <p class="cta-subtitle">
+                    Join ambitious football, cricket, basketball and hockey clubs using ClubConnect to run their operations like pros.
+                </p>
+                <button class="btn btn-primary btn-lg" onclick="window.location.href='signup.html'">
+                    Get Started Free
+                </button>
+                <p class="cta-note">No credit card required • 14-day free trial • Cancel anytime</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <div class="footer-logo">
+                        <img src="logo.png" alt="ClubConnect Logo">
+                    </div>
+                    <p class="footer-tagline">
+                        ClubConnect – the unified platform for managing multi-sport clubs, academies and training centers.
+                    </p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-title">Product</h4>
+                    <ul class="footer-links">
+                        <li><a href="features.html">Features</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#">Demo</a></li>
+
+                        <li><a href="#">Mobile Apps</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-title">Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Documentation</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-title">Company</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Press Kit</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-title">Newsletter</h4>
+                    <p class="footer-newsletter-text">Stay updated with new features and success stories.</p>
+                    <form class="newsletter-form" id="newsletterForm">
+  <input
+    type="email"
+    placeholder="Enter your email"
+    class="newsletter-input"
+    id="newsletterEmail"
+  >
+  <button type="submit" class="btn btn-primary" id="newsletterBtn">
+    Subscribe
+  </button>
+  <small id="newsletterMsg" class="newsletter-msg"></small>
+</form>
+
+
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-copyright">
+                    &copy; 2025 ClubConnect. All rights reserved.
+                </p>
+                <div class="footer-legal">
+  <a href="privacy.html">Privacy Policy</a>
+  <a href="terms.html">Terms of Service</a>
+  <a href="cookies.html">Cookie Policy</a>
+</div>
+
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    <!-- ... your content ... -->
+
+<!-- CRYPTO PAYMENT MODAL -->
+<div id="cryptoPaymentModal" class="crypto-modal hidden">
+  <div class="crypto-modal-backdrop"></div>
+  <div class="crypto-modal-body">
+    <div class="crypto-modal-header">
+      <h3>Pay with Crypto</h3>
+      <button id="cryptoModalCloseBtn" class="crypto-close-btn">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="crypto-modal-content">
+      <p id="cryptoSelectedPlanName" class="crypto-plan-name">
+        Selected plan
+      </p>
+      <p id="cryptoSelectedAmount" class="crypto-plan-amount">
+        0.0000 ETH
+      </p>
+
+      <div class="crypto-status" id="cryptoStatus">
+        <span>Wallet not connected</span>
+      </div>
+
+      <div class="crypto-actions">
+        <button id="connectWalletBtn" class="btn btn-outline">
+          <i class="fas fa-wallet"></i> Connect Wallet
+        </button>
+        <button id="payWithCryptoBtn" class="btn btn-primary" disabled>
+          <i class="fas fa-paper-plane"></i> Pay &amp; Subscribe
+        </button>
+      </div>
+
+      <p class="crypto-hint">
+        This demo uses MetaMask / EVM wallets. Make sure you are on the correct test network (e.g. Sepolia).
+      </p>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script type="module">
+  import {
+    initializeApp,
+    getApps,
+    getApp
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    serverTimestamp,
+    query,
+    where,
+    getDocs
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  // 🔹 Same Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyD8mSGezxer6j46O90_IsJOpUgu5KI0HnU",
+    authDomain: "clubconnect-fc50f.firebaseapp.com",
+    projectId: "clubconnect-fc50f",
+    storageBucket: "clubconnect-fc50f.firebasestorage.app",
+    messagingSenderId: "419240671350",
+    appId: "1:419240671350:web:69f7113d686e7f3e4a8757",
+    measurementId: "G-623LVNVKBG"
+  };
+
+  // ✅ Reuse app if already initialized
+  const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  const form       = document.getElementById("newsletterForm");
+  const emailInput = document.getElementById("newsletterEmail");
+  const btn        = document.getElementById("newsletterBtn");
+  const msgEl      = document.getElementById("newsletterMsg");
+
+  function setLoading(isLoading) {
+    if (!btn || !form) return;
+    btn.disabled = isLoading;
+    form.classList.toggle("is-loading", isLoading);
+    if (isLoading) {
+      btn.dataset.originalText = btn.textContent;
+      btn.innerHTML = '<i class="fas fa-futbol spinning-ball"></i> Subscribing…';
+    } else {
+      btn.innerHTML = btn.dataset.originalText || "Subscribe";
+    }
+  }
+
+  function showNewsletterMsg(text, type = "info") {
+    if (!msgEl) return;
+    msgEl.textContent = text;
+    msgEl.classList.remove("msg-error", "msg-success");
+    if (type === "error") {
+      msgEl.classList.add("msg-error");
+    } else if (type === "success") {
+      msgEl.classList.add("msg-success");
+    }
+  }
+
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  if (form && emailInput && btn) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const emailRaw = emailInput.value.trim();
+      const email    = emailRaw.toLowerCase();   // normalize
+
+      if (!email) {
+        showNewsletterMsg("Please enter your email.", "error");
+        return;
+      }
+      if (!isValidEmail(email)) {
+        showNewsletterMsg("Please enter a valid email address.", "error");
+        return;
+      }
+
+      setLoading(true);
+      showNewsletterMsg("Checking subscription…", "info");
+
+      try {
+        // 🔍 1) Check if email already exists
+        const q = query(
+          collection(db, "newsletterSubscribers"),
+          where("email", "==", email)
+        );
+        const snap = await getDocs(q);
+
+        if (!snap.empty) {
+          // Already subscribed
+          showNewsletterMsg("This email is already subscribed.", "error");
+          setLoading(false);
+          return;
+        }
+
+        // ✅ 2) Not found → create new subscription
+        await addDoc(collection(db, "newsletterSubscribers"), {
+          email,
+          createdAt: serverTimestamp(),
+          source: "homepage"
+        });
+
+        showNewsletterMsg("You’re in! We’ll keep you updated.", "success");
+        emailInput.value = "";
+      } catch (err) {
+        console.error("Newsletter subscribe error:", err);
+        showNewsletterMsg("Could not subscribe. Please try again later.", "error");
+      } finally {
+        setLoading(false);
+      }
+    });
+  }
+</script>
+
+
+</body>
+</html>

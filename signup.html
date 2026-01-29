@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up | ClubConnect</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    body.auth-page {
+      font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #f8fafc;
+      color: var(--clr-text-dark);
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .auth-main {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: blur(8px);
+      transform: scale(1.05);
+      z-index: 0;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(21, 101, 192, 0.78) 0%,
+        rgba(16, 55, 102, 0.9) 100%
+      );
+      z-index: 1;
+    }
+
+    .auth-container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1100px;
+      margin: 5rem auto 3rem;
+      padding: 0 1.25rem;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 2.6rem;
+      align-items: center;
+    }
+
+    @media (max-width: 900px) {
+      .auth-container {
+        grid-template-columns: minmax(0, 1fr);
+        margin-top: 5.5rem;
+      }
+      .auth-showcase {
+        display: none;
+      }
+    }
+
+    .auth-card {
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      box-shadow: var(--shadow-lg);
+      padding: 2.3rem 2rem 2rem;
+      color: var(--clr-text-dark);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .auth-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    .auth-card-header {
+      margin-bottom: 1.4rem;
+    }
+
+    .auth-label-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      background-color: rgba(21, 101, 192, 0.08);
+      color: var(--clr-primary-dark);
+      margin-bottom: 0.6rem;
+    }
+
+    .auth-label-chip i {
+      font-size: 0.8rem;
+    }
+
+    .auth-card-title {
+      font-size: 1.9rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+      color: var(--clr-text-dark);
+    }
+
+    .auth-card-subtitle {
+      font-size: 0.9rem;
+      color: var(--clr-text-light);
+      margin: 0;
+    }
+
+    .auth-form {
+      margin-top: 1.4rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    @media (max-width: 640px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin-bottom: 0.3rem;
+      color: var(--clr-text-dark);
+    }
+
+    .form-input,
+    .form-select {
+      width: 100%;
+      padding: 0.7rem 0.8rem;
+      border-radius: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.9);
+      background: rgba(255, 255, 255, 0.98);
+      color: var(--clr-text-dark);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .form-input::placeholder {
+      color: #9ca3af;
+    }
+
+    .form-input:focus,
+    .form-select:focus {
+      border-color: var(--clr-primary);
+      box-shadow: 0 0 0 1px rgba(21, 101, 192, 0.35);
+      background: #ffffff;
+    }
+
+    .password-field {
+      position: relative;
+    }
+
+    .password-toggle {
+      position: absolute;
+      
+      right: 10px;
+      top: 35%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .auth-roles-hint {
+      font-size: 0.78rem;
+      color: #6b7280;
+      margin-top: 0.2rem;
+    }
+
+    .btn-auth-primary {
+      width: 100%;
+      margin-top: 0.4rem;
+      padding: 0.8rem 1rem;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, var(--clr-primary), var(--clr-primary-dark));
+      color: #f9fafb;
+      font-weight: 600;
+      font-size: 0.98rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      box-shadow: 0 18px 35px rgba(15, 23, 42, 0.55);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+    }
+
+    .btn-auth-primary:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+      box-shadow: 0 22px 50px rgba(15, 23, 42, 0.65);
+    }
+
+    .btn-auth-primary i {
+      font-size: 0.9rem;
+    }
+
+    .auth-footer-text {
+      margin-top: 0.8rem;
+      font-size: 0.86rem;
+      color: var(--clr-text-light);
+      text-align: center;
+    }
+
+    .auth-footer-text a {
+      color: var(--clr-primary);
+      text-decoration: none;
+    }
+
+    .auth-footer-text a:hover {
+      text-decoration: underline;
+    }
+
+    .signup-message {
+      min-height: 1rem;
+      margin-top: 0.4rem;
+      font-size: 0.8rem;
+      text-align: left;
+    }
+
+    .signup-message.error {
+      color: #b91c1c;
+    }
+
+    .signup-message.success {
+      color: #15803d;
+    }
+
+    /* Right side showcase */
+    .auth-showcase {
+      color: #f9fafb;
+      padding: 1.2rem;
+    }
+
+    .auth-showcase-card {
+      background: rgba(15, 23, 42, 0.75);
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      padding: 1.6rem 1.5rem 1.5rem;
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(18px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .auth-showcase-card::before {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.26), transparent);
+      top: -80px;
+      right: -40px;
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .auth-showcase-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      gap: 0.75rem;
+    }
+
+    .auth-showcase-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #e5e7eb;
+    }
+
+    .auth-badge-pill {
+      padding: 0.3rem 0.7rem;
+      border-radius: 999px;
+      background-color: rgba(15, 118, 110, 0.25);
+      font-size: 0.75rem;
+      color: #6ee7b7;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      white-space: nowrap;
+    }
+
+    .auth-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .metric-item {
+      background-color: rgba(15, 23, 42, 0.96);
+      border-radius: 14px;
+      padding: 0.7rem 0.75rem;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      font-size: 0.8rem;
+    }
+
+    .metric-label {
+      color: #9ca3af;
+      font-size: 0.78rem;
+    }
+
+    .metric-value {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #e5e7eb;
+    }
+    .btn-auth-primary[disabled] {
+  opacity: 0.8;
+  cursor: not-allowed;
+  box-shadow: 0 12px 25px rgba(15, 23, 42, 0.45);
+  transform: none;
+}
+
+.spinner-icon {
+  animation: spinBall 0.8s linear infinite;
+}
+
+@keyframes spinBall {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+    .metric-value span {
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: #9ca3af;
+      margin-left: 0.25rem;
+    }
+
+    .auth-sports-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+      font-size: 0.78rem;
+    }
+
+    .auth-sport-pill {
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      background-color: rgba(15, 23, 42, 0.96);
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .auth-sport-pill i {
+      font-size: 0.8rem;
+    }
+
+    .auth-small-note {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      margin-top: 0.6rem;
+    }
+  </style>
+</head>
+<body class="auth-page">
+  <!-- Source Code Protection -->
+  <script src="protection.js"></script>
+
+  <!-- NAVBAR (same as homepage) -->
+  <header class="header" id="header">
+    <nav class="nav container">
+      <div class="nav-logo">
+  <a href="index.html">
+      <img src="logo.png" alt="ClubConnect Logo" class="logo-img">
+  </a>
+</div>
+
+      <div class="nav-right">
+        <ul class="nav-menu" id="navMenu">
+          <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+          <li class="nav-item"><a href="features.html" class="nav-link">Features</a></li>
+          <li class="nav-item"><a href="index.html#programs" class="nav-link">Programs</a></li>
+          <li class="nav-item"><a href="teams.html" class="nav-link">Teams</a></li>
+          <li class="nav-item"><a href="index.html#pricing" class="nav-link">Pricing</a></li>
+          <li class="nav-item"><a href="leaderboards.html" class="nav-link">Leaderboards</a></li>
+          <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+        </ul>
+        <button class="btn btn-login" onclick="window.location.href='login.html'">
+          Login
+        </button>
+      </div>
+      <div class="nav-toggle" id="navToggle">
+        <i class="fas fa-bars"></i>
+      </div>
+    </nav>
+  </header>
+
+  <!-- AUTH MAIN -->
+  <main class="auth-main">
+    <video class="hero-video" src="hero.mp4" autoplay muted loop playsinline></video>
+    <div class="hero-overlay"></div>
+
+    <div class="auth-container">
+      <!-- LEFT: SIGNUP CARD -->
+      <section class="auth-card">
+        <div class="auth-card-header">
+          <div class="auth-label-chip">
+            <i class="fas fa-user-plus"></i> Create your club access
+          </div>
+          <h1 class="auth-card-title">Join ClubConnect</h1>
+          <p class="auth-card-subtitle">
+            Create a secure account as a Club Owner, Coach or Player. We’ll verify your email before you log in.
+          </p>
+        </div>
+
+        <form id="signupForm" class="auth-form" novalidate>
+          <div class="form-group">
+            <label for="fullName">Full name</label>
+            <input type="text" id="fullName" class="form-input" required />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Work / personal email</label>
+            <input type="email" id="email" class="form-input" required />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group password-field">
+              <label for="password">Password</label>
+              <input type="password" id="password" class="form-input" required />
+              <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+            </div>
+
+            <div class="form-group">
+              <label for="role">Who are you?</label>
+              <select id="role" class="form-select" required>
+                <option value="">Select your role</option>
+                <option value="club_owner">Club Owner</option>
+                <option value="coach">Coach</option>
+                <option value="player">Player</option>
+              </select>
+              <p class="auth-roles-hint">
+                This will decide which dashboard we show you after approval.
+              </p>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-auth-primary" id="signupSubmitBtn">
+  <i class="fas fa-shield-halved"></i>
+  Create secure account
+</button>
+
+
+          <div id="signupMsg" class="signup-message"></div>
+
+          <p class="auth-footer-text">
+            Already have an account?
+            <a href="login.html">Log in instead</a>
+          </p>
+        </form>
+      </section>
+
+      <!-- RIGHT: SHOWCASE / TRUST -->
+      <aside class="auth-showcase">
+        <div class="auth-showcase-card">
+          <div class="auth-showcase-heading">
+            <div>
+              <div class="auth-showcase-title">Built for serious sports programs</div>
+              <p class="auth-card-subtitle">Multi-sport clubs use ClubConnect to keep everyone on the same page.</p>
+            </div>
+            <span class="auth-badge-pill">
+              <i class="fas fa-star"></i> 4.9 / 5 avg. rating
+            </span>
+          </div>
+
+          <div class="auth-metrics-grid">
+            <div class="metric-item">
+              <div class="metric-label">Clubs onboarded</div>
+              <div class="metric-value">120<span>this season</span></div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-label">Athletes managed</div>
+              <div class="metric-value">3.4k<span>active profiles</span></div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-label">Setup time</div>
+              <div class="metric-value">&lt; 14<span>days per club</span></div>
+            </div>
+            <div class="metric-item">
+              <div class="metric-label">Admin hours saved</div>
+              <div class="metric-value">60%<span>vs spreadsheets</span></div>
+            </div>
+          </div>
+
+          <div class="auth-sports-row">
+            <div class="auth-sport-pill">
+              <i class="fas fa-futbol"></i> Football Academies
+            </div>
+            <div class="auth-sport-pill">
+              <i class="fas fa-baseball-ball"></i> Cricket Programs
+            </div>
+            <div class="auth-sport-pill">
+              <i class="fas fa-basketball-ball"></i> Basketball Clubs
+            </div>
+            <div class="auth-sport-pill">
+              <i class="fas fa-hockey-puck"></i> Hockey Squads
+            </div>
+          </div>
+
+          <p class="auth-small-note">
+            Your password is never stored in plain text. We use Firebase Authentication to securely encrypt credentials and verify every email with an OTP-style link.
+          </p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <button class="back-to-top" id="backToTop">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+
+  <script src="app.js"></script>
+
+  <script type="module">
+  console.log("Signup script loaded");
+
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    sendEmailVerification
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import {
+    getFirestore,
+    doc,
+    setDoc,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD8mSGezxer6j46O90_IsJOpUgu5KI0HnU",
+    authDomain: "clubconnect-fc50f.firebaseapp.com",
+    projectId: "clubconnect-fc50f",
+    storageBucket: "clubconnect-fc50f.firebasestorage.app",
+    messagingSenderId: "419240671350",
+    appId: "1:419240671350:web:69f7113d686e7f3e4a8757",
+    measurementId: "G-623LVNVKBG"
+  };
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  const signupForm = document.getElementById("signupForm");
+  const msg        = document.getElementById("signupMsg");
+  const passField  = document.getElementById("password");
+  const togglePass = document.getElementById("togglePassword");
+  const signupBtn  = document.getElementById("signupSubmitBtn");
+
+  if (togglePass && passField) {
+    togglePass.addEventListener("click", () => {
+      const type = passField.getAttribute("type") === "password" ? "text" : "password";
+      passField.setAttribute("type", type);
+      togglePass.classList.toggle("fa-eye-slash");
+    });
+  }
+
+  function showMessage(text, type = "error") {
+    if (!msg) return;
+    msg.textContent = text;
+    msg.className = "signup-message " + type;
+  }
+
+  function setSignupLoading(isLoading, label = "Creating account…") {
+    if (!signupBtn) return;
+    signupBtn.disabled = isLoading;
+
+    if (isLoading) {
+      if (!signupBtn.dataset.originalInner) {
+        signupBtn.dataset.originalInner = signupBtn.innerHTML;
+      }
+      signupBtn.innerHTML =
+        `<i class="fas fa-basketball-ball spinner-icon"></i> ${label}`;
+    } else {
+      signupBtn.innerHTML =
+        signupBtn.dataset.originalInner ||
+        '<i class="fas fa-shield-halved"></i> Create secure account';
+    }
+  }
+
+  if (signupForm) {
+    signupForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (signupBtn && signupBtn.disabled) return; // prevent double submit
+
+      console.log("Signup form submitted");
+      showMessage("");
+
+      const fullName = document.getElementById("fullName")?.value.trim() || "";
+      const email    = (document.getElementById("email")?.value || "").trim().toLowerCase();
+      const password = document.getElementById("password")?.value || "";
+      const role     = document.getElementById("role")?.value || "";
+
+      if (!fullName || fullName.length < 3) {
+        showMessage("Please enter your full name (at least 3 characters).");
+        return;
+      }
+
+      if (!role) {
+        showMessage("Please select your role (Club Owner, Coach, or Player).");
+        return;
+      }
+
+      const strongPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+      if (!strongPassword.test(password)) {
+        showMessage("Password must be 8+ chars with uppercase, lowercase and a number.");
+        return;
+      }
+
+      setSignupLoading(true, "Creating account…");
+
+      try {
+        console.log("Calling Firebase createUserWithEmailAndPassword...");
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        const user = cred.user;
+        console.log("User created:", user.uid);
+
+        await setDoc(doc(db, "users", user.uid), {
+          fullName,
+          email,
+          role,
+          createdAt: serverTimestamp()
+        });
+        console.log("User document written to Firestore");
+
+        await sendEmailVerification(user);
+        console.log("Verification email sent");
+
+        showMessage(
+          "Account created! We’ve sent a verification email (OTP link). Must Check Spam section. Please verify before logging in.",
+          "success"
+        );
+
+        signupForm.reset();
+
+        // Keep button disabled & show a different label while we redirect
+        setSignupLoading(true, "Account created – redirecting…");
+
+        setTimeout(() => {
+          window.location.href = "login.html";
+        }, 2500);
+      } catch (error) {
+        console.error("Signup error:", error);
+        let friendly = "Something went wrong. Please try again.";
+
+        if (error.code === "auth/email-already-in-use") {
+          friendly = "This email is already registered. Try logging in instead.";
+        } else if (error.code === "auth/invalid-email") {
+          friendly = "Please enter a valid email address.";
+        } else if (error.code === "auth/weak-password") {
+          friendly = "Password is too weak. Use a stronger one.";
+        }
+
+        setSignupLoading(false);
+        showMessage(friendly, "error");
+      }
+    });
+  }
+</script>
+
+</body>
+</html>

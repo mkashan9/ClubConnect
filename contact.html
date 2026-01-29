@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact LubConnect – Sales, Support & Partnerships</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style src="style.css">
+        /* Lightweight internal page hero */
+        .form-control{
+            background-color: white;
+            color:black;
+        }
+        .page-hero {
+            background: linear-gradient(135deg, rgba(21,101,192,0.9) 0%, rgba(16,55,102,0.95) 100%);
+            color:#fff;
+            padding:6rem 0 4rem;
+            position:relative;
+            margin-top:70px;
+            text-align:center;
+        }
+        .page-hero .breadcrumb {
+            font-size:.9rem;
+            opacity:.8;
+            margin-bottom:.5rem;
+        }
+        .page-hero h1 {
+            font-size:clamp(2rem,4vw,2.75rem);
+            font-weight:700;
+            margin:0 0 1rem;
+            line-height:1.2;
+        }
+        .page-hero p {
+            max-width:700px;
+            margin:0 auto;
+            color:rgba(255,255,255,0.85);
+            font-size:1rem;
+            line-height:1.5;
+        }
+
+        /* Layout helpers for sub-sections unique to these pages */
+        .section-narrow {
+            max-width:1000px;
+            margin:0 auto;
+        }
+
+        /* Feature detail blocks */
+        .feature-detail-grid {
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+            gap:2rem;
+        }
+        .feature-detail-card {
+            background-color:#fff;
+            border-radius:var(--radius-lg);
+            box-shadow:var(--shadow-sm);
+            border:1px solid rgba(0,0,0,0.03);
+            padding:1.5rem 1.5rem 2rem;
+            transition:all var(--transition-fast);
+        }
+        .feature-detail-card:hover {
+            transform:translateY(-4px);
+            box-shadow:var(--shadow-md);
+        }
+        .feature-detail-icon {
+            width:48px;
+            height:48px;
+            border-radius:12px;
+            background-color:var(--clr-primary);
+            color:#fff;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:1.25rem;
+            margin-bottom:1rem;
+            box-shadow:0 8px 20px rgba(21,101,192,0.25);
+        }
+        .feature-detail-card h3 {
+            font-size:1.1rem;
+            margin:0 0 .5rem;
+            font-weight:600;
+            color:#242c34;
+        }
+        .feature-detail-card p {
+            margin:0;
+            font-size:.95rem;
+            color:#6c757d;
+            line-height:1.5;
+        }
+
+        /* Teams page */
+        .team-grid {
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+            gap:2rem;
+        }
+        .team-card {
+            background:#fff;
+            border-radius:var(--radius-lg);
+            box-shadow:var(--shadow-sm);
+            border:1px solid rgba(0,0,0,0.03);
+            padding:2rem 1.5rem;
+            text-align:center;
+            transition:all var(--transition-fast);
+        }
+        .team-card:hover {
+            transform:translateY(-6px);
+            box-shadow:var(--shadow-md);
+        }
+        .team-avatar {
+            width:72px;
+            height:72px;
+            border-radius:50%;
+            background-color:var(--clr-primary);
+            color:#fff;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:2rem;
+            font-weight:600;
+            margin:0 auto 1rem;
+            box-shadow:0 10px 24px rgba(21,101,192,0.3);
+        }
+        .team-name {
+            font-weight:600;
+            margin:0;
+            color:#242c34;
+            font-size:1.125rem;
+        }
+        .team-role {
+            margin:.25rem 0 1rem;
+            color:#6c757d;
+            font-size:.9rem;
+        }
+        .team-bio {
+            font-size:.9rem;
+            color:#6c757d;
+            line-height:1.5;
+            margin:0;
+        }
+        .team-social {
+            display:flex;
+            justify-content:center;
+            gap:1rem;
+            margin-top:1rem;
+            font-size:1rem;
+        }
+        .team-social a {
+            color:var(--clr-primary);
+            transition:color var(--transition-fast);
+        }
+        .team-social a:hover {
+            color:var(--clr-primary-dark);
+        }
+
+        /* Contact page */
+        .contact-wrapper {
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+            gap:2rem;
+        }
+        .contact-card {
+            background:#fff;
+            border-radius:var(--radius-lg);
+            box-shadow:var(--shadow-sm);
+            border:1px solid rgba(0,0,0,0.03);
+            padding:2rem;
+            height:100%;
+        }
+        .contact-card h3 {
+            margin-top:0;
+            font-size:1.125rem;
+            font-weight:600;
+            color:#242c34;
+        }
+        .contact-card p {
+            margin:0 0 .75rem;
+            font-size:.95rem;
+            color:#6c757d;
+        }
+        .contact-item {
+            display:flex;
+            align-items:flex-start;
+            gap:1rem;
+            margin-bottom:1rem;
+            font-size:.95rem;
+            line-height:1.4;
+            color:#6c757d;
+        }
+        .contact-icon {
+            width:36px;
+            height:36px;
+            border-radius:10px;
+            background-color:var(--clr-primary);
+            color:#fff;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:1rem;
+            box-shadow:0 8px 20px rgba(21,101,192,0.25);
+            flex-shrink:0;
+        }
+        .map-embed {
+            width:100%;
+            border:0;
+            border-radius:var(--radius-md);
+            min-height:220px;
+        }
+
+       
+        .contact-form.is-loading {
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.contact-msg {
+  display: block;
+  margin-top: 0.6rem;
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.contact-msg.msg-error {
+  color: #dc2626; /* red */
+}
+
+.contact-msg.msg-success {
+  color: #16a34a; /* green */
+}
+
+/* small sporty spinner */
+.spinning-ball {
+  display: inline-block;
+  margin-right: 0.25rem;
+  animation: spinBall 0.8s linear infinite;
+}
+
+@keyframes spinBall {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+        /* Back to top button */
+        #backToTop {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            background-color: var(--clr-primary);
+            color: #fff;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            box-shadow: var(--shadow-md);
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-fast);
+            z-index: 999;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:1rem;
+        }
+        #backToTop.show {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <!-- Source Code Protection -->
+    <script src="protection.js"></script>
+    <!-- Header -->
+    <header class="header" id="header">
+  <nav class="nav container">
+    <div class="nav-logo">
+  <a href="index.html">
+      <img src="logo.png" alt="ClubConnect Logo" class="logo-img">
+  </a>
+</div>
+
+    <div class="nav-right">
+      <ul class="nav-menu" id="navMenu">
+        <li class="nav-item">
+          <a href="index.html" class="nav-link">Home</a>
+        </li>
+        <li class="nav-item">
+          <a href="features.html" class="nav-link">Features</a>
+        </li>
+        <li class="nav-item">
+          <a href="index.html#programs" class="nav-link">Programs</a>
+        </li>
+        <li class="nav-item">
+          <a href="teams.html" class="nav-link">Teams</a>
+        </li>
+        <li class="nav-item">
+          <a href="index.html#pricing" class="nav-link">Pricing</a>
+        </li>
+        <li class="nav-item">
+          <a href="leaderboards.html" class="nav-link">Leaderboards</a>
+        </li>
+        <li class="nav-item">
+          <a href="contact.html" class="nav-link active">Contact</a>
+        </li>
+      </ul>
+      <button class="btn btn-login" onclick="window.location.href='login.html'">
+        Login
+      </button>
+    </div>
+    <div class="nav-toggle" id="navToggle">
+      <i class="fas fa-bars"></i>
+    </div>
+  </nav>
+</header>
+
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <div class="breadcrumb"><i class="fas fa-envelope-open-text"></i> &nbsp; Support / Sales / Partnerships</div>
+            <h1>Get in touch with ClubConnect</h1>
+            <p>Whether you’re running an established academy or launching a new program, our team will help you understand where LubConnect fits in your operations.</p>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="features">
+        <div class="container section-narrow">
+            <div class="contact-wrapper">
+
+                <!-- Contact Form -->
+                <div class="contact-card">
+                    <h3>Send us a message</h3>
+                    <p>Tell us a little about your club and we’ll connect you with the right specialist.</p>
+                    <form id="contactForm" class="contact-form">
+  <div class="form-group">
+    <label class="form-label" for="name">Full name</label>
+    <input id="name" type="text" class="form-control" placeholder="Jane Doe" required>
+  </div>
+  <div class="form-group">
+    <label class="form-label" for="email">Work email</label>
+    <input id="email" type="email" class="form-control" placeholder="you@club.org" required>
+  </div>
+  <div class="form-group">
+    <label class="form-label" for="club">Club / Organization</label>
+    <input id="club" type="text" class="form-control" placeholder="City Elite Basketball Club">
+  </div>
+  <div class="form-group">
+    <label class="form-label" for="role">Your role</label>
+    <select id="role" class="form-control">
+      <option>Club Owner</option>
+      <option>Coach</option>
+      <option>Player</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label class="form-label" for="message">How can we help?</label>
+    <textarea id="message" rows="4" class="form-control" placeholder="Example: We want to centralize schedules, attendance and payments. We currently manage 11 competitive teams across 3 age groups." required></textarea>
+  </div>
+
+  <button type="submit" class="btn btn-primary btn-lg btn-block" id="contactSubmitBtn">
+    Submit Request
+  </button>
+  <small id="contactMsg" class="contact-msg"></small>
+</form>
+
+                </div>
+
+                <!-- Contact Info -->
+                <div class="contact-card">
+                    <h3>Contact details</h3>
+                    <div class="contact-item">
+                        <div class="contact-icon"><i class="fas fa-headset"></i></div>
+                        <div>
+                            <strong>Customer Support</strong><br>
+                            support@lubconnect.io<br>
+                            Mon–Fri, 08:00–18:00 (UTC)
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon"><i class="fas fa-handshake"></i></div>
+                        <div>
+                            <strong>Sales &amp; Partnerships</strong><br>
+                            partnerships@lubconnect.io<br>
+                            Club onboarding, white-label, enterprise pricing
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+                        <div>
+                            <strong>Head Office</strong><br>
+                            LubConnect Ltd.<br>
+                            4100 Arena Plaza, Suite 220<br>
+                            Dubai Sports District, UAE<br>
+                            VAT / Reg. available upon request
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div>
+                            <strong>Data &amp; Compliance</strong><br>
+                            compliance@lubconnect.io<br>
+                            Player data access and removal requests
+                        </div>
+                    </div>
+
+                    <h3 style="margin-top:2rem;">Locations</h3>
+                    <p>We operate in EMEA, North America, and APAC with localized billing and regional data hosting.</p>
+
+                    <iframe class="map-embed" src="https://www.google.com/maps?q=Dubai%20Sports%20District&t=&z=13&ie=UTF8&iwloc=&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ / Trust -->
+    <section>
+        <div class="container section-narrow">
+            <div class="section-header">
+                <h2 class="section-title">Frequently asked questions</h2>
+                <p class="section-subtitle">Quick answers for club directors and admins</p>
+            </div>
+
+            <div class="feature-detail-grid">
+                <div class="feature-detail-card">
+                    <div class="feature-detail-icon"><i class="fas fa-lock"></i></div>
+                    <h3>Is our data private?</h3>
+                    <p>Yes. Each club has its own segregated environment. Access is permissioned, auditable, and designed so parents only see information related to their athlete.</p>
+                </div>
+
+                <div class="feature-detail-card">
+                    <div class="feature-detail-icon"><i class="fas fa-credit-card"></i></div>
+                    <h3>How do payments work?</h3>
+                    <p>You can invoice families or sponsors directly through the platform. We generate aging reports so you always know your receivables position.</p>
+                </div>
+
+                <div class="feature-detail-card">
+                    <div class="feature-detail-icon"><i class="fas fa-globe"></i></div>
+                    <h3>Do you work with academies outside our country?</h3>
+                    <p>Yes. We currently support clubs in 11+ countries across youth, semi-pro, and high-performance development programs.</p>
+                </div>
+
+                <div class="feature-detail-card">
+                    <div class="feature-detail-icon"><i class="fas fa-bolt"></i></div>
+                    <h3>How long does onboarding take?</h3>
+                    <p>Most clubs are live in under two weeks with schedules, rosters, and billing fully imported. Complex multi-location academies may require phased rollout by program.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2 class="cta-title">Ready to modernize operations?</h2>
+                <p class="cta-subtitle">We’ll audit your current tools and give you a rollout plan tailored to your club — free.</p>
+                <a href="mailto:support@lubconnect.io" class="btn btn-primary btn-lg">Email Us</a>
+                <p class="cta-note">support@lubconnect.io • partnerships@lubconnect.io</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <div class="footer-logo">
+                        <img src="logo.png" alt="ClubConnect Logo">
+                    </div>
+                    <p class="footer-tagline">
+                        ClubConnect – the unified platform for managing multi-sport clubs, academies and training centers.
+                    </p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-title">Product</h4>
+                    <ul class="footer-links">
+                        <li><a href="features.html">Features</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#">Demo</a></li>
+
+                        <li><a href="#">Mobile Apps</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-title">Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Documentation</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-title">Company</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Press Kit</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-title">Newsletter</h4>
+                    <p class="footer-newsletter-text">Stay updated with new features and success stories.</p>
+                    <form class="newsletter-form" id="newsletterForm">
+  <input
+    type="email"
+    placeholder="Enter your email"
+    class="newsletter-input"
+    id="newsletterEmail"
+  >
+  <button type="submit" class="btn btn-primary" id="newsletterBtn">
+    Subscribe
+  </button>
+  <small id="newsletterMsg" class="newsletter-msg"></small>
+</form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-copyright">
+                    &copy; 2025 ClubConnect. All rights reserved.
+                </p>
+                <div class="footer-legal">
+  <a href="privacy.html">Privacy Policy</a>
+  <a href="terms.html">Terms of Service</a>
+  <a href="cookies.html">Cookie Policy</a>
+</div>
+
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back To Top -->
+    <button id="backToTop" aria-label="Back to Top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="app.js"></script>
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+    <script type="module">
+  import {
+    initializeApp,
+    getApps,
+    getApp
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    serverTimestamp,
+    query,
+    where,
+    getDocs
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  // 🔹 Same Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyD8mSGezxer6j46O90_IsJOpUgu5KI0HnU",
+    authDomain: "clubconnect-fc50f.firebaseapp.com",
+    projectId: "clubconnect-fc50f",
+    storageBucket: "clubconnect-fc50f.firebasestorage.app",
+    messagingSenderId: "419240671350",
+    appId: "1:419240671350:web:69f7113d686e7f3e4a8757",
+    measurementId: "G-623LVNVKBG"
+  };
+
+  // ✅ Reuse app if already initialized
+  const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  // -----------------------------
+  //  A) Newsletter (footer)
+  // -----------------------------
+  const newsletterForm       = document.getElementById("newsletterForm");
+  const newsletterEmailInput = document.getElementById("newsletterEmail");
+  const newsletterBtn        = document.getElementById("newsletterBtn");
+  const newsletterMsgEl      = document.getElementById("newsletterMsg");
+
+  function setNewsletterLoading(isLoading) {
+    if (!newsletterBtn || !newsletterForm) return;
+    newsletterBtn.disabled = isLoading;
+    newsletterForm.classList.toggle("is-loading", isLoading);
+    if (isLoading) {
+      newsletterBtn.dataset.originalText = newsletterBtn.textContent;
+      newsletterBtn.innerHTML =
+        '<i class="fas fa-futbol spinning-ball"></i> Subscribing…';
+    } else {
+      newsletterBtn.innerHTML = newsletterBtn.dataset.originalText || "Subscribe";
+    }
+  }
+
+  function showNewsletterMsg(text, type = "info") {
+    if (!newsletterMsgEl) return;
+    newsletterMsgEl.textContent = text;
+    newsletterMsgEl.classList.remove("msg-error", "msg-success");
+    if (type === "error") {
+      newsletterMsgEl.classList.add("msg-error");
+    } else if (type === "success") {
+      newsletterMsgEl.classList.add("msg-success");
+    }
+  }
+
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  if (newsletterForm && newsletterEmailInput && newsletterBtn) {
+    newsletterForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const emailRaw = newsletterEmailInput.value.trim();
+      const email    = emailRaw.toLowerCase();
+
+      if (!email) {
+        showNewsletterMsg("Please enter your email.", "error");
+        return;
+      }
+      if (!isValidEmail(email)) {
+        showNewsletterMsg("Please enter a valid email address.", "error");
+        return;
+      }
+
+      setNewsletterLoading(true);
+      showNewsletterMsg("Checking subscription…", "info");
+
+      try {
+        // 🔍 1) Check if email already exists
+        const q = query(
+          collection(db, "newsletterSubscribers"),
+          where("email", "==", email)
+        );
+        const snap = await getDocs(q);
+
+        if (!snap.empty) {
+          showNewsletterMsg("This email is already subscribed.", "error");
+          setNewsletterLoading(false);
+          return;
+        }
+
+        // ✅ 2) Not found → create new
+        await addDoc(collection(db, "newsletterSubscribers"), {
+          email,
+          createdAt: serverTimestamp(),
+          source: "contact_footer"
+        });
+
+        showNewsletterMsg("You’re in! We’ll keep you updated.", "success");
+        newsletterEmailInput.value = "";
+      } catch (err) {
+        console.error("Newsletter subscribe error:", err);
+        showNewsletterMsg("Could not subscribe. Please try again later.", "error");
+      } finally {
+        setNewsletterLoading(false);
+      }
+    });
+  }
+
+  // -----------------------------
+  //  B) Contact form (main card)
+  // -----------------------------
+  const contactForm   = document.getElementById("contactForm");
+  const nameInput     = document.getElementById("name");
+  const emailInput    = document.getElementById("email");
+  const clubInput     = document.getElementById("club");
+  const roleSelect    = document.getElementById("role");
+  const messageInput  = document.getElementById("message");
+  const contactBtn    = document.getElementById("contactSubmitBtn");
+  const contactMsgEl  = document.getElementById("contactMsg");
+
+  function setContactLoading(isLoading) {
+    if (!contactForm || !contactBtn) return;
+    contactBtn.disabled = isLoading;
+    contactForm.classList.toggle("is-loading", isLoading);
+    if (isLoading) {
+      contactBtn.dataset.originalText = contactBtn.textContent;
+      contactBtn.innerHTML =
+        '<i class="fas fa-basketball-ball spinning-ball"></i> Sending…';
+    } else {
+      contactBtn.innerHTML = contactBtn.dataset.originalText || "Submit Request";
+    }
+  }
+
+  function showContactMsg(text, type = "info") {
+    if (!contactMsgEl) return;
+    contactMsgEl.textContent = text;
+    contactMsgEl.classList.remove("msg-error", "msg-success");
+    if (type === "error") {
+      contactMsgEl.classList.add("msg-error");
+    } else if (type === "success") {
+      contactMsgEl.classList.add("msg-success");
+    }
+  }
+
+  if (contactForm && nameInput && emailInput && messageInput && contactBtn) {
+    contactForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name    = nameInput.value.trim();
+      const email   = emailInput.value.trim().toLowerCase();
+      const club    = clubInput ? clubInput.value.trim() : "";
+      const role    = roleSelect ? roleSelect.value : "";
+      const message = messageInput.value.trim();
+
+      if (!name || !email || !message) {
+        showContactMsg("Please fill in your name, email and message.", "error");
+        return;
+      }
+      if (!isValidEmail(email)) {
+        showContactMsg("Please enter a valid email address.", "error");
+        return;
+      }
+
+      setContactLoading(true);
+      showContactMsg("Sending your request…", "info");
+
+      try {
+        await addDoc(collection(db, "contactRequests"), {
+          name,
+          email,
+          club: club || null,
+          role: role || null,
+          message,
+          status: "open",
+          createdAt: serverTimestamp(),
+          source: "contact_page"
+        });
+
+        showContactMsg("Thank you! Your request has been sent to our team.", "success");
+
+        // Clear form
+        nameInput.value = "";
+        emailInput.value = "";
+        if (clubInput) clubInput.value = "";
+        if (roleSelect) roleSelect.selectedIndex = 0;
+        messageInput.value = "";
+      } catch (err) {
+        console.error("Contact form error:", err);
+        showContactMsg("Could not send your request. Please try again later.", "error");
+      } finally {
+        setContactLoading(false);
+      }
+    });
+  }
+
+  // Optional: avoid error on pages without #year
+  const yearEl = document.getElementById("year");
+  if (yearEl) {
+    yearEl.textContent = new Date().getFullYear();
+  }
+</script>
+
+</body>
+</html>

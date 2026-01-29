@@ -1,0 +1,2421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClubConnect – Club Owner Dashboard</title>
+
+  <!-- Same base theme as homepage -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    /* Force light cards & dark text always */
+    .dashboard-theme {
+      --color-surface: #ffffff;
+      --color-text: #111827;
+      --color-text-secondary: #6b7280;
+      --color-card-border: rgba(15, 23, 42, 0.08);
+      --color-border: rgba(15, 23, 42, 0.08);
+
+      background-color: #f5f5f5;
+      color: var(--color-text);
+    }
+
+    body {
+      font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    /* Layout: top header + sidebar + main area */
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      min-height: calc(100vh - 72px); /* minus header height */
+      margin-top: 4.5rem; /* header offset */
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Sidebar */
+    .dashboard-sidebar {
+      background: linear-gradient(180deg, #155598, #1b3358);
+      color: #fff;
+      padding: 1.5rem 1.3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .sidebar-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .sidebar-title i {
+      font-size: 1.2rem;
+    }
+
+    .sidebar-user {
+      padding: 0.9rem 0.8rem;
+      border-radius: 1rem;
+      background-color: rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .sidebar-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .sidebar-user-meta {
+      font-size: 0.8rem;
+      line-height: 1.2;
+    }
+
+    .sidebar-user-meta strong {
+      display: block;
+      font-size: 0.88rem;
+    }
+
+    .sidebar-user-meta span {
+      color: rgba(255,255,255,0.8);
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .sidebar-link {
+      border-radius: 999px;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      border: 1px solid transparent;
+      cursor: pointer;
+      background-color: transparent;
+      color: rgba(255,255,255,0.88);
+      text-align: left;
+    }
+
+    .sidebar-link i {
+      font-size: 0.95rem;
+      width: 18px;
+      text-align: center;
+    }
+
+    .sidebar-link.active,
+    .sidebar-link:hover {
+      background-color: rgba(255,255,255,0.14);
+      border-color: rgba(255,255,255,0.3);
+      color: #ffffff;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-sidebar {
+        flex-direction: column;
+      }
+    }
+
+    /* Main content */
+    .dashboard-main {
+      padding: 2rem 2.3rem;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-main {
+        padding: 1.5rem 1rem 3rem;
+      }
+    }
+
+    .view-header {
+      margin-bottom: 1.3rem;
+    }
+
+    .view-header h1 {
+      font-size: 2.1rem;
+      margin: 0 0 0.4rem;
+      color: var(--color-text);
+    }
+
+    .view-header p {
+      margin: 0;
+      font-size: 0.98rem;
+      color: var(--color-text-secondary);
+      max-width: 640px;
+    }
+
+    /* card: single big center card on each view */
+    .dashboard-card {
+      background-color: var(--color-surface);
+      border-radius: 1.25rem;
+      border: 1px solid var(--color-card-border);
+      box-shadow: var(--shadow-sm);
+      padding: 1.8rem 2rem;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-card {
+        padding: 1.4rem 1.3rem;
+      }
+    }
+    .sidebar-link.locked {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+    .card-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .card-title-main {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .card-title-main i {
+      font-size: 1.1rem;
+      color: var(--clr-primary);
+    }
+
+    .card-title-main h2 {
+      font-size: 1.1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-text-secondary);
+      margin: 0;
+    }
+
+    .card-chip {
+      font-size: 0.78rem;
+      padding: 0.23rem 0.7rem;
+      border-radius: 999px;
+      background-color: rgba(21, 101, 192, 0.08);
+      color: var(--clr-primary);
+      white-space: nowrap;
+    }
+
+    .card-subtext {
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+      margin-bottom: 1.1rem;
+    }
+
+    /* Form elements */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem 1.5rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--color-text-secondary);
+      margin-bottom: 0.18rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.55rem 0.65rem;
+      border-radius: 0.7rem;
+      border: 1px solid var(--color-border-secondary);
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .form-group textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .form-hint {
+      font-size: 0.82rem;
+      color: var(--color-text-secondary);
+      margin-top: 0.4rem;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.3rem;
+    }
+
+    .btn-pill {
+      border-radius: 999px;
+      border: 1px solid var(--color-border-secondary);
+      background-color: #ffffff;
+      padding: 0.35rem 0.9rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .btn-pill-primary {
+      border-color: var(--clr-primary);
+      background-color: var(--clr-primary);
+      color: #ffffff;
+    }
+
+    .btn-pill-danger {
+      border-color: rgba(192, 21, 47, 0.7);
+      background-color: rgba(192, 21, 47, 0.9);
+      color: #ffffff;
+    }
+
+    .btn-pill-ghost {
+      background-color: #ffffff;
+    }
+
+    /* KPI row only in overview */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .kpi-card {
+      border-radius: 1rem;
+      border: 1px solid rgba(15,23,42,0.06);
+      padding: 0.9rem 1rem;
+      background-color: #f9fafb;
+    }
+
+    .kpi-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-text-secondary);
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .kpi-label i {
+      color: var(--clr-primary);
+    }
+
+    .kpi-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--color-text);
+      margin-bottom: 0.15rem;
+    }
+
+    .kpi-meta {
+      font-size: 0.8rem;
+      color: var(--color-text-secondary);
+    }
+
+    /* Simple table in some views */
+    .simple-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    .simple-table th,
+    .simple-table td {
+      padding: 0.55rem 0.4rem;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      text-align: left;
+    }
+
+    .simple-table th {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      color: var(--color-text-secondary);
+      letter-spacing: 0.06em;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+    }
+
+    .status-pill--ok {
+      background-color: rgba(33,128,141,0.12);
+      color: var(--color-success);
+    }
+
+    .status-pill--warn {
+      background-color: rgba(245,158,11,0.12);
+      color: rgb(180, 83, 9);
+    }
+
+    .status-pill--info {
+      background-color: rgba(21, 101, 192, 0.12);
+      color: var(--clr-primary);
+    }
+
+    /* Achievements chart */
+    .chart-wrapper {
+      margin-top: 1rem;
+      height: 240px;
+    }
+
+    .chart-wrapper canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    /* Views visibility */
+    .view {
+      display: none;
+    }
+    .view.active {
+      display: block;
+    }
+
+    /* Top site header fix: ensure text visible */
+    .header,
+    .nav-link,
+    .btn-login {
+      color: #000000;
+    }
+  </style>
+</head>
+<body>
+  <!-- Source Code Protection -->
+  <script src="protection.js"></script>
+  <!-- Top header (same style as homepage) -->
+   <header class="header" id="header">
+  <nav class="nav container">
+    <div class="nav-logo">
+  <a href="index.html">
+      <img src="logo.png" alt="ClubConnect Logo" class="logo-img">
+  </a>
+</div>
+
+    <div class="nav-right">
+      <ul class="nav-menu" id="navMenu">
+        <li class="nav-item">
+          <a href="index.html" class="nav-link active">Home</a>
+        </li>
+        <li class="nav-item">
+          <a href="features.html" class="nav-link">Features</a>
+        </li>
+        <li class="nav-item">
+          <a href="#programs" class="nav-link">Programs</a>
+        </li>
+        <li class="nav-item">
+          <a href="teams.html" class="nav-link">Teams</a>
+        </li>
+        <li class="nav-item">
+          <a href="#pricing" class="nav-link">Pricing</a>
+        </li>
+        <li class="nav-item">
+          <a href="leaderboards.html" class="nav-link">Leaderboards</a>
+        </li>
+        <li class="nav-item">
+          <a href="contact.html" class="nav-link">Contact</a>
+        </li>
+      <button class="btn btn-login" id="ownerLogoutTopBtn">Logout</button>
+      
+    </div>
+    <div class="nav-toggle" id="navToggle">
+      <i class="fas fa-bars"></i>
+    </div>
+  </nav>
+</header>
+
+  <!-- DASHBOARD LAYOUT -->
+  <div class="dashboard-layout dashboard-theme" id="ownerDashboardLayout" style="display:none;">
+    <!-- Left sidebar -->
+    <aside class="dashboard-sidebar">
+      <div class="sidebar-title">
+        <i class="fas fa-shield-alt"></i>
+        <span>Welcome Owner!</span>
+      </div>
+
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="ownerAvatarInitial">CO</div>
+        <div class="sidebar-user-meta">
+          <strong id="ownerUserName">Club Owner</strong>
+          <span id="ownerEmailLabel">owner@example.com</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="sidebar-link active" data-view-target="overview">
+          <i class="fas fa-gauge"></i> Overview
+        </button>
+        <button class="sidebar-link" data-view-target="announcements">
+  <i class="fas fa-bullhorn"></i> Announcements
+</button>
+
+        <button class="sidebar-link" data-view-target="profile">
+          <i class="fas fa-id-card"></i> Club Profile
+        </button>
+        <button class="sidebar-link" data-view-target="coach">
+          <i class="fas fa-chalkboard-teacher"></i> Coach
+        </button>
+        <button class="sidebar-link" data-view-target="players">
+          <i class="fas fa-users"></i> Players & Payroll
+        </button>
+        <button class="sidebar-link" data-view-target="leagues">
+          <i class="fas fa-list-check"></i> Leagues Enrollment
+        </button>
+        <button class="sidebar-link" data-view-target="challenges">
+          <i class="fas fa-bolt"></i> Club Challenges
+        </button>
+        <button class="sidebar-link" data-view-target="payments">
+          <i class="fas fa-wallet"></i> Payments
+        </button>
+        <button class="sidebar-link" data-view-target="achievements">
+          <i class="fas fa-trophy"></i> Achievements
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Right main content -->
+    <main class="dashboard-main">
+      <!-- OVERVIEW VIEW -->
+      <section class="view active" id="view-overview">
+        <div class="view-header">
+          <h1>Overview</h1>
+          <p>Quick snapshot of your club: squad size, coach status, league participation and financial summary.</p>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-title-row">
+            <div class="card-title-main">
+              <i class="fas fa-gauge-high"></i>
+              <h2>CLUB OVERVIEW</h2>
+            </div>
+            <span class="card-chip">Owner quick glance</span>
+          </div>
+
+          <div class="kpi-row">
+  <div class="kpi-card">
+    <div class="kpi-label"><i class="fas fa-users"></i> Squad size</div>
+    <div class="kpi-value" id="kpiSquadSize">0</div>
+    <div class="kpi-meta">Players currently in your club</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label"><i class="fas fa-chalkboard-teacher"></i> Head coach</div>
+    <div class="kpi-value" id="kpiCoachName">Not assigned</div>
+    <div class="kpi-meta">Click “Coach” in sidebar to manage</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label"><i class="fas fa-trophy"></i> Active leagues</div>
+    <div class="kpi-value" id="kpiActiveLeagues">0</div>
+    <div class="kpi-meta">You are enrolled in ongoing leagues</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label"><i class="fas fa-coins"></i> This month payroll</div>
+    <div class="kpi-value" id="kpiPayrollThisMonth">₨ 0</div>
+    <div class="kpi-meta">Total salaries for active players</div>
+  </div>
+</div>
+
+
+          <p class="card-subtext">
+            Use the left sidebar to jump into specific areas like <strong>Club Profile</strong>, <strong>Coach</strong>, <strong>Players</strong> or <strong>Leagues</strong>.
+          </p>
+        </div>
+      </section>
+
+      <!-- ANNOUNCEMENTS -->
+<section class="view" id="view-announcements">
+  <div class="view-header">
+    <h1>Announcements</h1>
+    <p>Post updates for your players. All announcements appear in players’ dashboards.</p>
+  </div>
+
+  <div class="dashboard-card">
+    <div class="card-title-row">
+      <div class="card-title-main">
+        <i class="fas fa-bullhorn"></i>
+        <h2>CREATE ANNOUNCEMENT</h2>
+      </div>
+      <span class="card-chip">Visible to players</span>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="ownerAnnouncementTitle">Title</label>
+        <input id="ownerAnnouncementTitle" type="text" placeholder="Short headline, e.g. Training time updated">
+      </div>
+      <div class="form-group">
+        <label for="ownerAnnouncementSport">Sport (optional)</label>
+        <select id="ownerAnnouncementSport">
+          <option value="">All sports</option>
+          <option>Football</option>
+          <option>Cricket</option>
+          <option>Basketball</option>
+          <option>Hockey</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="ownerAnnouncementMessage">Message</label>
+      <textarea id="ownerAnnouncementMessage" placeholder="Full announcement text for your players."></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-pill btn-pill-primary" id="ownerPostAnnouncementBtn">
+        <i class="fas fa-paper-plane"></i> Post announcement
+      </button>
+    </div>
+
+    <div class="form-hint">
+      Later, this can be filtered per club/team. For now it is visible to players globally (or filtered by sport).
+    </div>
+
+    <hr style="margin:1.3rem 0; border:none; border-top:1px solid rgba(0,0,0,0.06);">
+
+    <div class="card-title-row">
+      <div class="card-title-main">
+        <i class="fas fa-list"></i>
+        <h2>RECENT ANNOUNCEMENTS</h2>
+      </div>
+      <span class="card-chip">Last 10</span>
+    </div>
+
+    <table class="simple-table" id="ownerAnnouncementsTable">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Message</th>
+          <th>Role</th>
+          <th>When</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Filled from Firestore -->
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+      <!-- CLUB PROFILE VIEW -->
+      <section class="view" id="view-profile">
+        <div class="view-header">
+          <h1>Club Profile</h1>
+          <p>Update your club identity, home city and home ground — this is visible across the platform.</p>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-title-row">
+            <div class="card-title-main">
+              <i class="fas fa-id-card"></i>
+              <h2>CLUB PROFILE</h2>
+            </div>
+            <span class="card-chip">Public info</span>
+          </div>
+
+          <p class="card-subtext">
+            Keep your club profile clean and professional. This information appears to players, coaches and in league listings.
+          </p>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="clubNameInput">Club name</label>
+              <input id="clubNameInput" type="text" value="Margalla United FC">
+            </div>
+            <div class="form-group">
+              <label for="clubSportInput">Primary sport</label>
+              <select id="clubSportInput">
+                <option selected>Football</option>
+                <option>Cricket</option>
+                <option>Basketball</option>
+                <option>Hockey</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="clubCityInput">Home city</label>
+              <input id="clubCityInput" type="text" value="Islamabad">
+            </div>
+            <div class="form-group">
+              <label for="clubStadiumInput">Home ground / venue</label>
+              <input id="clubStadiumInput" type="text" value="FAST Arena Ground">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="clubBioInput">Club bio / tagline</label>
+            <textarea id="clubBioInput">High-intensity student club competing in university leagues.</textarea>
+          </div>
+
+          <div class="btn-row">
+  <button class="btn-pill btn-pill-primary" id="saveClubProfileBtn">
+    <i class="fas fa-save"></i> Save profile
+  </button>
+</div>
+
+<div class="form-hint" id="clubStatusHint">
+  Status: <span class="status-pill status-pill--warn">
+    <i class="fas fa-clock"></i> Not submitted yet
+  </span>
+</div>
+
+        </div>
+      </section>
+
+      <!-- COACH VIEW -->
+      <section class="view" id="view-coach">
+        <div class="view-header">
+          <h1>Coach Management</h1>
+          <p>Hire or replace your head coach, either from registered coaches or by proposing a new one.</p>
+        </div>
+
+        <div class="dashboard-card">
+  <div class="card-title-row">
+    <div class="card-title-main">
+      <i class="fas fa-chalkboard-teacher"></i>
+      <h2>HEAD COACH</h2>
+    </div>
+    <span class="card-chip">One head coach at a time</span>
+  </div>
+
+  <p class="card-subtext">
+    Assign a head coach from registered coaches or take charge yourself. Changes
+    appear on coach & player dashboards.
+  </p>
+
+  <div class="form-grid">
+    <!-- Current coach card -->
+    <div class="form-group">
+      <label>Current head coach</label>
+      <div class="kpi-card" style="padding:0.8rem 0.9rem;">
+        <div class="kpi-label" style="margin-bottom:0.2rem;">
+          <i class="fas fa-user-tie"></i> Assigned coach
+        </div>
+        <div id="currentCoachLabel" style="font-weight:600;">
+          No head coach assigned
+        </div>
+        <div class="kpi-meta" style="margin-top:0.3rem;">
+          Make sure your coach has registration enabled.
+        </div>
+        <div class="btn-row" style="margin-top:0.5rem;">
+          <button class="btn-pill btn-pill-danger" id="fireCoachBtn">
+            <i class="fas fa-user-slash"></i> Remove coach
+          </button>
+          <button class="btn-pill btn-pill-ghost" id="assignSelfAsCoachBtn">
+            <i class="fas fa-user-check"></i> Assign myself as coach
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hire coach card -->
+    <div class="form-group">
+      <label for="hireCoachSelect">Hire from registered coaches</label>
+      <select id="hireCoachSelect">
+        <option value="">Select coach…</option>
+      </select>
+      <div class="form-hint">
+        Only verified & registration-paid coaches appear here.
+      </div>
+      <div class="btn-row" style="margin-top:0.6rem;">
+        <button class="btn-pill btn-pill-primary" id="hireExistingCoachBtn">
+          <i class="fas fa-user-plus"></i> Hire selected coach
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <hr style="margin:1.3rem 0; border:none; border-top:1px solid rgba(0,0,0,0.06);">
+
+  <div class="form-grid">
+    <div class="form-group">
+      <label for="proposedCoachName">Propose your own external coach</label>
+      <input id="proposedCoachName" type="text" placeholder="Full name of coach">
+    </div>
+    <div class="form-group">
+      <label for="proposedCoachEmail">Coach email</label>
+      <input id="proposedCoachEmail" type="email" placeholder="coach@example.com">
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-pill btn-pill-ghost" id="proposeCoachBtn">
+      <i class="fas fa-paper-plane"></i> Send proposal to Super Admin
+    </button>
+  </div>
+</div>
+
+      </section>
+
+      <!-- PLAYERS VIEW -->
+      <section class="view" id="view-players">
+        <div class="view-header">
+          <h1>Players & Payroll</h1>
+          <p>Hire players from ClubConnect, manage contracts, and trigger salary payments.</p>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-title-row">
+            <div class="card-title-main">
+              <i class="fas fa-users"></i>
+              <h2>PLAYERS</h2>
+            </div>
+            <span class="card-chip">Squad & salaries</span>
+          </div>
+
+          <table class="simple-table" id="playersTable">
+            <thead>
+              <tr>
+                <th>Player</th>
+                <th>Position</th>
+                <th>Status</th>
+                <th>Monthly pay</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="playersTableBody">
+              <!-- Rows loaded from Firestore -->
+            </tbody>
+
+          </table>
+
+          <hr style="margin:1.3rem 0; border:none; border-top:1px solid rgba(0,0,0,0.06);">
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="hirePlayerSelect">Hire from registered players</label>
+              <select id="hirePlayerSelect">
+  <option value="">Select a player…</option>
+</select>
+
+            </div>
+            <div class="form-group">
+              <label for="hirePlayerSalary">Offer salary (PKR)</label>
+              <input id="hirePlayerSalary" type="number" placeholder="e.g. 18000">
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-pill btn-pill-primary" id="sendHireRequestBtn">
+              <i class="fas fa-paper-plane"></i> Send hire request
+            </button>
+          </div>
+
+          <div class="form-hint">
+            Player will see this in their dashboard and can accept or reject. Once accepted, “Pay” will be used to track salaries.
+          </div>
+        </div>
+      </section>
+
+      <!-- LEAGUES VIEW -->
+      <section class="view" id="view-leagues">
+        <div class="view-header">
+          <h1>Leagues Enrollment</h1>
+          <p>Enroll your club into current leagues before deadlines and track your entry status.</p>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-title-row">
+            <div class="card-title-main">
+              <i class="fas fa-list-check"></i>
+              <h2>LEAGUES</h2>
+            </div>
+            <span class="card-chip">Enrollment control</span>
+          </div>
+
+          <table class="simple-table" id="leaguesTable">
+            <thead>
+              <tr>
+                <th>League</th>
+                <th>Sport</th>
+                <th>Deadline</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-enrolled="true">
+                <td>Capital Football Premier</td>
+                <td>Football</td>
+                <td>Mar 01</td>
+                <td><span class="status-pill status-pill--info"><i class="fas fa-check-circle"></i> Enrolled</span></td>
+                <td>
+                  <button class="btn-pill btn-pill-ghost btn-withdraw-league"><i class="fas fa-xmark"></i> Withdraw</button>
+                </td>
+              </tr>
+              <tr data-enrolled="false">
+                <td>NUCES Super Sixes</td>
+                <td>Cricket</td>
+                <td>Mar 20</td>
+                <td><span class="status-pill status-pill--warn"><i class="fas fa-clock"></i> Not enrolled</span></td>
+                <td>
+                  <button class="btn-pill btn-pill-primary btn-enroll-league"><i class="fas fa-arrow-right-to-bracket"></i> Enroll</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="form-hint">
+            After the deadline, your enrollment will lock and fixtures will be generated by Super Admin’s league engine.
+          </div>
+        </div>
+      </section>
+
+      <!-- CHALLENGES VIEW -->
+      <section class="view" id="view-challenges">
+        <div class="view-header">
+          <h1>Club Challenges</h1>
+          <p>Challenge other clubs directly for friendly or rivalry matches.</p>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-title-row">
+            <div class="card-title-main">
+              <i class="fas fa-bolt"></i>
+              <h2>CHALLENGES</h2>
+            </div>
+            <span class="card-chip">Club vs club</span>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="challengeClubSelect">Opponent club</label>
+              <select id="challengeClubSelect">
+  <option value="">Select club…</option>
+</select>
+
+
+            </div>
+            <div class="form-group">
+              <label for="challengeDateInput">Preferred date</label>
+              <input id="challengeDateInput" type="date">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="challengeMessage">Message / match terms</label>
+            <textarea id="challengeMessage" placeholder="Friendly match request, format, ground preference, etc."></textarea>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-pill btn-pill-primary" id="sendChallengeBtn">
+              <i class="fas fa-paper-plane"></i> Send challenge
+            </button>
+          </div>
+
+          <div class="form-hint">
+            Other club owner will see this in their dashboard and can accept or reject. You will then see the schedule under Leagues / Fixtures.
+          </div>
+
+          <hr style="margin:1.3rem 0; border:none; border-top:1px solid rgba(0,0,0,0.06);">
+
+<div class="card-title-row">
+  <div class="card-title-main">
+    <i class="fas fa-clock-rotate-left"></i>
+    <h2>RECENT CHALLENGES</h2>
+  </div>
+  <span class="card-chip">Last 10 sent</span>
+</div>
+
+<table class="simple-table" id="challengesTable">
+  <thead>
+    <tr>
+      <th>Opponent</th>
+      <th>Date</th>
+      <th>Status</th>
+      <th>Message</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- filled from Firestore -->
+  </tbody>
+</table>
+
+        </div>
+      </section>
+
+      <!-- PAYMENTS VIEW -->
+      <section class="view" id="view-payments">
+        <div class="view-header">
+          <h1>Payments</h1>
+          <p>Track your registration fee to Super Admin and overall club payments.</p>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-title-row">
+            <div class="card-title-main">
+              <i class="fas fa-wallet"></i>
+              <h2>REGISTRATION FEE</h2>
+            </div>
+            <span class="card-chip">Platform access</span>
+          </div>
+
+          <p class="card-subtext">
+            Registration fee is required once per club to unlock all features: league enrollment, player market, chat system, and more.
+          </p>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Status</label>
+              <div id="registrationStatus">
+                <span class="status-pill status-pill--ok">
+                  <i class="fas fa-check-circle"></i> Paid
+                </span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Action</label>
+              <div class="btn-row">
+                <button class="btn-pill btn-pill-primary" id="payRegistrationBtn">
+                  <i class="fas fa-coins"></i> Pay / update fee
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-hint">
+            In real app, this will open a crypto wallet (like Trust Wallet) or payment gateway, and Super Admin will see your payment status.
+          </div>
+        </div>
+      </section>
+
+      <!-- ACHIEVEMENTS VIEW -->
+      <section class="view" id="view-achievements">
+        <div class="view-header">
+          <h1>Club Achievements</h1>
+          <p>Performance summary of your club: win rate, goals, clean sheets, discipline and fitness.</p>
+        </div>
+
+        <div class="dashboard-card">
+  <div class="card-title-row">
+    <div class="card-title-main">
+      <i class="fas fa-trophy"></i>
+      <h2>ACHIEVEMENT STATS</h2>
+    </div>
+    <span class="card-chip">Season snapshot</span>
+  </div>
+
+  <div class="kpi-row" style="margin-bottom:1rem;">
+    <div class="kpi-card">
+      <div class="kpi-label"><i class="fas fa-futbol"></i> Matches played</div>
+      <div class="kpi-value">24</div>
+      <div class="kpi-meta">All competitions</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label"><i class="fas fa-star"></i> Win rate</div>
+      <div class="kpi-value">68%</div>
+      <div class="kpi-meta">Better than last season</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label"><i class="fas fa-bullseye"></i> Goals scored</div>
+      <div class="kpi-value">42</div>
+      <div class="kpi-meta">League & friendlies</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label"><i class="fas fa-shield-alt"></i> Clean sheets</div>
+      <div class="kpi-value">9</div>
+      <div class="kpi-meta">Defensive stability</div>
+    </div>
+  </div>
+
+  <p class="card-subtext">
+    These visuals will later be fed directly from match data & player stats.
+    For now, they demonstrate how your performance dashboard will look.
+  </p>
+
+  <div class="chart-wrapper">
+    <canvas id="achievementsChart"></canvas>
+  </div>
+</div>
+
+      </section>
+    </main>
+  </div>
+
+  <!-- Back to top (from homepage) -->
+  <button class="back-to-top" id="backToTop">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+
+  <script src="app.js"></script>
+
+  <!-- Firebase + Role Guard + View Logic -->
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import {
+    getAuth,
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import {
+    getFirestore,
+    doc,
+    getDoc,
+    collection,
+    addDoc,
+    setDoc,
+    serverTimestamp,
+    query,
+    orderBy,
+    limit,
+    where,
+    onSnapshot,
+    updateDoc
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  // -------- Firebase init --------
+  const firebaseConfig = {
+    apiKey: "AIzaSyD8mSGezxer6j46O90_IsJOpUgu5KI0HnU",
+    authDomain: "clubconnect-fc50f.firebaseapp.com",
+    projectId: "clubconnect-fc50f",
+    storageBucket: "clubconnect-fc50f.firebasestorage.app",
+    messagingSenderId: "419240671350",
+    appId: "1:419240671350:web:69f7113d686e7f3e4a8757",
+    measurementId: "G-623LVNVKBG"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  // -------- DOM refs --------
+  const layoutEl       = document.getElementById("ownerDashboardLayout");
+  const emailLabel     = document.getElementById("ownerEmailLabel");
+  const avatarInitial  = document.getElementById("ownerAvatarInitial");
+  const userNameLabel  = document.getElementById("ownerUserName");
+  const logoutTopBtn   = document.getElementById("ownerLogoutTopBtn");
+
+  const sidebarLinks   = document.querySelectorAll(".sidebar-link");
+  const views          = document.querySelectorAll(".view");
+
+  // Club profile
+  const clubStatusHint     = document.getElementById("clubStatusHint");
+  const saveClubProfileBtn = document.getElementById("saveClubProfileBtn");
+  const clubNameInput      = document.getElementById("clubNameInput");
+  const clubSportInput     = document.getElementById("clubSportInput");
+  const clubCityInput      = document.getElementById("clubCityInput");
+  const clubStadiumInput   = document.getElementById("clubStadiumInput");
+  const clubBioInput       = document.getElementById("clubBioInput");
+
+  // Coach section
+  const currentCoachLabel       = document.getElementById("currentCoachLabel");
+  const fireCoachBtn            = document.getElementById("fireCoachBtn");
+  const assignSelfAsCoachBtn    = document.getElementById("assignSelfAsCoachBtn");
+  const hireCoachSelect         = document.getElementById("hireCoachSelect");
+  const hireExistingCoachBtn    = document.getElementById("hireExistingCoachBtn");
+  const proposedCoachNameInput  = document.getElementById("proposedCoachName");
+  const proposedCoachEmailInput = document.getElementById("proposedCoachEmail");
+  const proposeCoachBtn         = document.getElementById("proposeCoachBtn");
+
+  // Players section
+  const playersTableBody    = document.getElementById("playersTableBody");
+  const playersTable        = document.getElementById("playersTable");
+  const hirePlayerSelect    = document.getElementById("hirePlayerSelect");
+  const hirePlayerSalary    = document.getElementById("hirePlayerSalary");
+  const sendHireRequestBtn  = document.getElementById("sendHireRequestBtn");
+
+  // Leagues section
+  const leaguesTable             = document.getElementById("leaguesTable");
+  const ownerLeaguesTableBody    = leaguesTable?.querySelector("tbody") || null;
+
+  // Challenges section
+  const challengeClubSelect  = document.getElementById("challengeClubSelect");
+  const challengeDateInput   = document.getElementById("challengeDateInput");
+  const challengeMessage     = document.getElementById("challengeMessage");
+  const sendChallengeBtn     = document.getElementById("sendChallengeBtn");
+  const challengesTableBody  = document.querySelector("#challengesTable tbody");
+
+  // Payments
+  const payRegistrationBtn   = document.getElementById("payRegistrationBtn");
+  const registrationStatusEl = document.getElementById("registrationStatus");
+
+  // Achievements
+  const achCanvas = document.getElementById("achievementsChart");
+
+  // === SEND REQUEST TO PLAYER (OWNER SIDE) ===
+async function sendRequestToPlayer({
+  playerId,     // uid of player
+  fromName,
+  requestType,
+  details,
+  offer,
+  clubId,
+  teamId
+}) {
+  try {
+    await addDoc(collection(db, "playerRequests"), {
+      playerId:   playerId,                 // REQUIRED (used in player's where("playerId","==", currentUid))
+      fromName:   fromName || "Club Owner",
+      requestType: requestType || "Club contract",
+      details:    details || "",
+      offer:      offer || "",
+      clubId:     clubId || null,
+      teamId:     teamId || null,
+      status:     "pending",
+      createdAt:  serverTimestamp()
+    });
+
+    showNotification("Request sent to player!", 'success');
+  } catch (err) {
+    console.error("Error sending request to player", err);
+    showNotification("Could not send request: " + (err.code || err.message || err), 'error');
+  }
+}
+
+
+  // Announcements
+  const ownerAnnouncementTitle   = document.getElementById("ownerAnnouncementTitle");
+  const ownerAnnouncementSport   = document.getElementById("ownerAnnouncementSport");
+  const ownerAnnouncementMessage = document.getElementById("ownerAnnouncementMessage");
+  const ownerPostAnnouncementBtn = document.getElementById("ownerPostAnnouncementBtn");
+  const ownerAnnouncementsTable  = document.getElementById("ownerAnnouncementsTable");
+
+  // -------- Global state --------
+  let ownerPortalUnlocked = false;
+  let ownerProfileCache   = { fullName: "Club Owner" };
+  let currentOwnerUid     = null;
+
+  let ownerSquadDocs      = [];   // from clubPlayers
+  let headCoachInfo       = { name: null };
+  let clubApproved        = false;
+
+  let lastLeaguesSnapshot = null;
+  let ownerEnrollments    = {};
+
+  const MIN_PLAYERS_FOR_COMPETITIONS = 5;
+
+  // -------- Helpers --------
+  function setOwnerView(target) {
+    views.forEach(v => {
+      v.classList.toggle("active", v.id === "view-" + target);
+    });
+  }
+
+  function applyOwnerAccessGate(data) {
+    const registrationPaid = data.registrationPaid === true;
+    const accountEnabled   = data.accountEnabled === true;
+    const isBlocked        = data.isBlocked === true;
+
+    ownerPortalUnlocked = registrationPaid && accountEnabled && !isBlocked;
+
+    sidebarLinks.forEach(link => {
+      const target = link.getAttribute("data-view-target");
+      if (!ownerPortalUnlocked && target !== "payments" && target !== "overview") {
+        link.classList.add("locked");
+      } else {
+        link.classList.remove("locked");
+      }
+    });
+
+    setOwnerView(ownerPortalUnlocked ? "overview" : "payments");
+  }
+
+  function updateOverviewKPIs() {
+    const squadEl   = document.getElementById("kpiSquadSize");
+    const coachEl   = document.getElementById("kpiCoachName");
+    const leaguesEl = document.getElementById("kpiActiveLeagues");
+    const payrollEl = document.getElementById("kpiPayrollThisMonth");
+
+    if (!squadEl || !coachEl || !leaguesEl || !payrollEl) return;
+
+    const activePlayers = ownerSquadDocs.filter(p => p.status === "active").length;
+    squadEl.textContent = activePlayers;
+
+    coachEl.textContent = headCoachInfo.name || "Not assigned";
+
+    const activeLeagues = Object.values(ownerEnrollments || {}).filter(
+      e => e.status === "enrolled"
+    ).length;
+    leaguesEl.textContent = activeLeagues;
+
+    const totalPayroll = ownerSquadDocs
+      .filter(p => p.status === "active" && typeof p.monthlyPay === "number")
+      .reduce((sum, p) => sum + p.monthlyPay, 0);
+
+    payrollEl.textContent = "₨ " + totalPayroll.toLocaleString();
+  }
+
+  // -------- Club status & profile --------
+  function listenForClubStatus(ownerUid) {
+    if (!ownerUid || !clubStatusHint) return;
+
+    const clubRef = doc(db, "clubs", ownerUid);
+
+    onSnapshot(clubRef, (snap) => {
+      if (!snap.exists()) {
+        clubApproved = false;
+        clubStatusHint.innerHTML = `
+          Status: <span class="status-pill status-pill--warn">
+            <i class="fas fa-clock"></i> Not submitted yet
+          </span>
+        `;
+        headCoachInfo = { name: null };
+        if (currentCoachLabel) currentCoachLabel.innerHTML = "No head coach assigned";
+        updateOverviewKPIs();
+        return;
+      }
+
+      const c = snap.data();
+
+      // Fill profile inputs
+      if (clubNameInput)    clubNameInput.value    = c.clubName   || "";
+      if (clubSportInput && c.sport) clubSportInput.value = c.sport;
+      if (clubCityInput)    clubCityInput.value    = c.city       || "";
+      if (clubStadiumInput) clubStadiumInput.value = c.stadium    || "";
+      if (clubBioInput)     clubBioInput.value     = c.bio        || "";
+
+      const status = c.status || "pending";
+      clubApproved = (status === "approved");
+
+      let statusHtml = "";
+      if (status === "approved") {
+        statusHtml = `
+          <span class="status-pill status-pill--ok">
+            <i class="fas fa-check"></i> Approved by SuperAdmin
+          </span>`;
+      } else if (status === "pending") {
+        statusHtml = `
+          <span class="status-pill status-pill--warn">
+            <i class="fas fa-clock"></i> Under review by SuperAdmin
+          </span>`;
+      } else if (status === "rejected") {
+        statusHtml = `
+          <span class="status-pill status-pill--info">
+            <i class="fas fa-xmark"></i> Rejected – please update profile
+          </span>`;
+      } else if (status === "suspended") {
+        statusHtml = `
+          <span class="status-pill status-pill--info">
+            <i class="fas fa-ban"></i> Suspended by SuperAdmin
+          </span>`;
+      }
+
+      clubStatusHint.innerHTML = `Status: ${statusHtml}`;
+
+      headCoachInfo = {
+        id:    c.headCoachId   || null,
+        name:  c.headCoachName || null,
+        email: c.headCoachEmail|| null
+      };
+
+      if (currentCoachLabel) {
+        if (headCoachInfo.name) {
+          currentCoachLabel.innerHTML = `<strong>${headCoachInfo.name}</strong>${
+            headCoachInfo.email ? " · " + headCoachInfo.email : ""
+          }`;
+        } else {
+          currentCoachLabel.innerHTML = "No head coach assigned";
+        }
+      }
+
+      updateOverviewKPIs();
+    });
+  }
+
+  // -------- Coach & player markets --------
+  function loadAvailableCoaches() {
+  if (!hireCoachSelect) return;
+
+  // Very simple query: all coaches
+  const qCoaches = query(
+    collection(db, "users"),
+    where("role", "==", "coach")
+  );
+
+  onSnapshot(qCoaches, (snapshot) => {
+    // Reset dropdown
+    hireCoachSelect.innerHTML = '<option value="">Select coach…</option>';
+
+    console.log("Coaches snapshot size:", snapshot.size);
+
+    let addedCount = 0;
+
+    snapshot.forEach((docSnap) => {
+      const u = docSnap.data();
+      console.log("Coach doc:", docSnap.id, u);
+
+      // 👉 NO FILTER AT ALL NOW
+      const opt = document.createElement("option");
+
+      const years = u.experienceYears != null ? `${u.experienceYears} yrs` : "Experience N/A";
+      const sport = u.sport || "Any sport";
+
+      opt.value = docSnap.id;
+      opt.textContent = `${u.fullName || u.email || "Coach"} · ${sport} · ${years}`;
+
+      hireCoachSelect.appendChild(opt);
+      addedCount++;
+    });
+
+    console.log("Options added to dropdown:", addedCount);
+
+    // If we somehow got zero coaches, show a friendly message
+    if (addedCount === 0) {
+      const opt = document.createElement("option");
+      opt.value = "";
+      opt.textContent = "No coaches available";
+      hireCoachSelect.appendChild(opt);
+    }
+  }, (err) => {
+    console.error("Error in loadAvailableCoaches onSnapshot:", err);
+  });
+}
+
+
+  function loadAvailablePlayers() {
+    if (!hirePlayerSelect) return;
+
+    const qPlayers = query(
+      collection(db, "users"),
+      where("role", "==", "player"),
+      where("registrationPaid", "==", true),
+      where("accountEnabled", "==", true)
+    );
+
+    onSnapshot(qPlayers, (snapshot) => {
+      hirePlayerSelect.innerHTML = '<option value="">Select player…</option>';
+
+      snapshot.forEach((docSnap) => {
+        const u = docSnap.data();
+        const opt = document.createElement("option");
+        opt.value = docSnap.id;
+        opt.textContent = `${u.fullName || u.email} (${u.sport || "Any sport"})`;
+        hirePlayerSelect.appendChild(opt);
+      });
+    });
+  }
+
+  // -------- Leagues (owner) --------
+  function listenForLeaguesForOwner(ownerUid) {
+    if (!ownerLeaguesTableBody) return;
+
+    const leaguesQ = query(
+      collection(db, "leagues"),
+      orderBy("createdAt", "desc")
+    );
+
+    onSnapshot(leaguesQ, (snapshot) => {
+      lastLeaguesSnapshot = snapshot;
+      renderOwnerLeaguesTable();
+    });
+
+    const enrollQ = query(
+      collection(db, "leagueEnrollments"),
+      where("ownerId", "==", ownerUid)
+    );
+
+    onSnapshot(enrollQ, (snapshot) => {
+      ownerEnrollments = {};
+      snapshot.forEach((docSnap) => {
+        const e = docSnap.data();
+        ownerEnrollments[e.leagueId] = {
+          id: docSnap.id,
+          status: e.status || "enrolled"
+        };
+      });
+      renderOwnerLeaguesTable();
+    });
+  }
+
+  function renderOwnerLeaguesTable() {
+    if (!ownerLeaguesTableBody || !lastLeaguesSnapshot) return;
+
+    ownerLeaguesTableBody.innerHTML = "";
+
+    lastLeaguesSnapshot.forEach((docSnap) => {
+      const l = docSnap.data();
+      const leagueId = docSnap.id;
+
+      if (l.status === "draft" || l.status === "completed") return;
+
+      const enrollment = ownerEnrollments[leagueId];
+      const isEnrolled = enrollment && enrollment.status === "enrolled";
+
+      const deadlineLabel = l.deadlineLabel || l.deadline || "-";
+
+      const statusHtml = isEnrolled
+        ? '<span class="status-pill status-pill--info"><i class="fas fa-check-circle"></i> Enrolled</span>'
+        : '<span class="status-pill status-pill--warn"><i class="fas fa-clock"></i> Not enrolled</span>';
+
+      const actionBtnHtml = isEnrolled
+        ? '<button class="btn-pill btn-pill-ghost btn-withdraw-league"><i class="fas fa-xmark"></i> Withdraw</button>'
+        : '<button class="btn-pill btn-pill-primary btn-enroll-league"><i class="fas fa-arrow-right-to-bracket"></i> Enroll</button>';
+
+      const tr = document.createElement("tr");
+      tr.dataset.leagueId = leagueId;
+      tr.dataset.enrolled = isEnrolled ? "true" : "false";
+
+      tr.innerHTML = `
+        <td>${l.name || "-"}</td>
+        <td>${l.sport || "-"}</td>
+        <td>${deadlineLabel}</td>
+        <td>${statusHtml}</td>
+        <td>${actionBtnHtml}</td>
+      `;
+
+      ownerLeaguesTableBody.appendChild(tr);
+    });
+  }
+
+  // -------- Squad (clubPlayers) --------
+  function listenForOwnerSquad(ownerUid) {
+    if (!playersTableBody) return;
+
+    const qSquad = query(
+      collection(db, "clubPlayers"),
+      where("ownerId", "==", ownerUid)
+    );
+
+    onSnapshot(qSquad, (snapshot) => {
+      ownerSquadDocs = [];
+      playersTableBody.innerHTML = "";
+
+      snapshot.forEach((docSnap) => {
+        const p = docSnap.data();
+        const id = docSnap.id;
+
+        ownerSquadDocs.push({
+          id,
+          status: p.status || "active",
+          monthlyPay: p.monthlyPay || 0
+        });
+
+        const status = p.status || "active";
+        let statusHtml = "";
+        if (status === "active") {
+          statusHtml = `<span class="status-pill status-pill--ok"><i class="fas fa-check"></i> Active</span>`;
+        } else if (status === "offer") {
+          statusHtml = `<span class="status-pill status-pill--warn"><i class="fas fa-hourglass-half"></i> Offer sent</span>`;
+        } else if (status === "fired") {
+          statusHtml = `<span class="status-pill status-pill--info"><i class="fas fa-user-slash"></i> Fired</span>`;
+        } else if (status === "cancelled") {
+          statusHtml = `<span class="status-pill status-pill--info"><i class="fas fa-ban"></i> Cancelled</span>`;
+        }
+
+        const tr = document.createElement("tr");
+        tr.dataset.playerDocId = id;
+        tr.dataset.status = status;
+
+        tr.innerHTML = `
+          <td>${p.playerName || "-"}</td>
+          <td>${p.position || "-"}</td>
+          <td>${statusHtml}</td>
+          <td>₨ ${(p.monthlyPay || 0).toLocaleString()}</td>
+          <td>
+            <div class="btn-row">
+              ${
+                status === "active"
+                  ? `
+                <button class="btn-pill btn-pill-danger btn-fire-player">
+                  <i class="fas fa-user-minus"></i> Fire
+                </button>
+                <button class="btn-pill btn-pill-primary btn-pay-player">
+                  <i class="fas fa-coins"></i> Pay
+                </button>`
+                  : status === "offer"
+                  ? `
+                <button class="btn-pill btn-pill-ghost btn-cancel-offer">
+                  <i class="fas fa-times"></i> Cancel
+                </button>`
+                  : ""
+              }
+            </div>
+          </td>
+        `;
+        playersTableBody.appendChild(tr);
+      });
+
+      updateOverviewKPIs();
+    });
+  }
+
+  // -------- Challenges (clubs list + history) --------
+  function listenForChallengeClubs(ownerUid) {
+    if (!challengeClubSelect) return;
+
+    const clubsQ = query(
+      collection(db, "clubs"),
+      where("status", "==", "approved")
+    );
+
+    onSnapshot(clubsQ, (snapshot) => {
+      challengeClubSelect.innerHTML = '<option value="">Select club…</option>';
+
+      snapshot.forEach((docSnap) => {
+        const c = docSnap.data();
+        if (c.ownerUid === ownerUid) return;
+
+        const opt = document.createElement("option");
+        opt.value = docSnap.id;
+        opt.textContent = c.clubName || c.ownerName || "Club";
+        challengeClubSelect.appendChild(opt);
+      });
+    });
+  }
+
+  function listenForOwnerChallenges(ownerUid) {
+    if (!challengesTableBody) return;
+
+    const qChallenges = query(
+      collection(db, "clubChallenges"),
+      where("fromOwnerId", "==", ownerUid),
+      orderBy("createdAt", "desc"),
+      limit(10)
+    );
+
+    onSnapshot(qChallenges, (snapshot) => {
+      challengesTableBody.innerHTML = "";
+      snapshot.forEach((docSnap) => {
+        const ch = docSnap.data();
+        const tr = document.createElement("tr");
+
+        const status = ch.status || "pending";
+        let statusHtml = "";
+        if (status === "accepted") {
+          statusHtml = `<span class="status-pill status-pill--ok"><i class="fas fa-check-circle"></i> Accepted</span>`;
+        } else if (status === "rejected") {
+          statusHtml = `<span class="status-pill status-pill--info"><i class="fas fa-times-circle"></i> Rejected</span>`;
+        } else {
+          statusHtml = `<span class="status-pill status-pill--info"><i class="fas fa-clock"></i> Pending</span>`;
+        }
+
+        const whenStr = ch.createdAt?.toDate
+          ? ch.createdAt.toDate().toLocaleString()
+          : "-";
+
+        tr.innerHTML = `
+          <td>${ch.toClubName || "-"}</td>
+          <td>${ch.preferredDate || "-"}</td>
+          <td>${statusHtml}</td>
+          <td>${(ch.message || "").slice(0, 60)}${(ch.message || "").length > 60 ? "…" : ""}</td>
+        `;
+        challengesTableBody.appendChild(tr);
+      });
+    });
+  }
+
+  // -------- Logout --------
+  async function doLogout() {
+    try {
+      await signOut(auth);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      window.location.href = "login.html";
+    }
+  }
+
+  if (logoutTopBtn) {
+    logoutTopBtn.addEventListener("click", doLogout);
+  }
+
+  // -------- Sidebar navigation (with gating) --------
+  sidebarLinks.forEach(link => {
+    link.addEventListener("click", () => {
+      const target = link.getAttribute("data-view-target");
+
+      // 1) Payment + account gating
+      if (!ownerPortalUnlocked && target !== "payments" && target !== "overview") {
+        showNotification("Please complete your registration payment and wait for SuperAdmin approval to use this section.", 'warning', 5000);
+        return;
+      }
+
+      // 2) League / challenges gating (club approved + min players)
+      const activePlayers = ownerSquadDocs.filter(p => p.status === "active").length;
+      if ((target === "leagues" || target === "challenges") &&
+          (!clubApproved || activePlayers < MIN_PLAYERS_FOR_COMPETITIONS)) {
+        let msg = "";
+        if (!clubApproved) {
+          msg += "Your club profile must be approved by SuperAdmin.\n";
+        }
+        if (activePlayers < MIN_PLAYERS_FOR_COMPETITIONS) {
+          msg += `You need at least ${MIN_PLAYERS_FOR_COMPETITIONS} active players to use this section.`;
+        }
+        showNotification(msg, 'warning', 6000);
+        return;
+      }
+
+      sidebarLinks.forEach(l => l.classList.remove("active"));
+      link.classList.add("active");
+      setOwnerView(target);
+    });
+  });
+
+  // -------- Coach management --------
+  async function updateClubCoach(coachData) {
+    const user = auth.currentUser;
+    if (!user) {
+      showNotification("Not logged in.", 'error');
+      return;
+    }
+    const clubRef = doc(db, "clubs", user.uid);
+
+    await setDoc(
+      clubRef,
+      {
+        headCoachId: coachData.id || null,
+        headCoachName: coachData.name || null,
+        headCoachEmail: coachData.email || null,
+        headCoachUpdatedAt: serverTimestamp()
+      },
+      { merge: true }
+    );
+  }
+
+  if (fireCoachBtn) {
+    fireCoachBtn.addEventListener("click", async () => {
+      showConfirm("Remove current head coach?", async () => {
+        disableButton(fireCoachBtn);
+        try {
+          await updateClubCoach({ id: null, name: null, email: null });
+          showNotification("Head coach removed.", 'success');
+        } catch (err) {
+          console.error("Error removing coach", err);
+          showNotification("Could not remove coach. Check console / Firestore rules.", 'error');
+        } finally {
+          enableButton(fireCoachBtn);
+        }
+      });
+    });
+  }
+
+  if (assignSelfAsCoachBtn) {
+    assignSelfAsCoachBtn.addEventListener("click", async () => {
+      disableButton(assignSelfAsCoachBtn);
+      const user = auth.currentUser;
+      if (!user) {
+        enableButton(assignSelfAsCoachBtn);
+        return;
+      }
+
+      try {
+        await updateClubCoach({
+          id: user.uid,
+          name: ownerProfileCache.fullName || user.email || "Club Owner",
+          email: user.email || null
+        });
+        showNotification("You are now assigned as head coach.", 'success');
+      } catch (err) {
+        console.error("Error assigning self as coach", err);
+        showNotification("Could not assign yourself as coach.", 'error');
+      } finally {
+        enableButton(assignSelfAsCoachBtn);
+      }
+    });
+  }
+
+  if (hireExistingCoachBtn && hireCoachSelect) {
+    hireExistingCoachBtn.addEventListener("click", async () => {
+      const coachId = hireCoachSelect.value;
+      const coachLabel = hireCoachSelect.options[hireCoachSelect.selectedIndex]?.text || "";
+      const user = auth.currentUser;
+
+      if (!user) {
+        showNotification("Not logged in.", 'error');
+        return;
+      }
+      if (!coachId) {
+        showNotification("Select a coach to send request.", 'warning');
+        return;
+      }
+
+      // Ask for payment confirmation
+      showConfirm(
+        "Pay for coach hiring now with crypto?<br><br>Amount: " + window.PAYMENT_AMOUNTS.coachHiring + " ETH<br><br>Click Confirm to proceed with payment, or Cancel to send request without payment.",
+        () => {
+          // User chose to pay with crypto
+          window.openCryptoModal("coachHiring", "Coach Hiring", window.PAYMENT_AMOUNTS.coachHiring);
+        },
+        async () => {
+          // User chose not to pay - Send hire request without payment
+          disableButton(hireExistingCoachBtn);
+          try {
+            const coachRef = doc(db, "users", coachId);
+            const snap = await getDoc(coachRef);
+            const coach = snap.exists() ? snap.data() : {};
+
+            const clubRef = doc(db, "clubs", user.uid);
+            const clubSnap = await getDoc(clubRef);
+            const club = clubSnap.exists() ? clubSnap.data() : {};
+
+            await addDoc(collection(db, "coachHireRequests"), {
+              ownerId: user.uid,
+              coachId,
+              clubId: user.uid,
+              clubName: club.clubName || ownerProfileCache.fullName || "My Club",
+              coachName: coach.fullName || coachLabel,
+              status: "pending",
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp()
+            });
+
+            showNotification("Hire request sent to coach. They must accept it.", 'success', 5000);
+          } catch (err) {
+            console.error("Error sending hire request", err);
+            showNotification("Could not send hire request. Check console / Firestore rules.", 'error');
+          } finally {
+            enableButton(hireExistingCoachBtn);
+          }
+        }
+      );
+    });
+  }
+
+  if (proposeCoachBtn) {
+    proposeCoachBtn.addEventListener("click", () => {
+      disableButton(proposeCoachBtn);
+      const name  = proposedCoachNameInput?.value.trim();
+      const email = proposedCoachEmailInput?.value.trim();
+      if (!name || !email) {
+        showNotification("Enter proposed coach name and email.", 'warning');
+        enableButton(proposeCoachBtn);
+        return;
+      }
+      showNotification("In real app, SuperAdmin will review this proposed coach: " + name + " (" + email + ")", 'info', 6000);
+      enableButton(proposeCoachBtn);
+    });
+  }
+
+  // -------- Players table actions --------
+  if (playersTable) {
+    playersTable.addEventListener("click", async (e) => {
+      const btn = e.target.closest("button");
+      if (!btn) return;
+      const row = btn.closest("tr");
+      if (!row) return;
+
+      const docId = row.dataset.playerDocId;
+      if (!docId) return;
+
+      const playerRef = doc(db, "clubPlayers", docId);
+
+      if (btn.classList.contains("btn-fire-player")) {
+        showConfirm("Fire this player from your squad?", async () => {
+          try {
+            await updateDoc(playerRef, {
+              status: "fired",
+              updatedAt: serverTimestamp()
+            });
+            showNotification("Player removed from squad.", 'success');
+          } catch (err) {
+            console.error("Error firing player", err);
+            showNotification("Could not fire player. Check console / Firestore rules.", 'error');
+          }
+        });
+        return;
+      }
+
+      try {
+        if (btn.classList.contains("btn-pay-player")) {
+          await updateDoc(playerRef, {
+            lastPaidAt: serverTimestamp()
+          });
+          showNotification("Marked as paid for this month.", 'success');
+        } else if (btn.classList.contains("btn-cancel-offer")) {
+          await updateDoc(playerRef, {
+            status: "cancelled",
+            updatedAt: serverTimestamp()
+          });
+        }
+      } catch (err) {
+        console.error("Error updating player document", err);
+        showNotification("Could not update player. Check console / Firestore rules.", 'error');
+      }
+    });
+  }
+
+  // -------- Send hire request to player --------
+  if (sendHireRequestBtn) {
+    sendHireRequestBtn.addEventListener("click", async () => {
+      disableButton(sendHireRequestBtn);
+      const user = auth.currentUser;
+      if (!user) {
+        showNotification("Not logged in.", 'error');
+        enableButton(sendHireRequestBtn);
+        return;
+      }
+      const playerId = hirePlayerSelect.value;
+      const salary = Number(hirePlayerSalary.value || 0);
+
+      if (!playerId || !salary) {
+        showNotification("Select a player and enter salary.", 'warning');
+        enableButton(sendHireRequestBtn);
+        return;
+      }
+
+      try {
+        const playerRef = doc(db, "users", playerId);
+        const snap = await getDoc(playerRef);
+        const playerData = snap.exists() ? snap.data() : {};
+
+        console.log("Creating hire request with data:", {
+          playerId,
+          fromUid: user.uid,
+          fromRole: "owner",
+          clubId: user.uid,
+          clubName: ownerProfileCache.fullName || "My Club",
+          playerName: playerData.fullName || playerData.email || "Player",
+          salaryOffered: salary,
+          status: "pending"
+        });
+
+        // Create hire request in playerHireRequests collection
+        const docRef = await addDoc(collection(db, "playerHireRequests"), {
+          playerId,
+          fromUid: user.uid,
+          fromRole: "owner",
+          clubId: user.uid, // owner's clubId is their UID
+          clubName: ownerProfileCache.fullName || "My Club",
+          playerName: playerData.fullName || playerData.email || "Player",
+          salaryOffered: salary,
+          status: "pending",
+          createdAt: serverTimestamp()
+        });
+
+        console.log("Hire request created with ID:", docRef.id);
+
+        hirePlayerSelect.value = "";
+        hirePlayerSalary.value = "";
+        showNotification("Hire request sent to player. They will see it in their Requests section.", 'success', 5000);
+      } catch (err) {
+        console.error("Error sending hire request", err);
+        showNotification("Could not send hire request. Check console / Firestore rules.", 'error');
+      } finally {
+        enableButton(sendHireRequestBtn);
+      }
+    });
+  }
+
+  // -------- Leagues enroll / withdraw --------
+  if (leaguesTable) {
+    leaguesTable.addEventListener("click", async (e) => {
+      const btn = e.target.closest("button");
+      if (!btn) return;
+
+      const row = btn.closest("tr");
+      if (!row) return;
+
+      const leagueId = row.dataset.leagueId;
+      if (!leagueId) return;
+
+          const user = auth.currentUser;
+          if (!user) {
+            showNotification("Not logged in.", 'error');
+            return;
+          }      try {
+        if (btn.classList.contains("btn-enroll-league")) {
+          const existing = ownerEnrollments[leagueId];
+
+          if (existing) {
+            await updateDoc(
+              doc(db, "leagueEnrollments", existing.id),
+              {
+                status: "enrolled",
+                updatedAt: serverTimestamp()
+              }
+            );
+          } else {
+            await addDoc(collection(db, "leagueEnrollments"), {
+              leagueId,
+              ownerId: user.uid,
+              status: "enrolled",
+              createdAt: serverTimestamp()
+            });
+          }
+        } else if (btn.classList.contains("btn-withdraw-league")) {
+          const existing = ownerEnrollments[leagueId];
+          if (!existing) return;
+
+          await updateDoc(
+            doc(db, "leagueEnrollments", existing.id),
+            {
+              status: "withdrawn",
+              updatedAt: serverTimestamp()
+            }
+          );
+        }
+      } catch (err) {
+        console.error("Error updating league enrollment", err);
+        showNotification("Could not update enrollment. Check console / Firestore rules.", 'error');
+      }
+    });
+  }
+
+  // -------- Send club challenge --------
+  if (sendChallengeBtn) {
+    sendChallengeBtn.addEventListener("click", async () => {
+      disableButton(sendChallengeBtn);
+      const user = auth.currentUser;
+      if (!user) {
+        showNotification("Not logged in.", 'error');
+        enableButton(sendChallengeBtn);
+        return;
+      }
+
+      const opponentId   = challengeClubSelect.value;
+      const preferredDate= challengeDateInput.value;
+      const msg          = challengeMessage.value.trim();
+
+      if (!opponentId) {
+        showNotification("Select an opponent club.", 'warning');
+        enableButton(sendChallengeBtn);
+        return;
+      }
+
+      try {
+        const myClubSnap = await getDoc(doc(db, "clubs", user.uid));
+        const myClub = myClubSnap.exists() ? myClubSnap.data() : {};
+
+        const oppSnap = await getDoc(doc(db, "clubs", opponentId));
+        const oppClub = oppSnap.exists() ? oppSnap.data() : {};
+
+        await addDoc(collection(db, "clubChallenges"), {
+          fromOwnerId:  user.uid,
+          fromClubId:   user.uid,
+          fromClubName: myClub.clubName || ownerProfileCache.fullName || "My Club",
+          toClubId:     opponentId,
+          toClubName:   oppClub.clubName || "Opponent Club",
+          preferredDate: preferredDate || null,
+          message:       msg || null,
+          status:        "pending",
+          createdAt:     serverTimestamp()
+        });
+
+        challengeClubSelect.value = "";
+        challengeDateInput.value  = "";
+        challengeMessage.value    = "";
+
+        showNotification("Challenge sent.", 'success');
+      } catch (err) {
+        console.error("Error sending challenge", err);
+        showNotification("Could not send challenge. Check console / Firestore rules.", 'error');
+      } finally {
+        enableButton(sendChallengeBtn);
+      }
+    });
+  }
+
+  // -------- Payments --------
+  if (payRegistrationBtn) {
+    payRegistrationBtn.addEventListener("click", async () => {
+      disableButton(payRegistrationBtn);
+      window.open("https://your-crypto-gateway-or-docs.com", "_blank");
+
+      try {
+        const user = auth.currentUser;
+        if (!user) {
+          showNotification("Not logged in.", 'error');
+          enableButton(payRegistrationBtn);
+          return;
+        }
+        const userRef = doc(db, "users", user.uid);
+        await updateDoc(userRef, {
+          registrationPaid: true,
+          paymentMethod: "crypto",
+          paymentStatus: "pendingApproval"
+        });
+
+        if (registrationStatusEl) {
+          registrationStatusEl.innerHTML = `
+            <span class="status-pill status-pill--warn">
+              <i class="fas fa-hourglass-half"></i> Paid · awaiting SuperAdmin
+            </span>
+          `;
+        }
+        showNotification("Payment submitted. SuperAdmin will enable your features after verification.", 'success', 6000);
+      } catch (err) {
+        console.error("Error updating registration status", err);
+        showNotification("Could not update payment status. Please contact support.", 'error');
+      } finally {
+        enableButton(payRegistrationBtn);
+      }
+    });
+  }
+
+  // -------- Save club profile --------
+  if (saveClubProfileBtn) {
+    saveClubProfileBtn.addEventListener("click", async () => {
+      disableButton(saveClubProfileBtn);
+      const user = auth.currentUser;
+      if (!user) {
+        showNotification("Not logged in.", 'error');
+        enableButton(saveClubProfileBtn);
+        return;
+      }
+
+      const clubName = clubNameInput.value.trim();
+      const sport    = clubSportInput.value;
+      const city     = clubCityInput.value.trim();
+      const stadium  = clubStadiumInput.value.trim();
+      const bio      = clubBioInput.value.trim();
+
+      if (!clubName || !sport) {
+        showNotification("Please fill at least Club Name and Primary Sport.", 'warning');
+        enableButton(saveClubProfileBtn);
+        return;
+      }
+
+      try {
+        await setDoc(
+          doc(db, "clubs", user.uid),
+          {
+            ownerUid:   user.uid,
+            ownerEmail: user.email || null,
+            ownerName:  ownerProfileCache.fullName || "Club Owner",
+            clubName,
+            sport,
+            city:    city    || null,
+            stadium: stadium || null,
+            bio:     bio     || null,
+            status:  "pending",
+            updatedAt: serverTimestamp()
+          },
+          { merge: true }
+        );
+
+        showNotification("Club profile sent to SuperAdmin for approval.", 'success', 5000);
+      } catch (err) {
+        console.error("Error saving club profile", err);
+        showNotification("Could not save club profile. Check console / Firestore rules.", 'error');
+      } finally {
+        enableButton(saveClubProfileBtn);
+      }
+    });
+  }
+
+  // -------- Achievements chart (demo) --------
+  if (achCanvas) {
+    new Chart(achCanvas, {
+      type: "radar",
+      data: {
+        labels: ["Win Rate", "Goals", "Clean Sheets", "Discipline", "Fitness"],
+        datasets: [
+          {
+            label: "This Season",
+            data: [85, 78, 65, 74, 80],
+            borderColor: "#155598",
+            backgroundColor: "rgba(21,85,152,0.18)"
+          },
+          {
+            label: "Last Season",
+            data: [72, 70, 58, 62, 68],
+            borderColor: "#218081",
+            backgroundColor: "rgba(33,128,129,0.18)"
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          r: {
+            angleLines: { color: "rgba(0,0,0,0.06)" },
+            grid:       { color: "rgba(0,0,0,0.06)" },
+            pointLabels:{ color: "#4b5563" },
+            ticks:      { display: false }
+          }
+        }
+      }
+    });
+  }
+
+  // -------- Owner announcements --------
+  if (ownerPostAnnouncementBtn) {
+    ownerPostAnnouncementBtn.addEventListener("click", async () => {
+      disableButton(ownerPostAnnouncementBtn);
+      const title   = ownerAnnouncementTitle.value.trim();
+      const message = ownerAnnouncementMessage.value.trim();
+      const sport   = ownerAnnouncementSport.value;
+
+      if (!title || !message) {
+        showNotification("Please fill in title and message.", 'warning');
+        enableButton(ownerPostAnnouncementBtn);
+        return;
+      }
+
+      try {
+        const user = auth.currentUser;
+        console.log("Posting announcement with clubId:", user.uid, "title:", title);
+        
+        const colRef = collection(db, "announcements");
+        const docRef = await addDoc(colRef, {
+          title,
+          message,
+          sport: sport || null,
+          clubId: user.uid,
+          createdByUid: user.uid,
+          createdAt: serverTimestamp(),
+          createdByName: ownerProfileCache.fullName,
+          createdByRole: "clubOwner",
+          targetRole: "player"
+        });
+
+        console.log("Announcement posted successfully with ID:", docRef.id);
+
+        ownerAnnouncementTitle.value   = "";
+        ownerAnnouncementMessage.value = "";
+        ownerAnnouncementSport.value   = "";
+
+        showNotification("Announcement posted to your squad.", 'success');
+      } catch (err) {
+        console.error("Error posting announcement", err);
+        showNotification("Could not post announcement. Please try again.", 'error');
+      } finally {
+        enableButton(ownerPostAnnouncementBtn);
+      }
+    });
+  }
+
+  if (ownerAnnouncementsTable) {
+    const tbody = ownerAnnouncementsTable.querySelector("tbody");
+    
+    // Wait for auth to be ready
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        tbody.innerHTML = "<tr><td colspan='4' style='text-align:center;'>Not logged in</td></tr>";
+        return;
+      }
+
+      console.log("Setting up announcements query for owner:", user.uid);
+
+      const qAnnouncements = query(
+        collection(db, "announcements"),
+        where("createdByUid", "==", user.uid),
+        orderBy("createdAt", "desc"),
+        limit(10)
+      );
+
+      onSnapshot(qAnnouncements, (snapshot) => {
+        console.log("Owner announcements snapshot received. Count:", snapshot.size);
+        tbody.innerHTML = "";
+        
+        if (snapshot.empty) {
+          tbody.innerHTML = "<tr><td colspan='4' style='text-align:center;color:#999;'>No announcements yet</td></tr>";
+          return;
+        }
+
+        snapshot.forEach((docSnap) => {
+          const a = docSnap.data();
+          const tr = document.createElement("tr");
+
+          const whenStr = a.createdAt?.toDate
+            ? a.createdAt.toDate().toLocaleString()
+            : "-";
+
+          tr.innerHTML = `
+            <td>${a.title || ""}</td>
+            <td>${(a.message || "").slice(0, 80)}${(a.message || "").length > 80 ? "…" : ""}</td>
+            <td>${a.createdByRole === "coach" ? "Coach" : "Club Owner"}</td>
+            <td>${whenStr}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }, (err) => {
+        console.error("Error loading owner announcements:", err);
+        tbody.innerHTML = "<tr><td colspan='4' style='text-align:center;color:red;'>Error loading announcements</td></tr>";
+      });
+    });
+  }
+
+  // -------- Auth guard --------
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    try {
+      const userRef = doc(db, "users", user.uid);
+      const snap = await getDoc(userRef);
+
+      if (!snap.exists()) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      const data = snap.data();
+
+      if (data.role !== "club_owner") {
+        window.location.href = "login.html";
+        return;
+      }
+
+      currentOwnerUid = user.uid;
+
+      // Show layout
+      layoutEl.style.display = "grid";
+
+      // Header info
+      const email = user.email || "owner@example.com";
+      emailLabel.textContent = email;
+
+      const name = data.fullName || "Club Owner";
+      ownerProfileCache = { fullName: name };
+      userNameLabel.textContent = name;
+      const initials = name.split(" ").map(n => n[0]).join("").toUpperCase();
+      avatarInitial.textContent = initials;
+
+      // Registration status display
+      if (registrationStatusEl) {
+        let html;
+        if (data.registrationPaid && data.paymentStatus === "approved" && data.accountEnabled) {
+          html = `
+            <span class="status-pill status-pill--ok">
+              <i class="fas fa-check-circle"></i> Paid
+            </span>
+          `;
+        } else if (data.registrationPaid && data.paymentStatus === "pendingApproval") {
+          html = `
+            <span class="status-pill status-pill--warn">
+              <i class="fas fa-hourglass-half"></i> Paid · awaiting SuperAdmin
+            </span>
+          `;
+        } else {
+          html = `
+            <span class="status-pill status-pill--warn">
+              <i class="fas fa-clock"></i> Not paid
+            </span>
+          `;
+        }
+        registrationStatusEl.innerHTML = html;
+      }
+
+      // Gating
+      applyOwnerAccessGate(data);
+
+      // Real-time data
+      listenForClubStatus(user.uid);
+      listenForOwnerSquad(user.uid);
+      listenForLeaguesForOwner(user.uid);
+      listenForChallengeClubs(user.uid);
+      listenForOwnerChallenges(user.uid);
+
+      // Load markets only once account is enabled
+      if (data.accountEnabled === true) {
+        loadAvailableCoaches();
+        loadAvailablePlayers();
+      }
+
+    } catch (err) {
+      console.error("AUTH LOAD ERROR:", err);
+      window.location.href = "login.html";
+    }
+  });
+</script>
+
+  <!-- Crypto Payment Modal -->
+  <div id="cryptoPaymentModal" class="modal hidden">
+    <div class="modal-content" style="width: 90%; max-width: 500px; background: rgba(15,23,42,0.98); border: 1px solid rgba(148,163,184,0.6); border-radius: 1rem; padding: 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 style="margin: 0; color: #e5e7eb;">Crypto Payment</h2>
+        <button id="cryptoModalCloseBtn" style="background: none; border: none; font-size: 1.5rem; color: #9ca3af; cursor: pointer;">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+
+      <div style="background: rgba(51,65,85,0.5); padding: 1rem; border-radius: 0.75rem; margin-bottom: 1rem;">
+        <p style="margin: 0 0 0.5rem; color: #9ca3af; font-size: 0.9rem;">Plan:</p>
+        <p id="cryptoSelectedPlanName" style="margin: 0; color: #34d399; font-weight: 600; font-size: 1.1rem;">-</p>
+      </div>
+
+      <div style="background: rgba(51,65,85,0.5); padding: 1rem; border-radius: 0.75rem; margin-bottom: 1rem;">
+        <p style="margin: 0 0 0.5rem; color: #9ca3af; font-size: 0.9rem;">Amount:</p>
+        <p id="cryptoSelectedAmount" style="margin: 0; color: #60a5fa; font-weight: 600; font-size: 1.1rem;">-</p>
+        <p style="margin: 0.5rem 0 0; color: #6b7280; font-size: 0.85rem;">Network: Sepolia Testnet (for testing)</p>
+      </div>
+
+      <div id="cryptoStatus" style="background: rgba(100,116,139,0.3); border-left: 4px solid #64748b; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem; color: #cbd5e1; font-size: 0.9rem;">
+        Status will appear here...
+      </div>
+
+      <div style="display: flex; gap: 0.75rem; flex-direction: column;">
+        <button id="connectWalletBtn" class="btn-pill btn-pill-primary" style="width: 100%;">
+          <i class="fas fa-wallet"></i> Connect MetaMask Wallet
+        </button>
+        <button id="payWithCryptoBtn" class="btn-pill btn-pill-primary" style="width: 100%;" disabled>
+          <i class="fas fa-credit-card"></i> Pay with Crypto
+        </button>
+      </div>
+
+      <p style="margin: 1rem 0 0; color: #6b7280; font-size: 0.85rem; text-align: center;">
+        <i class="fas fa-info-circle"></i> No real money charged. Uses Sepolia testnet.
+      </p>
+    </div>
+  </div>
+
+  <!-- Modal Overlay -->
+  <style>
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal.hidden {
+      display: none;
+    }
+
+    .modal-content {
+      animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+
+</body>
+</html>

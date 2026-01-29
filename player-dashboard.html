@@ -1,0 +1,2520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClubConnect – Player Dashboard</title>
+
+  <!-- Base theme (same as homepage) -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    /* Floating chat button */
+    .chat-toggle-btn {
+      position: fixed;
+      right: 1.5rem;
+      bottom: 4.5rem; /* above back-to-top button */
+      width: 46px;
+      height: 46px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #155598, #1b3358);
+      color: #ffffff;
+      box-shadow: 0 14px 40px rgba(15, 23, 42, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 40;
+    }
+
+    .chat-toggle-btn i {
+      font-size: 1.2rem;
+    }
+
+    /* Chat panel */
+    .chat-panel {
+      position: fixed;
+      right: 1.5rem;
+      bottom: 5.5rem;
+      width: 320px;
+      max-width: 95vw;
+      height: 420px;
+      border-radius: 1.25rem;
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.9);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      color: #e5e7eb;
+      z-index: 50;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .chat-panel.open {
+      display: flex;
+    }
+
+    .chat-panel-header {
+      padding: 0.7rem 0.9rem;
+      border-bottom: 1px solid rgba(51, 65, 85, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+    }
+
+    .chat-panel-header-main {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .chat-panel-header-main i {
+      color: #34d399;
+    }
+
+    .chat-panel-header-main h3 {
+      font-size: 0.95rem;
+      margin: 0;
+    }
+
+    .chat-panel-header span {
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+
+    .chat-panel-close {
+      background: transparent;
+      border: none;
+      color: #9ca3af;
+      cursor: pointer;
+    }
+
+    .chat-panel-close i {
+      font-size: 1rem;
+    }
+
+    .chat-panel-messages {
+      flex: 1;
+      padding: 0.7rem 0.8rem;
+      overflow-y: auto;
+      font-size: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    /* Single message bubble */
+    .chat-msg {
+      max-width: 80%;
+      padding: 0.45rem 0.6rem;
+      border-radius: 0.8rem;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(55, 65, 81, 0.9);
+    }
+
+    .chat-msg.me {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #155598, #1e40af);
+      border-color: rgba(191, 219, 254, 0.9);
+    }
+
+    .chat-msg-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.7rem;
+      margin-bottom: 0.15rem;
+      color: #cbd5f5;
+    }
+
+    .chat-msg-body {
+      color: #f9fafb;
+      word-wrap: break-word;
+    }
+
+    .chat-msg-meta {
+      font-size: 0.7rem;
+      color: #9ca3af;
+      margin-top: 0.15rem;
+    }
+
+    /* Input area */
+    .chat-panel-input {
+      border-top: 1px solid rgba(51, 65, 85, 0.9);
+      padding: 0.55rem 0.7rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .chat-panel-input textarea {
+      resize: none;
+      min-height: 48px;
+      max-height: 90px;
+      border-radius: 0.75rem;
+      border: 1px solid rgba(75, 85, 99, 0.9);
+      background: rgba(15, 23, 42, 0.9);
+      color: #e5e7eb;
+      padding: 0.45rem 0.6rem;
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .chat-panel-input-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .chat-panel-input-row span {
+      font-size: 0.7rem;
+      color: #6b7280;
+    }
+
+    .chat-send-btn {
+      border-radius: 999px;
+      padding: 0.32rem 0.9rem;
+      border: none;
+      background: #22c55e;
+      color: #022c22;
+      font-size: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      cursor: pointer;
+    }
+
+    .chat-send-btn i {
+      font-size: 0.8rem;
+    }
+
+    /* Small screen tweaks */
+    @media (max-width: 768px) {
+      .chat-panel {
+        right: 0.8rem;
+        bottom: 4.8rem;
+        width: calc(100% - 1.6rem);
+        height: 60vh;
+      }
+    }
+
+    .sidebar-link.locked {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .dashboard-theme {
+      --color-surface: #ffffff;
+      --color-text: #111827;
+      --color-text-secondary: #6b7280;
+      --color-card-border: rgba(15, 23, 42, 0.08);
+      --color-border: rgba(15, 23, 42, 0.08);
+
+      background-color: #f5f5f5;
+      color: var(--color-text);
+    }
+
+    body {
+      font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      min-height: calc(100vh - 72px);
+      margin-top: 4.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Sidebar */
+    .dashboard-sidebar {
+      background: linear-gradient(180deg, #155598, #1b3358);
+      color: #fff;
+      padding: 1.5rem 1.3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .sidebar-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .sidebar-title i {
+      font-size: 1.2rem;
+    }
+
+    .sidebar-user {
+      padding: 0.9rem 0.8rem;
+      border-radius: 1rem;
+      background-color: rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .sidebar-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .sidebar-user-meta {
+      font-size: 0.8rem;
+      line-height: 1.2;
+    }
+
+    .sidebar-user-meta strong {
+      display: block;
+      font-size: 0.88rem;
+    }
+
+    .sidebar-user-meta span {
+      color: rgba(255,255,255,0.8);
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .sidebar-link {
+      border-radius: 999px;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      border: 1px solid transparent;
+      cursor: pointer;
+      background-color: transparent;
+      color: rgba(255,255,255,0.88);
+      text-align: left;
+    }
+
+    .sidebar-link i {
+      font-size: 0.95rem;
+      width: 18px;
+      text-align: center;
+    }
+
+    .sidebar-link.active,
+    .sidebar-link:hover {
+      background-color: rgba(255,255,255,0.14);
+      border-color: rgba(255,255,255,0.3);
+      color: #ffffff;
+    }
+
+    /* Main */
+    .dashboard-main {
+      padding: 2rem 2.3rem;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-main {
+        padding: 1.5rem 1rem 3rem;
+      }
+    }
+
+    .view-header {
+      margin-bottom: 1.3rem;
+    }
+
+    .view-header h1 {
+      font-size: 2.1rem;
+      margin: 0 0 0.4rem;
+      color: var(--color-text);
+    }
+
+    .view-header p {
+      margin: 0;
+      font-size: 0.98rem;
+      color: var(--color-text-secondary);
+      max-width: 680px;
+    }
+
+    .dashboard-card {
+      background-color: var(--color-surface);
+      border-radius: 1.25rem;
+      border: 1px solid var(--color-card-border);
+      box-shadow: var(--shadow-sm);
+      padding: 1.8rem 2rem;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-card {
+        padding: 1.4rem 1.3rem;
+      }
+    }
+
+    .card-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .card-title-main {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .card-title-main i {
+      font-size: 1.1rem;
+      color: var(--clr-primary);
+    }
+
+    .card-title-main h2 {
+      font-size: 1.1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-text-secondary);
+      margin: 0;
+    }
+
+    .card-chip {
+      font-size: 0.78rem;
+      padding: 0.23rem 0.7rem;
+      border-radius: 999px;
+      background-color: rgba(21, 101, 192, 0.08);
+      color: var(--clr-primary);
+      white-space: nowrap;
+    }
+
+    .card-subtext {
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+      margin-bottom: 1.1rem;
+    }
+
+    /* Motivational quote banner */
+    .quote-banner {
+      border-radius: 1rem;
+      padding: 0.9rem 1rem;
+      background: rgba(21, 85, 152, 0.08);
+      border: 1px solid rgba(21, 85, 152, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.8rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .quote-text {
+      font-size: 0.95rem;
+      color: #1f2933;
+    }
+
+    .quote-text strong {
+      display: block;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #4b5563;
+    }
+
+    .quote-icon {
+      font-size: 1.6rem;
+      color: var(--clr-primary);
+      margin-right: 0.5rem;
+    }
+
+    /* Buttons & forms */
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.3rem;
+    }
+
+    .btn-pill {
+      border-radius: 999px;
+      border: 1px solid var(--color-border-secondary);
+      background-color: #ffffff;
+      padding: 0.35rem 0.9rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .btn-pill-primary {
+      border-color: var(--clr-primary);
+      background-color: var(--clr-primary);
+      color: #ffffff;
+    }
+
+    .btn-pill-secondary {
+      border-color: #6b7280;
+      background-color: #ffffff;
+      color: #374151;
+    }
+
+    .btn-pill-secondary:hover {
+      background-color: #f3f4f6;
+      border-color: #4b5563;
+    }
+
+    .btn-pill-danger {
+      border-color: rgba(192, 21, 47, 0.7);
+      background-color: rgba(192, 21, 47, 0.9);
+      color: #ffffff;
+    }
+
+    .btn-pill-ghost {
+      background-color: #ffffff;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem 1.5rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--color-text-secondary);
+      margin-bottom: 0.18rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.55rem 0.65rem;
+      border-radius: 0.7rem;
+      border: 1px solid var(--color-border-secondary);
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .form-group textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .form-hint {
+      font-size: 0.82rem;
+      color: var(--color-text-secondary);
+      margin-top: 0.4rem;
+    }
+
+    /* Tables */
+    .simple-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    .simple-table th,
+    .simple-table td {
+      padding: 0.55rem 0.4rem;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    .simple-table th {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      color: var(--color-text-secondary);
+      letter-spacing: 0.06em;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+    }
+
+    .status-pill--badge {
+      background-color: rgba(234,179,8,0.16);
+      color: rgb(161,98,7);
+    }
+
+    .status-pill--ok {
+      background-color: rgba(34,197,94,0.16);
+      color: rgb(22,163,74);
+    }
+
+    .status-pill--upcoming {
+      background-color: rgba(37,99,235,0.14);
+      color: rgb(37,99,235);
+    }
+
+    .status-pill--pending {
+      background-color: rgba(245,158,11,0.14);
+      color: rgb(180, 83, 9);
+    }
+
+    .status-pill--danger {
+      background-color: rgba(239,68,68,0.12);
+      color: rgb(185,28,28);
+    }
+
+    .status-pill--warn {
+      background-color: rgba(245,158,11,0.14);
+      color: rgb(180,83,9);
+    }
+
+    /* KPIs on overview */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .kpi-card {
+      border-radius: 1rem;
+      border: 1px solid rgba(15,23,42,0.06);
+      padding: 0.9rem 1rem;
+      background-color: #f9fafb;
+    }
+
+    .kpi-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-text-secondary);
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .kpi-label i {
+      color: var(--clr-primary);
+    }
+
+    .kpi-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--color-text);
+      margin-bottom: 0.15rem;
+    }
+
+    .kpi-meta {
+      font-size: 0.8rem;
+      color: var(--color-text-secondary);
+    }
+
+    /* Badges grid */
+    .badge-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 1rem;
+      margin-top: 0.8rem;
+    }
+
+    .badge-card {
+      border-radius: 1rem;
+      border: 1px solid rgba(15,23,42,0.06);
+      padding: 0.8rem 0.9rem;
+      background-color: #f9fafb;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .badge-title {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .badge-title i {
+      color: #eab308;
+    }
+
+    .badge-meta {
+      font-size: 0.8rem;
+      color: var(--color-text-secondary);
+    }
+
+    .badge-progress {
+      margin-top: 0.3rem;
+      height: 6px;
+      border-radius: 999px;
+      background-color: rgba(15,23,42,0.08);
+      overflow: hidden;
+    }
+
+    .badge-progress-inner {
+      height: 100%;
+      width: 60%;
+      background: linear-gradient(90deg, #eab308, #facc15);
+    }
+
+    /* Performance chart */
+    .chart-wrapper {
+      margin-top: 1rem;
+      height: 260px;
+    }
+
+    .chart-wrapper canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    /* Views */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* Header text white */
+    .header,
+    .nav-link,
+    .btn-login {
+      color: black;
+    }
+  </style>
+</head>
+<body>
+  <!-- Source Code Protection -->
+  <script src="protection.js"></script>
+  <!-- Top header -->
+  <header class="header" id="header">
+    <nav class="nav container">
+      <div class="nav-logo">
+        <a href="index.html">
+          <img src="logo.png" alt="ClubConnect Logo" class="logo-img">
+        </a>
+      </div>
+
+      <div class="nav-right">
+        <ul class="nav-menu" id="navMenu">
+          <li class="nav-item">
+            <a href="index.html" class="nav-link active">Home</a>
+          </li>
+          <li class="nav-item">
+            <a href="features.html" class="nav-link">Features</a>
+          </li>
+          <li class="nav-item">
+            <a href="#programs" class="nav-link">Programs</a>
+          </li>
+          <li class="nav-item">
+            <a href="teams.html" class="nav-link">Teams</a>
+          </li>
+          <li class="nav-item">
+            <a href="#pricing" class="nav-link">Pricing</a>
+          </li>
+          <li class="nav-item">
+            <a href="leaderboards.html" class="nav-link">Leaderboards</a>
+          </li>
+          <li class="nav-item">
+            <a href="contact.html" class="nav-link">Contact</a>
+          </li>
+        </ul>
+        <button class="btn btn-login" id="playerLogoutTopBtn">Logout</button>
+      </div>
+      <div class="nav-toggle" id="navToggle">
+        <i class="fas fa-bars"></i>
+      </div>
+    </nav>
+  </header>
+
+  <!-- DASHBOARD LAYOUT -->
+  <div class="dashboard-layout dashboard-theme" id="playerDashboardLayout" style="display:none;">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar">
+      <div class="sidebar-title">
+        <i class="fas fa-user"></i>
+        <span>Welcome!</span>
+      </div>
+
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="playerAvatarInitial">P</div>
+        <div class="sidebar-user-meta">
+          <strong id="playerUserName">Player</strong>
+          <span id="playerEmailLabel">player@example.com</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="sidebar-link active" data-view-target="overview">
+          <i class="fas fa-gauge"></i> Overview
+        </button>
+        <button class="sidebar-link" data-view-target="announcements">
+          <i class="fas fa-bullhorn"></i> Announcements
+        </button>
+        <button class="sidebar-link" data-view-target="profile">
+          <i class="fas fa-id-card"></i> Profile
+        </button>
+        <button class="sidebar-link" data-view-target="badges">
+          <i class="fas fa-medal"></i> Badges & Stats
+        </button>
+        <button class="sidebar-link" data-view-target="schedule">
+          <i class="fas fa-calendar-days"></i> Schedule
+        </button>
+        <button class="sidebar-link" data-view-target="requests">
+          <i class="fas fa-inbox"></i> Requests
+        </button>
+        <button class="sidebar-link" data-view-target="history">
+          <i class="fas fa-history"></i> Club History
+        </button>
+        <button class="sidebar-link" data-view-target="payments">
+          <i class="fas fa-wallet"></i> Payments
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Main content -->
+    <main class="dashboard-main">
+      <!-- OVERVIEW -->
+      <section class="view active" id="view-overview">
+        <div class="view-header">
+          <h1>Overview</h1>
+          <p>Your personal control room: motivation, quick stats and shortcut to your next match or session.</p>
+        </div>
+
+        <div class="dashboard-card">
+          <!-- Motivational quote -->
+          <div class="quote-banner">
+            <div class="quote-text">
+              <strong>MOTIVATION FOR YOU</strong>
+              <span id="quoteText">Loading quote...</span>
+            </div>
+            <div class="btn-row">
+              <button class="btn-pill btn-pill-ghost" id="newQuoteBtn">
+                <i class="fas fa-shuffle"></i> New quote
+              </button>
+            </div>
+          </div>
+
+          <div class="card-title-row">
+            <div class="card-title-main">
+              <i class="fas fa-gauge-high"></i>
+              <h2>PLAYER SNAPSHOT</h2>
+            </div>
+            <span class="card-chip">Today</span>
+          </div>
+
+          <div class="kpi-row">
+            <div class="kpi-card">
+              <div class="kpi-label"><i class="fas fa-building"></i> Current club</div>
+              <div class="kpi-value" id="playerCurrentClub">-</div>
+              <div class="kpi-meta" id="playerClubMeta">Not affiliated</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label"><i class="fas fa-medal"></i> Badges unlocked</div>
+              <div class="kpi-value">5</div>
+              <div class="kpi-meta">Hustler · Playmaker · Iron Man</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label"><i class="fas fa-calendar-days"></i> Next match</div>
+              <div class="kpi-value">Fri</div>
+              <div class="kpi-meta">League match vs Rawal Kings</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label"><i class="fas fa-dumbbell"></i> Next training</div>
+              <div class="kpi-value">Today</div>
+              <div class="kpi-meta">17:00 – Fitness & conditioning</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label"><i class="fas fa-chart-line"></i> Form index</div>
+              <div class="kpi-value">8.3</div>
+              <div class="kpi-meta">Average rating (last 5 coach reports)</div>
+            </div>
+          </div>
+
+          <p class="card-subtext">
+            Use the left navigation to update your profile, review badges, check schedule, respond to club / coach requests, and manage your registration fee.
+          </p>
+        </div>
+      </section>
+
+      <!-- ANNOUNCEMENTS -->
+      <section class="view" id="view-announcements">
+        <div class="view-header">
+          <h1>Announcements</h1>
+          <p>Important updates from your club owner and coach.</p>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-title-row">
+            <div class="card-title-main">
+              <i class="fas fa-bullhorn"></i>
+              <h2>ANNOUNCEMENT BOARD</h2>
+            </div>
+            <span class="card-chip">Live updates</span>
+          </div>
+
+          <p class="card-subtext">
+            Stay on top of training changes, matchday instructions and club-wide news.
+          </p>
+
+          <table class="simple-table" id="playerAnnouncementsTable">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>From</th>
+                <th>Role</th>
+                <th>Message</th>
+                <th>When</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Filled in realtime from Firestore -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PROFILE -->
+      <section class="view" id="view-profile">
+        <div class="view-header">
+          <h1>Profile</h1>
+          <p>Manage your basic details that club owners and coaches will see.</p>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-title-row">
+            <div class="card-title-main">
+              <i class="fas fa-id-card"></i>
+              <h2>PLAYER PROFILE</h2>
+            </div>
+            <span class="card-chip">Public info</span>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="playerNameInput">Full name</label>
+              <input id="playerNameInput" type="text" placeholder="Your name">
+            </div>
+            <div class="form-group">
+              <label for="playerSportSelect">Primary sport</label>
+              <select id="playerSportSelect">
+                <option>Football</option>
+                <option>Cricket</option>
+                <option>Basketball</option>
+                <option>Hockey</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="playerPositionInput">Position / role</label>
+              <input id="playerPositionInput" type="text" placeholder="e.g. Forward, All-rounder">
+            </div>
+            <div class="form-group">
+              <label for="playerCityInput">City</label>
+              <input id="playerCityInput" type="text" placeholder="Your city">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="playerBioInput">Short bio</label>
+            <textarea id="playerBioInput" placeholder="Share your strengths, experience and goals."></textarea>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-pill btn-pill-primary" id="savePlayerProfileBtn">
+              <i class="fas fa-save"></i> Save profile
+            </button>
+          </div>
+
+          <div class="form-hint">
+            This saves to Firestore so club owners and coaches always see your latest info.
+          </div>
+        </div>
+      </section>
+
+      <!-- BADGES & STATS -->
+      <section class="view" id="view-badges">
+        <div class="view-header">
+          <h1>Badges & Stats</h1>
+          <p>See which badges you’ve unlocked and how your performance looks based on coach feedback.</p>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-title-row">
+            <div class="card-title-main">
+              <i class="fas fa-medal"></i>
+              <h2>BADGES</h2>
+            </div>
+            <span class="card-chip">Milestones</span>
+          </div>
+
+          <p class="card-subtext">
+            Badges are based on performance metrics like attendance, effort, discipline and match impact. Later they will be auto-assigned from real stats.
+          </p>
+
+          <div class="badge-grid">
+            <div class="badge-card">
+              <div class="badge-title">
+                <i class="fas fa-bolt"></i> Hustler Badge
+              </div>
+              <div class="badge-meta">High work rate and pressing intensity over multiple games.</div>
+              <div class="badge-progress">
+                <div class="badge-progress-inner" style="width: 100%;"></div>
+              </div>
+              <span class="status-pill status-pill--badge" style="margin-top:0.3rem;">
+                <i class="fas fa-check"></i> Unlocked
+              </span>
+            </div>
+
+            <div class="badge-card">
+              <div class="badge-title">
+                <i class="fas fa-compass"></i> Playmaker Badge
+              </div>
+              <div class="badge-meta">Assists, key passes and chance creation.</div>
+              <div class="badge-progress">
+                <div class="badge-progress-inner" style="width: 70%;"></div>
+              </div>
+              <span class="status-pill status-pill--badge" style="margin-top:0.3rem;">
+                <i class="fas fa-star-half-stroke"></i> Almost there
+              </span>
+            </div>
+
+            <div class="badge-card">
+              <div class="badge-title">
+                <i class="fas fa-shield"></i> Iron Wall Badge
+              </div>
+              <div class="badge-meta">Defensive actions, clearances and blocks.</div>
+              <div class="badge-progress">
+                <div class="badge-progress-inner" style="width: 45%;"></div>
+              </div>
+              <span class="status-pill status-pill--badge" style="margin-top:0.3rem;">
+                <i class="fas fa-hourglass-half"></i> In progress
+              </span>
+            </div>
+
+            <div class="badge-card">
+              <div class="badge-title">
+                <i class="fas fa-heart-pulse"></i> Iron Man Badge
+              </div>
+              <div class="badge-meta">Top training attendance and fitness level.</div>
+              <div class="badge-progress">
+                <div class="badge-progress-inner" style="width: 90%;"></div>
+              </div>
+              <span class="status-pill status-pill--badge" style="margin-top:0.3rem;">
+                <i class="fas fa-check"></i> Unlocked
+              </span>
+            </div>
+          </div>
+
+          <hr style="margin:1.3rem 0; border:none; border-top:1px solid rgba(0,0,0,0.06);">
+
+          <div class="card-title-row">
+            <div class="card-title-main">
+              <i class="fas fa-chart-line"></i>
+              <h2>PERFORMANCE</h2>
+            </div>
+            <span class="card-chip">Coach feedback</span>
+          </div>
+
+          <div class="chart-wrapper">
+            <canvas id="playerPerformanceChart"></canvas>
+          </div>
+
+          <div class="form-hint">
+            Metrics (0–100): Fitness, Form, Discipline, Tactics, Mentality. These will later come from coach feedback + match stats.
+          </div>
+
+          <hr style="margin:1.3rem 0; border:none; border-top:1px solid rgba(0,0,0,0.06);">
+
+          <table class="simple-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>From</th>
+                <th>Area</th>
+                <th>Summary</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2025-02-18</td>
+                <td>Coach Imran</td>
+                <td>Form</td>
+                <td>Excellent pressing and work rate. Keep intensity for full 90 minutes.</td>
+              </tr>
+              <tr>
+                <td>2025-02-14</td>
+                <td>Coach Imran</td>
+                <td>Tactics</td>
+                <td>Better positioning during transitions. Watch space behind full-back.</td>
+              </tr>
+              <tr>
+                <td>2025-02-10</td>
+                <td>Coach Imran</td>
+                <td>Discipline</td>
+                <td>Good control of emotions in a heated match. Avoid silly bookings.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SCHEDULE -->
+      <section class="view" id="view-schedule">
+        <div class="view-header">
+          <h1>Schedule</h1>
+          <p>Your upcoming training sessions, league matches and challenge matches in one place.</p>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-title-row">
+            <div class="card-title-main">
+              <i class="fas fa-calendar-days"></i>
+              <h2>TRAINING SESSIONS</h2>
+            </div>
+            <span class="card-chip">Coach plan</span>
+          </div>
+
+          <table class="simple-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Focus</th>
+                <th>Intensity</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2025-02-21</td>
+                <td>17:00</td>
+                <td>Fitness & conditioning</td>
+                <td>High</td>
+                <td><span class="status-pill status-pill--upcoming"><i class="fas fa-clock"></i> Upcoming</span></td>
+              </tr>
+              <tr>
+                <td>2025-02-23</td>
+                <td>17:30</td>
+                <td>Tactical drills</td>
+                <td>Medium</td>
+                <td><span class="status-pill status-pill--upcoming"><i class="fas fa-clock"></i> Upcoming</span></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <hr style="margin:1.3rem 0; border:none; border-top:1px solid rgba(0,0,0,0.06);">
+
+          <div class="card-title-row">
+            <div class="card-title-main">
+              <i class="fas fa-trophy"></i>
+              <h2>LEAGUE MATCHES</h2>
+            </div>
+            <span class="card-chip">Competitive</span>
+          </div>
+
+          <table class="simple-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Match</th>
+                <th>Competition</th>
+                <th>Venue</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2025-02-25</td>
+                <td>Margalla United vs Rawal Kings</td>
+                <td>Capital Football Premier</td>
+                <td>FAST Arena Ground</td>
+                <td><span class="status-pill status-pill--upcoming"><i class="fas fa-clock"></i> Upcoming</span></td>
+              </tr>
+              <tr>
+                <td>2025-03-01</td>
+                <td>Margalla United vs Blue Tigers</td>
+                <td>Capital Football Premier</td>
+                <td>Jinnah Stadium</td>
+                <td><span class="status-pill status-pill--upcoming"><i class="fas fa-clock"></i> Upcoming</span></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <hr style="margin:1.3rem 0; border:none; border-top:1px solid rgba(0,0,0,0.06);">
+
+          <div class="card-title-row">
+            <div class="card-title-main">
+              <i class="fas fa-bolt"></i>
+              <h2>CHALLENGE MATCHES</h2>
+            </div>
+            <span class="card-chip">Friendlies / rivalry</span>
+          </div>
+
+          <table class="simple-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Match</th>
+                <th>Type</th>
+                <th>Venue</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2025-03-05</td>
+                <td>Margalla United vs City Hoop</td>
+                <td>Friendly</td>
+                <td>Blue Court Sports Complex</td>
+                <td><span class="status-pill status-pill--pending"><i class="fas fa-hourglass-half"></i> To confirm</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- REQUESTS -->
+      <section class="view" id="view-requests">
+        <div class="view-header">
+          <h1>Requests</h1>
+          <p>View and respond to requests from club owners and coaches.</p>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-title-row">
+            <div class="card-title-main">
+              <i class="fas fa-inbox"></i>
+              <h2>INBOX</h2>
+            </div>
+            <span class="card-chip">Offers & invites</span>
+          </div>
+
+          <table class="simple-table" id="requestsTable">
+            <thead>
+              <tr>
+                <th>Club Name</th>
+                <th>From</th>
+                <th>Salary Offered</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="requestsTableBody">
+              <!-- Filled realtime from Firestore -->
+            </tbody>
+          </table>
+
+          <div class="form-hint">
+            Once you accept a club contract, you'll be connected with that club. You can only be in one active club at a time.
+          </div>
+        </div>
+      </section>
+
+      <!-- CLUB HISTORY -->
+      <section class="view" id="view-history">
+        <div class="view-header">
+          <h1>Club History</h1>
+          <p>Track your career journey - current affiliation and past club memberships.</p>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-title-row">
+            <div class="card-title-main">
+              <i class="fas fa-history"></i>
+              <h2>YOUR CLUB JOURNEY</h2>
+            </div>
+            <span class="card-chip">Career timeline</span>
+          </div>
+
+          <!-- Current club status -->
+          <div style="margin-bottom: 1.5rem;">
+            <h3 style="font-size: 1rem; margin-bottom: 0.5rem; color: #1f2937;">Current Status</h3>
+            <div id="currentClubStatus" style="padding: 1rem; border-radius: 0.75rem; background-color: #f0f9ff; border: 1px solid #bfdbfe;">
+              <p style="margin: 0; color: #1e40af; font-weight: 500;">Loading...</p>
+            </div>
+          </div>
+
+          <!-- Club history timeline -->
+          <h3 style="font-size: 1rem; margin-bottom: 0.8rem; color: #1f2937;">Club History</h3>
+          <table class="simple-table" id="clubHistoryTable">
+            <thead>
+              <tr>
+                <th>Club Name</th>
+                <th>Joined</th>
+                <th>Status</th>
+                <th>Duration</th>
+              </tr>
+            </thead>
+            <tbody id="clubHistoryTableBody">
+              <!-- Filled realtime from Firestore -->
+            </tbody>
+          </table>
+
+          <div class="form-hint">
+            This timeline shows all clubs you've been affiliated with and their statuses.
+          </div>
+        </div>
+      </section>
+
+      <!-- PAYMENTS -->
+      <section class="view" id="view-payments">
+        <div class="view-header">
+          <h1>Payments</h1>
+          <p>Pay your registration fee to Super Admin and track payment status.</p>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-title-row">
+            <div class="card-title-main">
+              <i class="fas fa-wallet"></i>
+              <h2>REGISTRATION FEE</h2>
+            </div>
+            <span class="card-chip">Platform access</span>
+          </div>
+
+          <p class="card-subtext">
+            Each player pays a one-time registration fee to use ClubConnect in official leagues. Coaches are not charged, but players are.
+          </p>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Status</label>
+              <div id="playerRegistrationStatus">
+                <span class="status-pill status-pill--danger">
+                  <i class="fas fa-circle-exclamation"></i> Not paid
+                </span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Amount</label>
+              <input type="text" value="₨ 1,500 (one-time)" disabled>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-pill btn-pill-primary" id="playerPayRegistrationBtn">
+              <i class="fas fa-coins"></i> Pay registration fee
+            </button>
+            <button class="btn-pill btn-pill-secondary" id="playerRequestDemoAccessBtn" style="display:none;">
+              <i class="fas fa-paper-plane"></i> Request Demo Access (No Payment)
+            </button>
+          </div>
+
+          <div class="form-hint" id="demoRequestStatus">
+            
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Floating team chat -->
+  <button class="chat-toggle-btn" id="chatToggleBtn">
+    <i class="fas fa-comments"></i>
+  </button>
+
+  <div class="chat-panel" id="teamChatPanel">
+    <div class="chat-panel-header">
+      <div class="chat-panel-header-main">
+        <i class="fas fa-users"></i>
+        <div>
+          <h3>Team Chat</h3>
+          <span>Coach &amp; teammates · encrypted</span>
+        </div>
+      </div>
+      <button class="chat-panel-close" id="chatCloseBtn">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="chat-panel-messages" id="chatMessages"></div>
+
+    <div class="chat-panel-input">
+      <textarea id="chatMessageInput" placeholder="Drop a message for your team..."></textarea>
+      <div class="chat-panel-input-row">
+        <span>Messages are end-to-end encrypted in this demo.</span>
+        <button class="chat-send-btn" id="chatSendBtn">
+          <i class="fas fa-paper-plane"></i> Send
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Crypto Payment Modal -->
+  <div id="cryptoPaymentModal" class="modal hidden">
+    <div class="modal-content" style="width: 90%; max-width: 500px; background: rgba(15,23,42,0.98); border: 1px solid rgba(148,163,184,0.6); border-radius: 1rem; padding: 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 style="margin: 0; color: #e5e7eb;">Crypto Payment</h2>
+        <button id="cryptoModalCloseBtn" style="background: none; border: none; font-size: 1.5rem; color: #9ca3af; cursor: pointer;">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+
+      <div style="background: rgba(51,65,85,0.5); padding: 1rem; border-radius: 0.75rem; margin-bottom: 1rem;">
+        <p style="margin: 0 0 0.5rem; color: #9ca3af; font-size: 0.9rem;">Plan:</p>
+        <p id="cryptoSelectedPlanName" style="margin: 0; color: #34d399; font-weight: 600; font-size: 1.1rem;">-</p>
+      </div>
+
+      <div style="background: rgba(51,65,85,0.5); padding: 1rem; border-radius: 0.75rem; margin-bottom: 1rem;">
+        <p style="margin: 0 0 0.5rem; color: #9ca3af; font-size: 0.9rem;">Amount:</p>
+        <p id="cryptoSelectedAmount" style="margin: 0; color: #60a5fa; font-weight: 600; font-size: 1.1rem;">-</p>
+        <p style="margin: 0.5rem 0 0; color: #6b7280; font-size: 0.85rem;">Network: Sepolia Testnet</p>
+      </div>
+
+      <div id="cryptoStatus" style="background: rgba(100,116,139,0.3); border-left: 4px solid #64748b; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem; color: #cbd5e1; font-size: 0.9rem;">
+        Status will appear here...
+      </div>
+
+      <div style="display: flex; gap: 0.75rem; flex-direction: column;">
+        <button id="connectWalletBtn" class="btn-pill btn-pill-primary" style="width: 100%;">
+          <i class="fas fa-wallet"></i> Connect MetaMask Wallet
+        </button>
+        <button id="payWithCryptoBtn" class="btn-pill btn-pill-primary" style="width: 100%;" disabled>
+          <i class="fas fa-credit-card"></i> Pay with Crypto
+        </button>
+      </div>
+
+      <p style="margin: 1rem 0 0; color: #6b7280; font-size: 0.85rem; text-align: center;">
+        <i class="fas fa-info-circle"></i> No real money charged. Uses Sepolia testnet.
+      </p>
+    </div>
+  </div>
+
+  <!-- Modal Overlay -->
+  <style>
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal.hidden {
+      display: none;
+    }
+
+    .modal-content {
+      animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+
+  <!-- Back to top -->
+  <button class="back-to-top" id="backToTop">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+
+  <script src="app.js"></script>
+
+  <!-- Firebase auth guard + dashboard logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      collection,
+      query,
+      where,
+      orderBy,
+      onSnapshot,
+      addDoc,
+      updateDoc,
+      serverTimestamp,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import CryptoJS from "https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/+esm";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD8mSGezxer6j46O90_IsJOpUgu5KI0HnU",
+      authDomain: "clubconnect-fc50f.firebaseapp.com",
+      projectId: "clubconnect-fc50f",
+      storageBucket: "clubconnect-fc50f.firebasestorage.app",
+      messagingSenderId: "419240671350",
+      appId: "1:419240671350:web:69f7113d686e7f3e4a8757",
+      measurementId: "G-623LVNVKBG"
+    };
+
+    let playerPortalUnlocked = false;
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Function to check if demo request already exists
+    async function checkDemoRequestStatus(playerId, statusElement, buttonElement) {
+      try {
+        const requestsRef = collection(db, "demoAccessRequests");
+        const q = query(requestsRef, where("playerId", "==", playerId), where("type", "==", "playerRegistration"));
+        const snapshot = await getDocs(q);
+
+        if (!snapshot.empty) {
+          const request = snapshot.docs[0].data();
+          
+          if (request.status === "pending") {
+            if (statusElement) {
+              statusElement.innerHTML = `
+                <div style="padding: 1rem; background: rgba(59, 130, 246, 0.1); border-left: 3px solid #3b82f6; border-radius: 8px; margin-top: 1rem;">
+                  <i class="fas fa-info-circle" style="color: #3b82f6;"></i>
+                  <strong>Demo Request Pending!</strong> Your request is awaiting SuperAdmin approval.
+                </div>
+              `;
+            }
+            if (buttonElement) buttonElement.style.display = 'none';
+          } else if (request.status === "approved") {
+            if (statusElement) {
+              statusElement.innerHTML = `
+                <div style="padding: 1rem; background: rgba(16, 185, 129, 0.1); border-left: 3px solid #10b981; border-radius: 8px; margin-top: 1rem;">
+                  <i class="fas fa-check-circle" style="color: #10b981;"></i>
+                  <strong>Demo Access Approved!</strong> You now have access to the platform.
+                </div>
+              `;
+            }
+            if (buttonElement) buttonElement.style.display = 'none';
+          } else if (request.status === "rejected") {
+            if (statusElement) {
+              statusElement.innerHTML = `
+                <div style="padding: 1rem; background: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; border-radius: 8px; margin-top: 1rem;">
+                  <i class="fas fa-times-circle" style="color: #ef4444;"></i>
+                  <strong>Demo Request Rejected.</strong> Please contact support or make a payment.
+                </div>
+              `;
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error checking demo request:", error);
+      }
+    }
+
+    const layoutEl        = document.getElementById("playerDashboardLayout");
+    const emailLabel      = document.getElementById("playerEmailLabel");
+    const avatarInitial   = document.getElementById("playerAvatarInitial");
+    const userNameLabel   = document.getElementById("playerUserName");
+    const logoutTopBtn    = document.getElementById("playerLogoutTopBtn");
+
+    const sidebarLinks = document.querySelectorAll(".sidebar-link");
+    const views        = document.querySelectorAll(".view");
+
+    // Profile fields
+    const playerNameInput     = document.getElementById("playerNameInput");
+    const playerSportSelect   = document.getElementById("playerSportSelect");
+    const playerPositionInput = document.getElementById("playerPositionInput");
+    const playerCityInput     = document.getElementById("playerCityInput");
+    const playerBioInput      = document.getElementById("playerBioInput");
+    const savePlayerProfileBtn = document.getElementById("savePlayerProfileBtn");
+
+    // Requests table
+    const requestsTable = document.getElementById("requestsTable");
+    const requestsTbody = requestsTable ? requestsTable.querySelector("tbody") : null;
+
+    function setPlayerView(target) {
+      views.forEach(v => {
+        v.classList.toggle("active", v.id === "view-" + target);
+      });
+    }
+
+    sidebarLinks.forEach(link => {
+      link.addEventListener("click", () => {
+        const target = link.getAttribute("data-view-target");
+
+        if (!playerPortalUnlocked && target !== "payments") {
+          showNotification("Please pay your registration fee and wait for SuperAdmin approval to use this section.", 'warning', 5000);
+          return;
+        }
+
+        sidebarLinks.forEach(l => l.classList.remove("active"));
+        link.classList.add("active");
+        setPlayerView(target);
+      });
+    });
+
+    function applyPlayerAccessGate(data) {
+      const registrationPaid = data.registrationPaid === true;
+      const accountEnabled   = data.accountEnabled === true;
+      const isBlocked        = data.isBlocked === true;
+
+      playerPortalUnlocked = registrationPaid && accountEnabled && !isBlocked;
+
+      sidebarLinks.forEach(link => {
+        const target = link.getAttribute("data-view-target");
+        if (!playerPortalUnlocked && target !== "payments") {
+          link.classList.add("locked");
+        } else {
+          link.classList.remove("locked");
+        }
+      });
+
+      setPlayerView(playerPortalUnlocked ? "overview" : "payments");
+    }
+
+    // --- Current user meta for chat etc ---
+    let currentUserMeta = {
+      uid: null,
+      name: "Player",
+      role: "player",
+      sport: "general",
+      teamId: null
+    };
+    let teamRoomId = "global-room";
+
+    // === AUTH GUARD ===
+    // ===== Player Club Status (current affiliation) =====
+    function loadPlayerClubStatus(playerUid) {
+      const currentClubEl = document.getElementById("playerCurrentClub");
+      const clubMetaEl = document.getElementById("playerClubMeta");
+      const currentClubStatusEl = document.getElementById("currentClubStatus");
+
+      if (!currentClubEl) return;
+
+      getDoc(doc(db, "users", playerUid)).then(snap => {
+        const userData = snap.exists() ? snap.data() : {};
+        const currentClubId = userData.currentClubId;
+
+        if (currentClubId) {
+          getDoc(doc(db, "clubs", currentClubId)).then(clubSnap => {
+            if (clubSnap.exists()) {
+              const clubData = clubSnap.data();
+              const clubName = clubData.clubName || "Club";
+              
+              currentClubEl.textContent = clubName;
+              if (clubMetaEl) clubMetaEl.textContent = "Active member";
+              
+              if (currentClubStatusEl) {
+                currentClubStatusEl.innerHTML = `
+                  <div style="padding: 1rem; border-radius: 0.75rem; background-color: #ecfdf5; border: 1px solid #86efac;">
+                    <p style="margin: 0; color: #166534; font-weight: 500;">
+                      <i class="fas fa-check-circle"></i> Currently affiliated with <strong>${clubName}</strong>
+                    </p>
+                  </div>
+                `;
+              }
+            }
+          });
+        } else {
+          currentClubEl.textContent = "Free Agent";
+          if (clubMetaEl) clubMetaEl.textContent = "Available for offers";
+          
+          if (currentClubStatusEl) {
+            currentClubStatusEl.innerHTML = `
+              <div style="padding: 1rem; border-radius: 0.75rem; background-color: #fef3c7; border: 1px solid #fcd34d;">
+                <p style="margin: 0; color: #92400e; font-weight: 500;">
+                  <i class="fas fa-star"></i> You are currently a free agent. Check your Requests section for pending offers!
+                </p>
+              </div>
+            `;
+          }
+        }
+      });
+    }
+
+    // ===== Player Club History =====
+    function loadPlayerClubHistory(playerUid) {
+      const historyTableBody = document.getElementById("clubHistoryTableBody");
+
+      if (!historyTableBody) return;
+
+      const qHistory = query(
+        collection(db, "playerClubHistory"),
+        where("playerId", "==", playerUid),
+        orderBy("joinedDate", "desc")
+      );
+
+      onSnapshot(qHistory, (snapshot) => {
+        historyTableBody.innerHTML = "";
+
+        if (snapshot.empty) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td colspan="4" style="text-align: center; color: #6b7280;">No club history yet. Accept an offer to start your journey!</td>`;
+          historyTableBody.appendChild(tr);
+          return;
+        }
+
+        snapshot.forEach((docSnap) => {
+          const history = docSnap.data();
+          const tr = document.createElement("tr");
+
+          const joinedDate = history.joinedDate?.toDate
+            ? history.joinedDate.toDate().toLocaleDateString()
+            : "-";
+          
+          const leftDate = history.leftDate?.toDate
+            ? history.leftDate.toDate().toLocaleDateString()
+            : "-";
+
+          const duration = history.leftDate
+            ? `${joinedDate} to ${leftDate}`
+            : `From ${joinedDate}`;
+
+          const statusBadge = history.status === "active"
+            ? `<span class="status-pill status-pill--ok"><i class="fas fa-check"></i> Active</span>`
+            : `<span class="status-pill status-pill--info"><i class="fas fa-history"></i> Past</span>`;
+
+          tr.innerHTML = `
+            <td>${history.clubName || "-"}</td>
+            <td>${joinedDate}</td>
+            <td>${statusBadge}</td>
+            <td>${duration}</td>
+          `;
+
+          historyTableBody.appendChild(tr);
+        });
+      });
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+      try {
+        const snap = await getDoc(doc(db, "users", user.uid));
+        if (!snap.exists()) {
+          window.location.href = "login.html";
+          return;
+        }
+        const data = snap.data();
+        if (data.role !== "player") {
+          window.location.href = "login.html";
+          return;
+        }
+
+        layoutEl.style.display = "grid";
+
+        const email = user.email || "player@example.com";
+        emailLabel.textContent = email;
+        const name = data.fullName || "Player";
+        userNameLabel.textContent = name;
+        const init = name.split(" ").map(p => p[0]).join("").slice(0,2).toUpperCase();
+        avatarInitial.textContent = init;
+
+        // Prefill profile form
+        if (playerNameInput)     playerNameInput.value     = data.fullName || "";
+        if (playerSportSelect && data.sport) {
+          playerSportSelect.value = data.sport;
+        }
+        if (playerPositionInput) playerPositionInput.value = data.position || "";
+        if (playerCityInput)     playerCityInput.value     = data.city || "";
+        if (playerBioInput)      playerBioInput.value      = data.bio || "";
+
+        // Registration status
+        const playerRegistrationStatus = document.getElementById("playerRegistrationStatus");
+        const playerPayRegistrationBtnLocal = document.getElementById("playerPayRegistrationBtn");
+        const playerRequestDemoAccessBtnLocal = document.getElementById("playerRequestDemoAccessBtn");
+        const demoRequestStatusLocal = document.getElementById("demoRequestStatus");
+
+        if (playerRegistrationStatus) {
+          if (data.registrationPaid === true && data.accountEnabled !== true) {
+            playerRegistrationStatus.innerHTML = `
+              <span class="status-pill status-pill--warn">
+                <i class="fas fa-hourglass-half"></i> Paid · awaiting SuperAdmin approval
+              </span>
+            `;
+            // Hide both buttons when paid
+            if (playerPayRegistrationBtnLocal) playerPayRegistrationBtnLocal.style.display = 'none';
+            if (playerRequestDemoAccessBtnLocal) playerRequestDemoAccessBtnLocal.style.display = 'none';
+          } else if (data.registrationPaid === true && data.accountEnabled === true) {
+            playerRegistrationStatus.innerHTML = `
+              <span class="status-pill status-pill--ok">
+                <i class="fas fa-check"></i> Paid · active
+              </span>
+            `;
+            if (playerPayRegistrationBtnLocal) {
+              playerPayRegistrationBtnLocal.disabled = true;
+              playerPayRegistrationBtnLocal.style.display = 'none';
+            }
+            if (playerRequestDemoAccessBtnLocal) playerRequestDemoAccessBtnLocal.style.display = 'none';
+          } else {
+            // Not paid - show both payment and demo request buttons
+            playerRegistrationStatus.innerHTML = `
+              <span class="status-pill status-pill--danger">
+                <i class="fas fa-circle-exclamation"></i> Not paid
+              </span>
+            `;
+            if (playerPayRegistrationBtnLocal) playerPayRegistrationBtnLocal.style.display = 'inline-flex';
+            if (playerRequestDemoAccessBtnLocal) playerRequestDemoAccessBtnLocal.style.display = 'inline-flex';
+            
+            // Check if demo request already sent
+            checkDemoRequestStatus(user.uid, demoRequestStatusLocal, playerRequestDemoAccessBtnLocal);
+          }
+        }
+
+        // Access gate
+        applyPlayerAccessGate(data);
+
+        // Chat metadata
+        currentUserMeta.uid    = user.uid;
+        currentUserMeta.name   = data.fullName || "Player";
+        currentUserMeta.role   = data.role || "player";
+        currentUserMeta.sport  = data.sport || "general";
+        currentUserMeta.teamId = data.teamId || null;
+        teamRoomId             = currentUserMeta.teamId || `user-${user.uid}`;
+
+        // Initialize club chat when auth is ready
+        const currentClubId = data.currentClubId || null;
+        initClubChatForPlayer(currentClubId, user.uid, data.fullName || "Player", data.role || "player");
+
+        // Realtime hire requests
+        initRealtimeHireRequests(user.uid);
+
+        // Load current club status and history
+        loadPlayerClubStatus(user.uid);
+        loadPlayerClubHistory(user.uid);
+
+      } catch (err) {
+        console.error("Error loading player profile", err);
+        window.location.href = "login.html";
+      }
+    });
+
+    async function doLogout() {
+      try {
+        await signOut(auth);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        window.location.href = "login.html";
+      }
+    }
+
+    if (logoutTopBtn) {
+      logoutTopBtn.addEventListener("click", doLogout);
+    }
+
+    // ====== Club-Based Chat System with Date Filter (Player) ======
+    const CHAT_SECRET = "clubconnect-demo-team-secret";
+
+    function encryptMessage(plainText) {
+      return CryptoJS.AES.encrypt(plainText, CHAT_SECRET).toString();
+    }
+
+    function decryptMessage(cipherText) {
+      try {
+        const bytes = CryptoJS.AES.decrypt(cipherText, CHAT_SECRET);
+        return bytes.toString(CryptoJS.enc.Utf8) || "[decryption error]";
+      } catch (e) {
+        return "[decryption error]";
+      }
+    }
+
+    const chatToggleBtn     = document.getElementById("chatToggleBtn");
+    const chatCloseBtn      = document.getElementById("chatCloseBtn");
+    const chatPanel         = document.getElementById("teamChatPanel");
+    const chatMessagesEl    = document.getElementById("chatMessages");
+    const chatMessageInput  = document.getElementById("chatMessageInput");
+    const chatSendBtn       = document.getElementById("chatSendBtn");
+
+    let currentClubIdForChat = null;
+    let currentUserForChat = null;
+
+    function getDateString(date) {
+      // Returns YYYY-MM-DD format
+      return date.toISOString().split("T")[0];
+    }
+
+    function isMessageFromDate(timestamp, selectedDate) {
+      if (!timestamp || !timestamp.toDate) return false;
+      const messageDate = timestamp.toDate();
+      const messageDateStr = getDateString(messageDate);
+      const selectedDateStr = getDateString(selectedDate);
+      return messageDateStr === selectedDateStr;
+    }
+
+    function initClubChatForPlayer(clubId, userId, userName, userRole) {
+      if (!chatPanel || !chatMessagesEl) return;
+
+      // Setup close button listener (always available)
+      if (chatCloseBtn && !chatCloseBtn.dataset.listenerAttached) {
+        chatCloseBtn.addEventListener("click", () => {
+          chatPanel.classList.remove("open");
+        });
+        chatCloseBtn.dataset.listenerAttached = "true";
+      }
+
+      // Setup toggle button listener (always available)
+      if (chatToggleBtn && !chatToggleBtn.dataset.listenerAttached) {
+        chatToggleBtn.addEventListener("click", () => {
+          chatPanel.classList.toggle("open");
+          if (chatPanel.classList.contains("open")) {
+            chatMessageInput?.focus();
+            loadClubChatMessages();
+          }
+        });
+        chatToggleBtn.dataset.listenerAttached = "true";
+      }
+
+      // Check if player is in a club
+      if (!clubId) {
+        chatMessagesEl.innerHTML = `
+          <div style='padding:1.5rem;text-align:center;'>
+            <div style='font-size:2rem;margin-bottom:0.5rem;'><i class='fas fa-users' style='color:#ef4444;'></i></div>
+            <h3 style='color:#1f2937;margin:0.5rem 0;font-weight:600;'>Club Chat Not Available</h3>
+            <p style='color:#6b7280;margin:0.5rem 0 1rem;font-size:0.9rem;'>You must be part of a club to use the chat feature.</p>
+            <div style='background:rgba(239, 68, 68, 0.1);border-left:4px solid #ef4444;padding:1rem;border-radius:0.5rem;text-align:left;'>
+              <p style='color:#7f1d1d;margin:0;font-weight:500;'><i class='fas fa-check-circle'></i> Requirements:</p>
+              <ul style='color:#7f1d1d;margin:0.5rem 0 0;padding-left:1.5rem;font-size:0.85rem;'>
+                <li>Join or request to join a club</li>
+                <li>Wait for club owner approval</li>
+                <li>Once approved, chat becomes available</li>
+              </ul>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      currentClubIdForChat = clubId;
+      currentUserForChat = { uid: userId, name: userName, role: userRole };
+
+      // Create date filter UI if not exists
+      if (!document.getElementById("chatDateFilterContainer")) {
+        const filterContainer = document.createElement("div");
+        filterContainer.id = "chatDateFilterContainer";
+        filterContainer.style.cssText = "border-bottom:1px solid rgba(51,65,85,0.9);padding:0.6rem 0.8rem;";
+        filterContainer.innerHTML = `
+          <div style="display:flex;gap:0.5rem;align-items:center;">
+            <label style="font-size:0.8rem;color:#9ca3af;">Filter by date:</label>
+            <input type="date" id="chatDateFilter" style="padding:0.4rem 0.6rem;border-radius:0.5rem;border:1px solid rgba(75,85,99,0.9);background:rgba(15,23,42,0.9);color:#e5e7eb;font-size:0.85rem;">
+          </div>
+        `;
+        chatPanel.insertBefore(filterContainer, chatPanel.querySelector(".chat-panel-messages"));
+      }
+
+      const dateInput = document.getElementById("chatDateFilter");
+      if (dateInput) {
+        // Set default to today
+        const today = new Date();
+        dateInput.value = getDateString(today);
+
+        dateInput.addEventListener("change", loadClubChatMessages);
+      }
+
+      // Setup send button and message input listeners
+      if (chatSendBtn && !chatSendBtn.dataset.listenerAttached) {
+        chatSendBtn.addEventListener("click", sendClubChatMessage);
+        chatSendBtn.dataset.listenerAttached = "true";
+      }
+
+      if (chatMessageInput && !chatMessageInput.dataset.listenerAttached) {
+        chatMessageInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            sendClubChatMessage();
+          }
+        });
+        chatMessageInput.dataset.listenerAttached = "true";
+      }
+
+      // Load messages for today initially
+      loadClubChatMessages();
+    }
+
+    function loadClubChatMessages() {
+      if (!currentClubIdForChat || !chatMessagesEl) return;
+
+      const dateInput = document.getElementById("chatDateFilter");
+      const selectedDate = dateInput ? new Date(dateInput.value) : new Date();
+
+      console.log("Loading club chat messages for clubId:", currentClubIdForChat, "date:", getDateString(selectedDate));
+
+      const qChat = query(
+        collection(db, "clubChats"),
+        where("clubId", "==", currentClubIdForChat),
+        orderBy("createdAt", "asc")
+      );
+
+      onSnapshot(qChat, (snapshot) => {
+        console.log("Club chat snapshot received. Count:", snapshot.size);
+        chatMessagesEl.innerHTML = "";
+
+        const messagesForDate = [];
+        snapshot.forEach((docSnap) => {
+          const msg = docSnap.data();
+          if (isMessageFromDate(msg.createdAt, selectedDate)) {
+            messagesForDate.push({ id: docSnap.id, ...msg });
+          }
+        });
+
+        if (messagesForDate.length === 0) {
+          chatMessagesEl.innerHTML = "<div style='padding:1rem;text-align:center;color:#999;'><i class='fas fa-inbox'></i> No messages on this date</div>";
+          return;
+        }
+
+        messagesForDate.forEach((msg) => {
+          const plainText = decryptMessage(msg.text);
+          const isMe = msg.senderId === currentUserForChat.uid;
+
+          const msgEl = document.createElement("div");
+          msgEl.className = "chat-msg" + (isMe ? " me" : "");
+
+          const timeStr = msg.createdAt?.toDate
+            ? msg.createdAt.toDate().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+            : "";
+
+          msgEl.innerHTML = `
+            <div class="chat-msg-header">
+              <span>${msg.senderName || "Unknown"}</span>
+              <span>${msg.senderRole === "coach" ? "Coach" : "Player"}</span>
+            </div>
+            <div class="chat-msg-body">${plainText}</div>
+            <div class="chat-msg-meta">${timeStr}</div>
+          `;
+          chatMessagesEl.appendChild(msgEl);
+          chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+        });
+      }, (err) => {
+        console.error("Error loading club chat messages:", err);
+        chatMessagesEl.innerHTML = "<div style='padding:1rem;text-align:center;color:red;'><i class='fas fa-exclamation-triangle'></i> Error loading chat</div>";
+      });
+    }
+
+    async function sendClubChatMessage() {
+      const text = chatMessageInput.value.trim();
+      if (!text || !currentClubIdForChat || !currentUserForChat) return;
+
+      disableButton(chatSendBtn);
+      try {
+        const encrypted = encryptMessage(text);
+        await addDoc(collection(db, "clubChats"), {
+          clubId:     currentClubIdForChat,
+          senderId:   currentUserForChat.uid,
+          senderName: currentUserForChat.name,
+          senderRole: currentUserForChat.role,
+          text:       encrypted,
+          createdAt:  serverTimestamp()
+        });
+        chatMessageInput.value = "";
+        console.log("Club chat message sent successfully");
+      } catch (err) {
+        console.error("Error sending club chat message:", err);
+        showNotification("Could not send message: " + (err.code || err.message || err), 'error');
+      } finally {
+        enableButton(chatSendBtn);
+      }
+    }
+
+    // ===== Motivational quotes =====
+    const quotes = [
+      "Champions are made when no one is watching.",
+      "Small daily improvements lead to big results.",
+      "Your only competition is who you were yesterday.",
+      "Train like a beast, play like a legend.",
+      "Discipline beats talent when talent doesn’t work hard.",
+      "Every rep, every run, every drill counts.",
+      "Pain is temporary, pride is forever.",
+      "Don’t count the days. Make the days count."
+    ];
+
+    const quoteTextEl = document.getElementById("quoteText");
+    const newQuoteBtn = document.getElementById("newQuoteBtn");
+
+    function showRandomQuote() {
+      const idx = Math.floor(Math.random() * quotes.length);
+      quoteTextEl.textContent = quotes[idx];
+    }
+
+    if (quoteTextEl) {
+      showRandomQuote();
+    }
+
+    if (newQuoteBtn) {
+      newQuoteBtn.addEventListener("click", showRandomQuote);
+    }
+
+    // ===== Save profile to Firestore =====
+    if (savePlayerProfileBtn) {
+      savePlayerProfileBtn.addEventListener("click", async () => {
+        disableButton(savePlayerProfileBtn);
+        const user = auth.currentUser;
+        if (!user) {
+          showNotification("Not logged in.", 'error');
+          enableButton(savePlayerProfileBtn);
+          return;
+        }
+
+        const fullName  = playerNameInput?.value.trim() || "";
+        const sport     = playerSportSelect?.value || "Football";
+        const position  = playerPositionInput?.value.trim() || "";
+        const city      = playerCityInput?.value.trim() || "";
+        const bio       = playerBioInput?.value.trim() || "";
+
+        try {
+          const userRef = doc(db, "users", user.uid);
+          await updateDoc(userRef, {
+            fullName,
+            sport,
+            position,
+            city,
+            bio
+          });
+
+          // Update header name + avatar
+          if (fullName) {
+            userNameLabel.textContent = fullName;
+            const init = fullName.split(" ").map(p => p[0]).join("").slice(0,2).toUpperCase();
+            avatarInitial.textContent = init;
+          }
+
+          showNotification("Profile updated successfully.", 'success');
+        } catch (err) {
+          console.error("Error saving player profile", err);
+          showNotification("Could not save profile. Please try again later.", 'error');
+        } finally {
+          enableButton(savePlayerProfileBtn);
+        }
+      });
+    }
+
+    // ===== Hire Requests: realtime from Firestore =====
+    const requestsTableBody = document.getElementById("requestsTableBody");
+    
+    function initRealtimeHireRequests(playerUid) {
+      if (!requestsTableBody) return;
+
+      console.log("Initializing hire requests for player:", playerUid);
+
+      const qReq = query(
+        collection(db, "playerHireRequests"),
+        where("playerId", "==", playerUid),
+        orderBy("createdAt", "desc")
+      );
+
+      onSnapshot(qReq, (snapshot) => {
+        console.log("Received snapshot with", snapshot.size, "hire requests");
+        
+        requestsTableBody.innerHTML = "";
+        
+        if (snapshot.empty) {
+          console.log("No hire requests found for player");
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td colspan="5" style="text-align: center; color: #6b7280;">No requests yet. Check back later!</td>`;
+          requestsTableBody.appendChild(tr);
+          return;
+        }
+
+        snapshot.forEach((docSnap) => {
+          console.log("Processing hire request:", docSnap.id, docSnap.data());
+          
+          const req = docSnap.data();
+          const tr = document.createElement("tr");
+
+          const status = req.status || "pending";
+
+          tr.dataset.id = docSnap.id;
+          tr.dataset.status = status;
+          tr.dataset.clubId = req.clubId || "";
+
+          let statusHtml = "";
+          let actionsHtml = "";
+          
+          if (status === "pending") {
+            statusHtml = `<span class="status-pill status-pill--warn"><i class="fas fa-hourglass-half"></i> Pending</span>`;
+            actionsHtml = `
+              <div class="btn-row">
+                <button class="btn-pill btn-pill-primary btn-accept-request">
+                  <i class="fas fa-check"></i> Accept
+                </button>
+                <button class="btn-pill btn-pill-danger btn-reject-request">
+                  <i class="fas fa-xmark"></i> Reject
+                </button>
+              </div>
+            `;
+          } else if (status === "accepted") {
+            statusHtml = `<span class="status-pill status-pill--ok"><i class="fas fa-check-circle"></i> Accepted</span>`;
+            actionsHtml = `<span class="status-pill status-pill--ok"><i class="fas fa-check-circle"></i> Active</span>`;
+          } else if (status === "rejected") {
+            statusHtml = `<span class="status-pill status-pill--danger"><i class="fas fa-times-circle"></i> Rejected</span>`;
+            actionsHtml = `-`;
+          }
+
+          tr.innerHTML = `
+            <td>${req.clubName || "-"}</td>
+            <td>${req.fromRole === "owner" ? "Owner" : "Coach"}</td>
+            <td>₨ ${(req.salaryOffered || 0).toLocaleString()}</td>
+            <td>${statusHtml}</td>
+            <td>${actionsHtml}</td>
+          `;
+
+          requestsTableBody.appendChild(tr);
+        });
+      }, (err) => {
+        console.error("Error listening to hire requests:", err);
+      });
+    }
+
+    // Handle accept / reject clicks for hire requests
+    if (requestsTable) {
+      requestsTable.addEventListener("click", async (e) => {
+        const btn = e.target.closest("button");
+        if (!btn) return;
+        const row = btn.closest("tr");
+        if (!row) return;
+
+        const reqId = row.dataset.id;
+        const clubId = row.dataset.clubId;
+
+        if (!reqId || !clubId) return;
+
+        const isAccept = btn.classList.contains("btn-accept-request");
+        const isReject = btn.classList.contains("btn-reject-request");
+
+        if (!isAccept && !isReject) return;
+
+        const newStatus = isAccept ? "accepted" : "rejected";
+
+        disableButton(btn);
+        try {
+          const user = auth.currentUser;
+          if (!user) {
+            showNotification("Not logged in.", 'error');
+            return;
+          }
+
+          if (isAccept) {
+            // Get hire request details
+            const reqSnap = await getDoc(doc(db, "playerHireRequests", reqId));
+            const reqData = reqSnap.exists() ? reqSnap.data() : {};
+
+            // Get club details
+            const clubSnap = await getDoc(doc(db, "clubs", clubId));
+            const clubData = clubSnap.exists() ? clubSnap.data() : {};
+            const ownerUid = clubData.ownerUid || clubId;
+
+            // 1) Check if player is already in another active club - if yes, mark old one as "past"
+            const currentClubSnap = await getDoc(doc(db, "users", user.uid));
+            const userData = currentClubSnap.exists() ? currentClubSnap.data() : {};
+            const currentClubId = userData.currentClubId;
+
+            if (currentClubId && currentClubId !== clubId) {
+              // Move current club entry to history
+              const oldClubSnap = await getDoc(doc(db, "clubs", currentClubId));
+              const oldClubData = oldClubSnap.exists() ? oldClubSnap.data() : {};
+
+              try {
+                console.log("Adding old club to history...");
+                await addDoc(collection(db, "playerClubHistory"), {
+                  playerId: user.uid,
+                  clubId: currentClubId,
+                  clubName: oldClubData.clubName || "Previous Club",
+                  joinedDate: userData.joinedCurrentClubDate || new Date(),
+                  leftDate: serverTimestamp(),
+                  status: "past"
+                });
+                console.log("Old club added to history successfully");
+              } catch (histErr) {
+                console.error("Error adding old club to history:", histErr);
+                throw histErr;
+              }
+            }
+
+            // 2) Create entry in clubPlayers for the new club
+            try {
+              console.log("Adding player to new club...");
+              await addDoc(collection(db, "clubPlayers"), {
+                ownerId: ownerUid,
+                clubId: clubId,
+                playerId: user.uid,
+                playerName: userData.fullName || "Player",
+                playerEmail: user.email || null,
+                position: userData.position || "-",
+                status: "active",
+                monthlyPay: reqData.salaryOffered || 0,
+                joinedDate: serverTimestamp()
+              });
+              console.log("Player added to club successfully");
+            } catch (cpErr) {
+              console.error("Error adding player to club:", cpErr);
+              throw cpErr;
+            }
+
+            // 3) Update player's user document with current club
+            try {
+              console.log("Updating player's user document...");
+              await updateDoc(doc(db, "users", user.uid), {
+                currentClubId: clubId,
+                joinedCurrentClubDate: serverTimestamp()
+              });
+              console.log("Player's user document updated");
+            } catch (userErr) {
+              console.error("Error updating user document:", userErr);
+              throw userErr;
+            }
+
+            // 4) Create history entry for new club
+            try {
+              console.log("Creating new club history entry...");
+              await addDoc(collection(db, "playerClubHistory"), {
+                playerId: user.uid,
+                clubId: clubId,
+                clubName: reqData.clubName || clubData.clubName || "Club",
+                joinedDate: serverTimestamp(),
+                leftDate: null,
+                status: "active"
+              });
+              console.log("New club history entry created");
+            } catch (histErr2) {
+              console.error("Error creating club history:", histErr2);
+              throw histErr2;
+            }
+          }
+
+          // 5) Update hire request status
+          try {
+            console.log("Attempting to update hire request:", reqId, "with status:", newStatus);
+            await updateDoc(doc(db, "playerHireRequests", reqId), {
+              status: newStatus,
+              respondedAt: serverTimestamp()
+            });
+            console.log("Hire request updated successfully");
+          } catch (reqErr) {
+            console.error("Error updating hire request:", reqErr);
+            throw reqErr;
+          }
+
+          // UI will be updated automatically by onSnapshot
+          if (isAccept) {
+            showNotification("You have accepted the club offer! You are now part of their squad.", 'success', 5000);
+          }
+        } catch (err) {
+          console.error("Error in accept/reject flow:", err);
+          showNotification("Could not process request. Check console for details.", 'error');
+        } finally {
+          enableButton(btn);
+        }
+      });
+    }
+
+    // ===== Registration fee =====
+    const playerPayRegistrationBtn = document.getElementById("playerPayRegistrationBtn");
+    const playerRequestDemoAccessBtn = document.getElementById("playerRequestDemoAccessBtn");
+    const playerRegistrationStatus = document.getElementById("playerRegistrationStatus");
+    const demoRequestStatus = document.getElementById("demoRequestStatus");
+
+    if (playerPayRegistrationBtn) {
+      playerPayRegistrationBtn.addEventListener("click", async () => {
+        const user = auth.currentUser;
+        if (!user) {
+          showNotification("Not logged in.", 'error');
+          return;
+        }
+
+        // Open crypto payment modal
+        window.openCryptoModal("playerRegistration", "Player Registration", window.PAYMENT_AMOUNTS.playerRegistration);
+      });
+    }
+
+    // Demo access request (no payment required)
+    if (playerRequestDemoAccessBtn) {
+      playerRequestDemoAccessBtn.addEventListener("click", async () => {
+        disableButton(playerRequestDemoAccessBtn);
+        const user = auth.currentUser;
+        if (!user) {
+          showNotification("Not logged in.", 'error');
+          enableButton(playerRequestDemoAccessBtn);
+          return;
+        }
+
+        try {
+          // Get player data from users collection
+          const userDocRef = doc(db, "users", user.uid);
+          const userSnap = await getDoc(userDocRef);
+          
+          if (!userSnap.exists()) {
+            showNotification("User profile not found.", 'error');
+            enableButton(playerRequestDemoAccessBtn);
+            return;
+          }
+
+          const userData = userSnap.data();
+
+          // Update user document to mark as "demo paid" - pending admin approval
+          await updateDoc(userDocRef, {
+            registrationPaid: true,
+            paymentStatus: "pendingApproval",
+            paymentType: "demo", // Mark as demo request
+            demoRequestedAt: new Date()
+          });
+
+          showNotification("Demo access request sent to SuperAdmin! You'll be notified once approved.", 'success', 5000);
+          
+          // Update UI to show request sent
+          if (demoRequestStatus) {
+            demoRequestStatus.innerHTML = `
+              <div style="padding: 1rem; background: rgba(59, 130, 246, 0.1); border-left: 3px solid #3b82f6; border-radius: 8px; margin-top: 1rem;">
+                <i class="fas fa-info-circle" style="color: #3b82f6;"></i>
+                <strong>Demo Request Sent!</strong> Awaiting SuperAdmin approval. You'll receive access without payment once approved.
+              </div>
+            `;
+          }
+
+          // Hide the demo button after request sent
+          playerRequestDemoAccessBtn.style.display = 'none';
+          
+        } catch (error) {
+          console.error("Error sending demo request:", error);
+          showNotification("Failed to send demo access request.", 'error');
+          enableButton(playerRequestDemoAccessBtn);
+        }
+      });
+    }
+
+    // ===== Performance chart =====
+    const perfCanvas = document.getElementById("playerPerformanceChart");
+    if (perfCanvas) {
+      new Chart(perfCanvas, {
+        type: "radar",
+        data: {
+          labels: ["Fitness", "Form", "Discipline", "Tactics", "Mentality"],
+          datasets: [{
+            label: "You",
+            data: [85, 88, 80, 82, 90],
+            borderColor: "#155598",
+            backgroundColor: "rgba(21,85,152,0.18)"
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            r: {
+              angleLines: { color: "rgba(0,0,0,0.06)" },
+              grid: { color: "rgba(0,0,0,0.06)" },
+              pointLabels: { color: "#4b5563" },
+              ticks: { display: false }
+            }
+          }
+        }
+      });
+    }
+
+    // ===== Player Announcement Board =====
+    const playerAnnouncementsTable = document.getElementById("playerAnnouncementsTable");
+
+    if (playerAnnouncementsTable) {
+      const tbody = playerAnnouncementsTable.querySelector("tbody");
+
+      // Listen to announcements from player's current club only
+      function listenToClubAnnouncements(playerId, clubId) {
+        console.log("listenToClubAnnouncements called with playerId:", playerId, "clubId:", clubId);
+        
+        if (!clubId) {
+          console.log("No clubId, showing 'not in any club' message");
+          tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;color:#999;'>You are not in any club yet</td></tr>";
+          return;
+        }
+
+        const qAnn = query(
+          collection(db, "announcements"),
+          where("clubId", "==", clubId),
+          orderBy("createdAt", "desc")
+        );
+
+        console.log("Querying announcements for clubId:", clubId);
+
+        onSnapshot(qAnn, (snapshot) => {
+          console.log("Announcements snapshot received. Empty:", snapshot.empty, "Count:", snapshot.size);
+          
+          tbody.innerHTML = "";
+          if (snapshot.empty) {
+            console.log("No announcements found for club:", clubId);
+            tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;color:#999;'>No announcements yet</td></tr>";
+            return;
+          }
+
+          snapshot.forEach((docSnap) => {
+            const a = docSnap.data();
+            console.log("Processing announcement:", a.title, "from clubId:", a.clubId);
+            const tr = document.createElement("tr");
+
+            const whenStr = a.createdAt?.toDate
+              ? a.createdAt.toDate().toLocaleString()
+              : "-";
+
+            tr.innerHTML = `
+              <td>${a.title || ""}</td>
+              <td>${a.createdByName || "-"}</td>
+              <td>${a.createdByRole === "coach" ? "Coach" : "Club Owner"}</td>
+              <td>${(a.message || "").slice(0, 80)}${(a.message || "").length > 80 ? "…" : ""}</td>
+              <td>${whenStr}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }, (err) => {
+          console.error("Error listening to announcements:", err);
+          tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;color:red;'>Error loading announcements</td></tr>";
+        });
+      }
+
+      // Load announcements when player data is ready - wait for auth
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          console.log("Auth ready. Setting up announcements listener for user:", user.uid);
+          const userDocRef = doc(db, "users", user.uid);
+          onSnapshot(userDocRef, (userSnap) => {
+            if (userSnap.exists()) {
+              const userData = userSnap.data();
+              const currentClubId = userData.currentClubId || null;
+              console.log("User data loaded. currentClubId:", currentClubId);
+              listenToClubAnnouncements(user.uid, currentClubId);
+            } else {
+              console.log("User document does not exist");
+            }
+          }, (err) => {
+            console.error("Error loading user data for announcements:", err);
+          });
+        } else {
+          console.log("No user authenticated, announcements not initialized");
+        }
+      });
+    }
+
+  </script>
+</body>
+</html>

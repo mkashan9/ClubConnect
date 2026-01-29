@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LubConnect Teams – Leadership & Culture</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style src="style.css">
+        /* Lightweight internal page hero */
+        .page-hero {
+            background: linear-gradient(135deg, rgba(21,101,192,0.9) 0%, rgba(16,55,102,0.95) 100%);
+            color:#fff;
+            padding:6rem 0 4rem;
+            position:relative;
+            margin-top:70px;
+            text-align:center;
+        }
+        .page-hero .breadcrumb {
+            font-size:.9rem;
+            opacity:.8;
+            margin-bottom:.5rem;
+        }
+        .page-hero h1 {
+            font-size:clamp(2rem,4vw,2.75rem);
+            font-weight:700;
+            margin:0 0 1rem;
+            line-height:1.2;
+        }
+        .page-hero p {
+            max-width:700px;
+            margin:0 auto;
+            color:rgba(255,255,255,0.85);
+            font-size:1rem;
+            line-height:1.5;
+        }
+
+        /* Layout helpers for sub-sections unique to these pages */
+        .section-narrow {
+            max-width:1000px;
+            margin:0 auto;
+        }
+
+        /* Feature detail blocks */
+        .feature-detail-grid {
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+            gap:2rem;
+        }
+        .feature-detail-card {
+            background-color:#fff;
+            border-radius:var(--radius-lg);
+            box-shadow:var(--shadow-sm);
+            border:1px solid rgba(0,0,0,0.03);
+            padding:1.5rem 1.5rem 2rem;
+            transition:all var(--transition-fast);
+        }
+        .feature-detail-card:hover {
+            transform:translateY(-4px);
+            box-shadow:var(--shadow-md);
+        }
+        .feature-detail-icon {
+            width:48px;
+            height:48px;
+            border-radius:12px;
+            background-color:var(--clr-primary);
+            color:#fff;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:1.25rem;
+            margin-bottom:1rem;
+            box-shadow:0 8px 20px rgba(21,101,192,0.25);
+        }
+        .feature-detail-card h3 {
+            font-size:1.1rem;
+            margin:0 0 .5rem;
+            font-weight:600;
+            color:#242c34;
+        }
+        .feature-detail-card p {
+            margin:0;
+            font-size:.95rem;
+            color:#6c757d;
+            line-height:1.5;
+        }
+
+        /* Teams page */
+        .team-grid {
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+            gap:2rem;
+        }
+        .team-card {
+            background:#fff;
+            border-radius:var(--radius-lg);
+            box-shadow:var(--shadow-sm);
+            border:1px solid rgba(0,0,0,0.03);
+            padding:2rem 1.5rem;
+            text-align:center;
+            transition:all var(--transition-fast);
+        }
+        .team-card:hover {
+            transform:translateY(-6px);
+            box-shadow:var(--shadow-md);
+        }
+        .team-avatar {
+            width:72px;
+            height:72px;
+            border-radius:50%;
+            background-color:var(--clr-primary);
+            color:#fff;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:2rem;
+            font-weight:600;
+            margin:0 auto 1rem;
+            box-shadow:0 10px 24px rgba(21,101,192,0.3);
+        }
+        .team-name {
+            font-weight:600;
+            margin:0;
+            color:#242c34;
+            font-size:1.125rem;
+        }
+        .team-role {
+            margin:.25rem 0 1rem;
+            color:#6c757d;
+            font-size:.9rem;
+        }
+        .team-bio {
+            font-size:.9rem;
+            color:#6c757d;
+            line-height:1.5;
+            margin:0;
+        }
+        .team-social {
+            display:flex;
+            justify-content:center;
+            gap:1rem;
+            margin-top:1rem;
+            font-size:1rem;
+        }
+        .team-social a {
+            color:var(--clr-primary);
+            transition:color var(--transition-fast);
+        }
+        .team-social a:hover {
+            color:var(--clr-primary-dark);
+        }
+
+        /* Contact page */
+        .contact-wrapper {
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+            gap:2rem;
+        }
+        .contact-card {
+            background:#fff;
+            border-radius:var(--radius-lg);
+            box-shadow:var(--shadow-sm);
+            border:1px solid rgba(0,0,0,0.03);
+            padding:2rem;
+            height:100%;
+        }
+        .contact-card h3 {
+            margin-top:0;
+            font-size:1.125rem;
+            font-weight:600;
+            color:#242c34;
+        }
+        .contact-card p {
+            margin:0 0 .75rem;
+            font-size:.95rem;
+            color:#6c757d;
+        }
+        .contact-item {
+            display:flex;
+            align-items:flex-start;
+            gap:1rem;
+            margin-bottom:1rem;
+            font-size:.95rem;
+            line-height:1.4;
+            color:#6c757d;
+        }
+        .contact-icon {
+            width:36px;
+            height:36px;
+            border-radius:10px;
+            background-color:var(--clr-primary);
+            color:#fff;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:1rem;
+            box-shadow:0 8px 20px rgba(21,101,192,0.25);
+            flex-shrink:0;
+        }
+        .map-embed {
+            width:100%;
+            border:0;
+            border-radius:var(--radius-md);
+            min-height:220px;
+        }
+
+        /* Footer small tweaks for spacing */
+        .footer {
+            
+            font-size:.95rem;
+        }
+        .footer a { color:black; opacity:.9; }
+        .footer a:hover { opacity:1; }
+        .footer-content {
+            display:grid;
+            gap:1rem;
+            grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+        }
+        .footer-logo img {
+            height:60px;
+            width:auto;
+            object-fit:contain;
+        }
+        .footer-title {
+            color:black;
+            font-size:1rem;
+            font-weight:600;
+            margin-bottom:1rem;
+        }
+        .footer-links {
+            list-style:none;
+            padding:0;
+            margin:0;
+            line-height:1.8;
+        }
+        .footer-links li {
+            margin:0 0 .5rem;
+        }
+        .footer-tagline {
+            color:rgba(0, 0, 0, 0.75);
+            font-size:.9rem;
+            line-height:1.4;
+        }
+        .footer-social {
+            display:flex;
+            gap:.75rem;
+            margin-top:1rem;
+            font-size:1.1rem;
+        }
+        .footer-bottom {
+            border-top:1px solid rgba(255,255,255,0.1);
+            margin-top:2rem;
+            padding-top:1.5rem;
+            font-size:.8rem;
+            color:rgba(0, 0, 0, 0.6);
+            display:flex;
+            flex-wrap:wrap;
+            justify-content:space-between;
+            gap:1rem;
+        }
+
+        /* Back to top button */
+        #backToTop {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            background-color: var(--clr-primary);
+            color: #fff;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            box-shadow: var(--shadow-md);
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all var(--transition-fast);
+            z-index: 999;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:1rem;
+        }
+        #backToTop.show {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <!-- Source Code Protection -->
+    <script src="protection.js"></script>
+    <!-- Header -->
+    <header class="header" id="header">
+  <nav class="nav container">
+    <div class="nav-logo">
+  <a href="index.html">
+      <img src="logo.png" alt="ClubConnect Logo" class="logo-img">
+  </a>
+</div>
+
+    <div class="nav-right">
+      <ul class="nav-menu" id="navMenu">
+        <li class="nav-item">
+          <a href="index.html" class="nav-link">Home</a>
+        </li>
+        <li class="nav-item">
+          <a href="features.html" class="nav-link">Features</a>
+        </li>
+        <li class="nav-item">
+          <a href="index.html#programs" class="nav-link">Programs</a>
+        </li>
+        <li class="nav-item">
+          <a href="teams.html" class="nav-link active">Teams</a>
+        </li>
+        <li class="nav-item">
+          <a href="index.html#pricing" class="nav-link">Pricing</a>
+        </li>
+        <li class="nav-item">
+          <a href="leaderboards.html" class="nav-link">Leaderboards</a>
+        </li>
+        <li class="nav-item">
+          <a href="contact.html" class="nav-link">Contact</a>
+        </li>
+      </ul>
+      <button class="btn btn-login" onclick="window.location.href='login.html'">
+        Login
+      </button>
+    </div>
+    <div class="nav-toggle" id="navToggle">
+      <i class="fas fa-bars"></i>
+    </div>
+  </nav>
+</header>
+
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <div class="breadcrumb"><i class="fas fa-users"></i> &nbsp; Company / People</div>
+            <h1>The team behind ClubConnect</h1>
+            <p>We’re a multidisciplinary group of engineers, performance analysts, and former coaches. Our mission is to give clubs professional-grade tools without professional-league budgets.</p>
+        </div>
+    </section>
+
+    <!-- Leadership -->
+    <section class="features">
+        <div class="container section-narrow">
+            <div class="section-header">
+                <h2 class="section-title">Leadership</h2>
+                <p class="section-subtitle">Experienced operators with deep roots in sport, technology, and club operations</p>
+            </div>
+
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-avatar"><i class="fas fa-user"></i></div>
+                    <p class="team-name">Muhammad Zubair</p>
+                    <p class="team-role">Board of Director</p>
+                    <p class="team-bio">15+ years building scalable athlete development programs across Europe and the Middle East. Previously Director of Operations for a multisport academy network serving 3,000+ athletes.</p>
+                    <div class="team-social">
+                        <a href="https://github.com/Zubair378"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+
+                <div class="team-card">
+                    <div class="team-avatar"><i class="fas fa-user"></i></div>
+                    <p class="team-name">Naveedullah Shah</p>
+                    <p class="team-role">Board of Director</p>
+                    <p class="team-bio">Software architect focused on secure, real-time systems for high-availability environments. Led platform engineering at a global tournament management provider before founding LubConnect’s core platform.</p>
+                    <div class="team-social">
+                        <a href="https://github.com/shahjee017"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+
+                <div class="team-card">
+                    <div class="team-avatar"><i class="fas fa-user"></i></div>
+                    <p class="team-name">Muhammad Kashan Ali</p>
+                    <p class="team-role">Board of Director</p>
+                    <p class="team-bio">UEFA-certified performance analyst. Built data models for player workload, injury risk, and match impact tracking adopted by national-level youth programs.</p>
+                    <div class="team-social">
+                        <a href="https://github.com/mkashan9"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+
+               
+            </div>
+        </div>
+    </section>
+
+    <!-- Developers -->
+    <section class="features">
+        <div class="container section-narrow">
+            <div class="section-header">
+                <h2 class="section-title">Developers&#9825;Team SoftDrivers</h2>
+                <p class="section-subtitle">Experienced operators with deep roots in sport, technology, and club operations</p>
+            </div>
+
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-avatar"><i class="fas fa-user"></i></div>
+                    <p class="team-name">Muhammad Zubair</p>
+                    <p class="team-role">FrontEnd Expert</p>
+                    <p class="team-bio">Expert Front-End Developer skilled in React, JavaScript, and modern UI engineering. Passionate about building fast, responsive, and accessible web experiences with clean code and a strong focus on user experience.</p>
+                    <div class="team-social">
+                        <a href="https://github.com/Zubair378"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+
+                <div class="team-card">
+                    <div class="team-avatar"><i class="fas fa-user"></i></div>
+                    <p class="team-name">Naveedullah Shah</p>
+                    <p class="team-role">UI/UX Designer</p>
+                    <p class="team-bio">Creative UI/UX Designer specializing in intuitive, user-centered digital experiences. Skilled in wireframing, prototyping, and visual design, with a strong focus on usability, accessibility, and clean, modern aesthetics.</p>
+                    <div class="team-social">
+                        <a href="https://github.com/shahjee017"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+
+                <div class="team-card">
+                    <div class="team-avatar"><i class="fas fa-user"></i></div>
+                    <p class="team-name">Muhammad Kashan Ali</p>
+                    <p class="team-role">BackEnd Expert</p>
+                    <p class="team-bio">Skilled Back-End Developer experienced in building secure, scalable, and high-performance server-side applications. Proficient in API development, databases, and system architecture, with a strong focus on reliability, efficiency, and clean backend logic.</p>
+                    <div class="team-social">
+                        <a href="https://github.com/mkashan9"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+
+               
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Philosophy -->
+    <section>
+        <div class="container section-narrow">
+            <div class="section-header">
+                <h2 class="section-title">How we work with clubs</h2>
+                <p class="section-subtitle">Partnership, not just software access</p>
+            </div>
+
+            <div class="feature-detail-grid">
+                <div class="feature-detail-card">
+                    <div class="feature-detail-icon"><i class="fas fa-clipboard-check"></i></div>
+                    <h3>Onboarding &amp; Migration</h3>
+                    <p>We import your spreadsheets, payment lists, and athlete notes — securely — so you don’t start from a blank dashboard.</p>
+                </div>
+                <div class="feature-detail-card">
+                    <div class="feature-detail-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+                    <h3>Coach Enablement</h3>
+                    <p>We deliver live training for coaches and admins so the platform becomes part of daily workflow, not “another tool.”</p>
+                </div>
+                <div class="feature-detail-card">
+                    <div class="feature-detail-icon"><i class="fas fa-chart-pie"></i></div>
+                    <h3>Executive Reporting</h3>
+                    <p>Boards and directors get real visibility: attendance health, cash position, and program retention trends across age groups.</p>
+                </div>
+                <div class="feature-detail-card">
+                    <div class="feature-detail-icon"><i class="fas fa-headset"></i></div>
+                    <h3>Live Human Support</h3>
+                    <p>Your club gets a named success manager — not a ticket queue. We act like an extension of your operations staff.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2 class="cta-title">Want to work with us?</h2>
+                <p class="cta-subtitle">We’re partnering with high-performance academies and ambitious grassroots programs worldwide.</p>
+                <a href="contact.html" class="btn btn-primary btn-lg">Talk to our team</a>
+                <p class="cta-note">We typically respond within one business day</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <div class="footer-logo">
+                        <img src="logo.png" alt="ClubConnect Logo">
+                    </div>
+                    <p class="footer-tagline">
+                        ClubConnect – the unified platform for managing multi-sport clubs, academies and training centers.
+                    </p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-title">Product</h4>
+                    <ul class="footer-links">
+                        <li><a href="features.html">Features</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#">Demo</a></li>
+
+                        <li><a href="#">Mobile Apps</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-title">Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Documentation</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-title">Company</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Press Kit</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-title">Newsletter</h4>
+                    <p class="footer-newsletter-text">Stay updated with new features and success stories.</p>
+                    <form class="newsletter-form" id="newsletterForm">
+  <input
+    type="email"
+    placeholder="Enter your email"
+    class="newsletter-input"
+    id="newsletterEmail"
+  >
+  <button type="submit" class="btn btn-primary" id="newsletterBtn">
+    Subscribe
+  </button>
+  <small id="newsletterMsg" class="newsletter-msg"></small>
+</form>
+
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-copyright">
+                    &copy; 2025 ClubConnect. All rights reserved.
+                </p>
+                <div class="footer-legal">
+  <a href="privacy.html">Privacy Policy</a>
+  <a href="terms.html">Terms of Service</a>
+  <a href="cookies.html">Cookie Policy</a>
+</div>
+
+            </div>
+        </div>
+    </footer>
+    <!-- Back To Top -->
+    <button id="backToTop" aria-label="Back to Top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="app.js"></script>
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+    <script type="module">
+  import {
+    initializeApp,
+    getApps,
+    getApp
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    serverTimestamp,
+    query,
+    where,
+    getDocs
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  // 🔹 Same Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyD8mSGezxer6j46O90_IsJOpUgu5KI0HnU",
+    authDomain: "clubconnect-fc50f.firebaseapp.com",
+    projectId: "clubconnect-fc50f",
+    storageBucket: "clubconnect-fc50f.firebasestorage.app",
+    messagingSenderId: "419240671350",
+    appId: "1:419240671350:web:69f7113d686e7f3e4a8757",
+    measurementId: "G-623LVNVKBG"
+  };
+
+  // ✅ Reuse app if already initialized
+  const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  const form       = document.getElementById("newsletterForm");
+  const emailInput = document.getElementById("newsletterEmail");
+  const btn        = document.getElementById("newsletterBtn");
+  const msgEl      = document.getElementById("newsletterMsg");
+
+  function setLoading(isLoading) {
+    if (!btn || !form) return;
+    btn.disabled = isLoading;
+    form.classList.toggle("is-loading", isLoading);
+    if (isLoading) {
+      btn.dataset.originalText = btn.textContent;
+      btn.innerHTML = '<i class="fas fa-futbol spinning-ball"></i> Subscribing…';
+    } else {
+      btn.innerHTML = btn.dataset.originalText || "Subscribe";
+    }
+  }
+
+  function showNewsletterMsg(text, type = "info") {
+    if (!msgEl) return;
+    msgEl.textContent = text;
+    msgEl.classList.remove("msg-error", "msg-success");
+    if (type === "error") {
+      msgEl.classList.add("msg-error");
+    } else if (type === "success") {
+      msgEl.classList.add("msg-success");
+    }
+  }
+
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  if (form && emailInput && btn) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const emailRaw = emailInput.value.trim();
+      const email    = emailRaw.toLowerCase();   // normalize
+
+      if (!email) {
+        showNewsletterMsg("Please enter your email.", "error");
+        return;
+      }
+      if (!isValidEmail(email)) {
+        showNewsletterMsg("Please enter a valid email address.", "error");
+        return;
+      }
+
+      setLoading(true);
+      showNewsletterMsg("Checking subscription…", "info");
+
+      try {
+        // 🔍 1) Check if email already exists
+        const q = query(
+          collection(db, "newsletterSubscribers"),
+          where("email", "==", email)
+        );
+        const snap = await getDocs(q);
+
+        if (!snap.empty) {
+          // Already subscribed
+          showNewsletterMsg("This email is already subscribed.", "error");
+          setLoading(false);
+          return;
+        }
+
+        // ✅ 2) Not found → create new subscription
+        await addDoc(collection(db, "newsletterSubscribers"), {
+          email,
+          createdAt: serverTimestamp(),
+          source: "homepage"
+        });
+
+        showNewsletterMsg("You’re in! We’ll keep you updated.", "success");
+        emailInput.value = "";
+      } catch (err) {
+        console.error("Newsletter subscribe error:", err);
+        showNewsletterMsg("Could not subscribe. Please try again later.", "error");
+      } finally {
+        setLoading(false);
+      }
+    });
+  }
+</script>
+</body>
+</html>

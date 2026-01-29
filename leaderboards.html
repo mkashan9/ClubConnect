@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClubConnect – Club & Player Leaderboards</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style src="style.css">
+    /* Page hero */
+    .page-hero {
+      background: radial-gradient(circle at top left, rgba(21,101,192,0.5), rgba(16,55,102,0.96));
+      color:#fff;
+      padding:6rem 0 4rem;
+      margin-top:70px;
+      position:relative;
+      overflow:hidden;
+      text-align:center;
+    }
+    .page-hero::before,
+    .page-hero::after {
+      content:"";
+      position:absolute;
+      border-radius:50%;
+      filter:blur(40px);
+      opacity:0.6;
+      pointer-events:none;
+    }
+    .page-hero::before {
+      width:260px; height:260px;
+      background:radial-gradient(circle, rgba(255,255,255,0.7), transparent);
+      top:-80px; left:-40px;
+    }
+    .page-hero::after {
+      width:220px; height:220px;
+      background:radial-gradient(circle, rgba(255,255,255,0.35), transparent);
+      bottom:-60px; right:-20px;
+    }
+    .page-hero .breadcrumb {
+      font-size:.9rem;
+      opacity:.85;
+      margin-bottom:.5rem;
+    }
+    .page-hero h1 {
+      font-size:clamp(2.2rem,4vw,2.8rem);
+      font-weight:800;
+      margin:0 0 .75rem;
+    }
+    .page-hero p {
+      max-width:720px;
+      margin:0 auto;
+      font-size:1rem;
+      color:rgba(255,255,255,0.9);
+    }
+
+    /* Section wrapper */
+    .leaderboard-page {
+      background: linear-gradient(180deg,#f8f9fb 0%,#eef2f7 60%,#f8f9fb 100%);
+    }
+
+    .leaderboard-header-row {
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:space-between;
+      align-items:center;
+      gap:1rem;
+      margin-bottom:1.5rem;
+    }
+    .leaderboard-title {
+      font-size:1.4rem;
+      font-weight:700;
+      color:#242c34;
+      display:flex;
+      align-items:center;
+      gap:.6rem;
+    }
+    .leaderboard-title i {
+      color:var(--clr-primary);
+    }
+    .leaderboard-subtitle {
+      font-size:.9rem;
+      color:#6c757d;
+      margin:0;
+    }
+
+    /* Filter pills */
+    .lb-filters {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.5rem;
+    }
+    .lb-pill {
+      border-radius:999px;
+      padding:.4rem .9rem;
+      border:1px solid rgba(21,101,192,0.18);
+      font-size:.82rem;
+      cursor:pointer;
+      background-color:#fff;
+      color:#242c34;
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+      box-shadow:0 4px 12px rgba(0,0,0,0.03);
+      transition:background-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+    }
+    .lb-pill i { font-size:.85rem; }
+    .lb-pill.active,
+    .lb-pill:hover {
+      background:linear-gradient(135deg,#1565C0,#103766);
+      color:#fff;
+      border-color:transparent;
+      transform:translateY(-2px);
+      box-shadow:0 10px 24px rgba(16,55,102,0.25);
+    }
+
+    /* Grid */
+    .leaderboard-grid {
+      display:grid;
+      grid-template-columns:2.1fr 1.2fr;
+      gap:2rem;
+    }
+    @media (max-width: 900px) {
+      .leaderboard-grid {
+        grid-template-columns:1fr;
+      }
+    }
+
+    /* Table style leaderboard (clubs) */
+    .lb-card {
+      background:rgba(255,255,255,0.9);
+      border-radius:18px;
+      border:1px solid rgba(21,101,192,0.12);
+      box-shadow:0 14px 30px rgba(15,35,52,0.10);
+      padding:1.5rem 1.25rem;
+      backdrop-filter:blur(14px);
+      position:relative;
+      overflow:hidden;
+    }
+    .lb-card::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:inherit;
+      border:1px solid rgba(255,255,255,0.8);
+      pointer-events:none;
+      mix-blend-mode:soft-light;
+    }
+
+    .lb-table-header,
+    .lb-row {
+      display:grid;
+      grid-template-columns:.5fr 2.3fr 1.3fr 1.1fr 1.1fr;
+      gap:.5rem;
+      align-items:center;
+      font-size:.9rem;
+    }
+    .lb-table-header {
+      font-size:.8rem;
+      text-transform:uppercase;
+      letter-spacing:.05em;
+      color:#6c757d;
+      margin-bottom:.75rem;
+    }
+    .lb-row {
+      position:relative;
+      padding:.6rem .65rem;
+      border-radius:14px;
+      transition:background-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+    .lb-row:hover {
+      background-color:rgba(21,101,192,0.04);
+      transform:translateY(-2px);
+      box-shadow:0 8px 20px rgba(15,35,52,0.08);
+    }
+
+    .lb-rank {
+      font-weight:700;
+      color:#242c34;
+    }
+    .lb-rank-badge {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:28px;
+      height:28px;
+      border-radius:50%;
+      font-size:.85rem;
+      font-weight:700;
+      color:#fff;
+      background:linear-gradient(135deg,#fbbf24,#f97316);
+      box-shadow:0 8px 18px rgba(245,158,11,0.45);
+    }
+    .lb-rank-badge.silver {
+      background:linear-gradient(135deg,#d1d5db,#9ca3af);
+      box-shadow:0 8px 18px rgba(156,163,175,0.45);
+    }
+    .lb-rank-badge.bronze {
+      background:linear-gradient(135deg,#f97316,#b45309);
+      box-shadow:0 8px 18px rgba(180,83,9,0.45);
+    }
+
+    .lb-club-info {
+      display:flex;
+      align-items:center;
+      gap:.6rem;
+    }
+    .lb-club-avatar {
+      width:34px;
+      height:34px;
+      border-radius:12px;
+      background:linear-gradient(135deg,#1565C0,#103766);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:1.1rem;
+      box-shadow:0 10px 22px rgba(16,55,102,0.35);
+      flex-shrink:0;
+    }
+    .lb-club-text h4 {
+      margin:0;
+      font-size:.95rem;
+      font-weight:600;
+      color:#242c34;
+    }
+    .lb-club-text p {
+      margin:0;
+      font-size:.78rem;
+      color:#6c757d;
+    }
+    .lb-tag {
+      display:inline-flex;
+      align-items:center;
+      gap:.25rem;
+      padding:.25rem .6rem;
+      border-radius:999px;
+      background-color:rgba(21,101,192,0.06);
+      font-size:.75rem;
+      color:#155598;
+    }
+
+    .lb-metric {
+      font-weight:600;
+      color:#242c34;
+    }
+    .lb-metric span {
+      display:block;
+      font-size:.75rem;
+      color:#6c757d;
+      font-weight:400;
+    }
+
+    /* Side card stats */
+    .lb-side-card-title {
+      font-size:.95rem;
+      font-weight:600;
+      margin-bottom:.75rem;
+      color:#242c34;
+    }
+    .lb-side-chip {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:.55rem .7rem;
+      border-radius:999px;
+      background-color:#f3f6fb;
+      font-size:.8rem;
+      margin-bottom:.45rem;
+    }
+    .lb-side-chip span:first-child {
+      font-weight:500;
+      color:#242c34;
+    }
+    .lb-side-chip span:last-child {
+      color:#6c757d;
+    }
+
+    .lb-badge-overall {
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+      padding:.35rem .7rem;
+      border-radius:999px;
+      background:rgba(16,185,129,0.08);
+      color:#047857;
+      font-size:.78rem;
+      margin-top:.25rem;
+    }
+    .lb-badge-overall i {
+      font-size:.9rem;
+    }
+
+    /* Player leaderboard cards */
+    .player-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:1.5rem;
+    }
+    .player-card {
+      position:relative;
+      background:rgba(255,255,255,0.95);
+      border-radius:18px;
+      padding:1.25rem 1.2rem 1.1rem;
+      border:1px solid rgba(21,101,192,0.12);
+      box-shadow:0 10px 26px rgba(15,35,52,0.10);
+      backdrop-filter:blur(10px);
+      overflow:hidden;
+    }
+    .player-rank-chip {
+      position:absolute;
+      top:10px;
+      right:12px;
+      font-size:.75rem;
+      padding:.25rem .6rem;
+      border-radius:999px;
+      background-color:rgba(21,101,192,0.08);
+      color:#155598;
+      display:flex;
+      align-items:center;
+      gap:.25rem;
+    }
+    .player-header {
+      display:flex;
+      align-items:center;
+      gap:.75rem;
+      margin-bottom:.6rem;
+    }
+    .player-avatar {
+      width:42px;
+      height:42px;
+      border-radius:50%;
+      border:2px solid rgba(255,255,255,0.8);
+      background:radial-gradient(circle at top,#facc15,#f97316);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      font-weight:700;
+      font-size:.95rem;
+      box-shadow:0 12px 26px rgba(245,158,11,0.45);
+    }
+    .player-info h4 {
+      margin:0;
+      font-size:.98rem;
+      font-weight:600;
+      color:#242c34;
+    }
+    .player-info p {
+      margin:0;
+      font-size:.78rem;
+      color:#6c757d;
+    }
+    .player-tags {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.4rem;
+      margin-bottom:.75rem;
+      margin-top:.3rem;
+    }
+    .player-tag {
+      font-size:.75rem;
+      padding:.25rem .55rem;
+      border-radius:999px;
+      background-color:#eef2ff;
+      color:#1d4ed8;
+      display:inline-flex;
+      align-items:center;
+      gap:.25rem;
+    }
+    .player-tag i { font-size:.8rem; }
+
+    .player-stats {
+      display:flex;
+      flex-wrap:wrap;
+      gap:.75rem;
+      font-size:.8rem;
+    }
+    .player-stat {
+      min-width:90px;
+    }
+    .player-stat-label {
+      color:#6c757d;
+      font-size:.72rem;
+    }
+    .player-stat-value {
+      font-weight:600;
+      color:#242c34;
+    }
+    .player-form {
+      margin-top:.65rem;
+      display:flex;
+      align-items:center;
+      gap:.4rem;
+      font-size:.75rem;
+      color:#6c757d;
+    }
+    .form-dot {
+      width:8px;
+      height:8px;
+      border-radius:50%;
+    }
+    .form-dot.win { background-color:#16a34a; }
+    .form-dot.draw { background-color:#fbbf24; }
+    .form-dot.loss { background-color:#dc2626; }
+
+  </style>
+</head>
+<body class="leaderboard-page">
+  <!-- Source Code Protection -->
+  <script src="protection.js"></script>
+  <!-- Header -->
+  <header class="header" id="header">
+  <nav class="nav container">
+    <div class="nav-logo">
+  <a href="index.html">
+      <img src="logo.png" alt="ClubConnect Logo" class="logo-img">
+  </a>
+</div>
+
+    <div class="nav-right">
+      <ul class="nav-menu" id="navMenu">
+        <li class="nav-item">
+          <a href="index.html" class="nav-link">Home</a>
+        </li>
+        <li class="nav-item">
+          <a href="features.html" class="nav-link">Features</a>
+        </li>
+        <li class="nav-item">
+          <a href="index.html#programs" class="nav-link">Programs</a>
+        </li>
+        <li class="nav-item">
+          <a href="teams.html" class="nav-link">Teams</a>
+        </li>
+        <li class="nav-item">
+          <a href="index.html#pricing" class="nav-link">Pricing</a>
+        </li>
+        <li class="nav-item">
+          <a href="leaderboards.html" class="nav-link active">Leaderboards</a>
+        </li>
+        <li class="nav-item">
+          <a href="contact.html" class="nav-link">Contact</a>
+        </li>
+      </ul>
+      <button class="btn btn-login" onclick="window.location.href='login.html'">
+        Login
+      </button>
+    </div>
+    <div class="nav-toggle" id="navToggle">
+      <i class="fas fa-bars"></i>
+    </div>
+  </nav>
+</header>
+
+
+  <!-- Page hero -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb">
+        <i class="fas fa-trophy"></i> &nbsp; Rankings / Clubs &amp; Players
+      </div>
+      <h1>Leaderboards for Every Sport</h1>
+      <p>Track the hottest clubs and standout players across football, cricket, basketball and hockey — updated in real time from your ClubConnect data.</p>
+    </div>
+  </section>
+
+  <!-- Club Leaderboard -->
+  <section>
+    <div class="container">
+      <div class="leaderboard-header-row">
+        <div>
+          <div class="leaderboard-title">
+            <i class="fas fa-shield-alt"></i> Club Leaderboard
+          </div>
+          <p class="leaderboard-subtitle">
+            Top performing clubs based on win rate, form and overall rating.
+          </p>
+        </div>
+        <div class="lb-filters">
+          <button class="lb-pill active"><i class="fas fa-globe"></i>All Sports</button>
+          <button class="lb-pill"><i class="fas fa-futbol"></i>Football</button>
+          <button class="lb-pill"><i class="fas fa-baseball-ball"></i>Cricket</button>
+          <button class="lb-pill"><i class="fas fa-basketball-ball"></i>Basketball</button>
+          <button class="lb-pill"><i class="fas fa-hockey-puck"></i>Hockey</button>
+        </div>
+      </div>
+
+      <div class="leaderboard-grid">
+        <div class="lb-card">
+          <div class="lb-table-header">
+            <div>#</div>
+            <div>Club</div>
+            <div>Sport / Region</div>
+            <div>Record</div>
+            <div>Rating</div>
+          </div>
+
+          <!-- Row 1 -->
+          <div class="lb-row">
+            <div class="lb-rank">
+              <span class="lb-rank-badge">1</span>
+            </div>
+            <div class="lb-club-info">
+              <div class="lb-club-avatar">
+                <i class="fas fa-futbol"></i>
+              </div>
+              <div class="lb-club-text">
+                <h4>Elite Football Academy</h4>
+                <p>Multi-age academy • 18 squads</p>
+              </div>
+            </div>
+            <div>
+              <span class="lb-tag">
+                <i class="fas fa-map-marker-alt"></i> Lahore • Football
+              </span>
+            </div>
+            <div class="lb-metric">
+              21–3–2
+              <span>W–D–L • Last 10: 8W</span>
+            </div>
+            <div class="lb-metric">
+              96
+              <span>Overall rating</span>
+            </div>
+          </div>
+
+          <!-- Row 2 -->
+          <div class="lb-row">
+            <div class="lb-rank">
+              <span class="lb-rank-badge silver">2</span>
+            </div>
+            <div class="lb-club-info">
+              <div class="lb-club-avatar">
+                <i class="fas fa-baseball-ball"></i>
+              </div>
+              <div class="lb-club-text">
+                <h4>Starline Cricket Club</h4>
+                <p>U16 &amp; U19 • Development + Elite</p>
+              </div>
+            </div>
+            <div>
+              <span class="lb-tag">
+                <i class="fas fa-map-marker-alt"></i> Karachi • Cricket
+              </span>
+            </div>
+            <div class="lb-metric">
+              17–4–4
+              <span>W–D–L • Last 10: 7W</span>
+            </div>
+            <div class="lb-metric">
+              92
+              <span>Overall rating</span>
+            </div>
+          </div>
+
+          <!-- Row 3 -->
+          <div class="lb-row">
+            <div class="lb-rank">
+              <span class="lb-rank-badge bronze">3</span>
+            </div>
+            <div class="lb-club-info">
+              <div class="lb-club-avatar">
+                <i class="fas fa-basketball-ball"></i>
+              </div>
+              <div class="lb-club-text">
+                <h4>City Hoops Academy</h4>
+                <p>Basketball • Boys &amp; Girls</p>
+              </div>
+            </div>
+            <div>
+              <span class="lb-tag">
+                <i class="fas fa-map-marker-alt"></i> Islamabad • Basketball
+              </span>
+            </div>
+            <div class="lb-metric">
+              15–6–3
+              <span>W–D–L • Last 10: 6W</span>
+            </div>
+            <div class="lb-metric">
+              89
+              <span>Overall rating</span>
+            </div>
+          </div>
+
+          <!-- Row 4 -->
+          <div class="lb-row">
+            <div class="lb-rank">
+            <span class="lb-rank-badge">4</span>
+           </div>
+            <div class="lb-club-info">
+              <div class="lb-club-avatar">
+                <i class="fas fa-hockey-puck"></i>
+              </div>
+              <div class="lb-club-text">
+                <h4>Northside Hockey Program</h4>
+                <p>High-performance • 6 squads</p>
+              </div>
+            </div>
+            <div>
+              <span class="lb-tag">
+                <i class="fas fa-map-marker-alt"></i> Rawalpindi • Hockey
+              </span>
+            </div>
+            <div class="lb-metric">
+              12–5–2
+              <span>W–D–L • Last 10: 5W</span>
+            </div>
+            <div class="lb-metric">
+              86
+              <span>Overall rating</span>
+            </div>
+          </div>
+
+          <!-- Row 5 -->
+          <div class="lb-row">
+            <div class="lb-rank">
+            <span class="lb-rank-badge">5</span>
+           </div>
+            <div class="lb-club-info">
+              <div class="lb-club-avatar">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="lb-club-text">
+                <h4>MultiSport Performance Club</h4>
+                <p>Football • Basketball • Hockey</p>
+              </div>
+            </div>
+            <div>
+              <span class="lb-tag">
+                <i class="fas fa-map-marker-alt"></i> Dubai • Multi-sport
+              </span>
+            </div>
+            <div class="lb-metric">
+              24–8–7
+              <span>All sports combined</span>
+            </div>
+            <div class="lb-metric">
+              84
+              <span>Overall rating</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Side summary card -->
+        <div class="lb-card">
+          <div class="lb-side-card-title">Club ranking signals</div>
+          <p class="leaderboard-subtitle" style="margin-bottom:.8rem;">
+            Rankings combine win rate, strength of schedule, player availability and form from the last 30 days.
+          </p>
+
+          <div class="lb-side-chip">
+            <span><i class="fas fa-percentage"></i> Win rate weight</span>
+            <span>45%</span>
+          </div>
+          <div class="lb-side-chip">
+            <span><i class="fas fa-dumbbell"></i> Strength of schedule</span>
+            <span>25%</span>
+          </div>
+          <div class="lb-side-chip">
+            <span><i class="fas fa-heartbeat"></i> Player availability</span>
+            <span>15%</span>
+          </div>
+          <div class="lb-side-chip">
+            <span><i class="fas fa-fire"></i> Recent form</span>
+            <span>15%</span>
+          </div>
+
+          <div style="margin-top:1.2rem;">
+            <div class="lb-side-card-title" style="margin-bottom:.35rem;">
+              Global snapshot
+            </div>
+            <p class="leaderboard-subtitle" style="margin-bottom:.5rem;">
+              Based on all clubs currently active in your ClubConnect environment.
+            </p>
+            <div class="lb-side-chip">
+              <span><i class="fas fa-building"></i> Tracked clubs</span>
+              <span>124</span>
+            </div>
+            <div class="lb-side-chip">
+              <span><i class="fas fa-running"></i> Registered athletes</span>
+              <span>3,480</span>
+            </div>
+            <div class="lb-badge-overall">
+              <i class="fas fa-star"></i> Avg. club rating: 81 / 100
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Player Leaderboard -->
+  <section style="padding-top:2.5rem;">
+    <div class="container">
+      <div class="leaderboard-header-row">
+        <div>
+          <div class="leaderboard-title">
+            <i class="fas fa-user-ninja"></i> Player Leaderboard
+          </div>
+          <p class="leaderboard-subtitle">
+            Top players ranked using goals, assists, impact, consistency and coach ratings.
+          </p>
+        </div>
+        <div class="lb-filters">
+          <button class="lb-pill active"><i class="fas fa-globe"></i>All Positions</button>
+          <button class="lb-pill"><i class="fas fa-bullseye"></i>Attackers</button>
+          <button class="lb-pill"><i class="fas fa-shield-alt"></i>Defenders</button>
+          <button class="lb-pill"><i class="fas fa-hands-helping"></i>Playmakers</button>
+        </div>
+      </div>
+
+      <div class="player-grid">
+        <!-- Player 1 -->
+        <div class="player-card">
+          <div class="player-rank-chip">
+            <i class="fas fa-trophy"></i> #1 Overall
+          </div>
+          <div class="player-header">
+            <div class="player-avatar">AH</div>
+            <div class="player-info">
+              <h4>Ali Hassan</h4>
+              <p>Forward • Elite Football Academy</p>
+            </div>
+          </div>
+          <div class="player-tags">
+            <span class="player-tag"><i class="fas fa-futbol"></i>Football</span>
+            <span class="player-tag"><i class="fas fa-bolt"></i>High impact</span>
+          </div>
+          <div class="player-stats">
+            <div class="player-stat">
+              <div class="player-stat-label">Matches</div>
+              <div class="player-stat-value">18</div>
+            </div>
+            <div class="player-stat">
+              <div class="player-stat-label">Goals</div>
+              <div class="player-stat-value">21</div>
+            </div>
+            <div class="player-stat">
+              <div class="player-stat-label">Assists</div>
+              <div class="player-stat-value">9</div>
+            </div>
+            <div class="player-stat">
+              <div class="player-stat-label">Coach rating</div>
+              <div class="player-stat-value">9.7 / 10</div>
+            </div>
+          </div>
+          <div class="player-form">
+            Recent form:
+            <span class="form-dot win"></span>
+            <span class="form-dot win"></span>
+            <span class="form-dot win"></span>
+            <span class="form-dot draw"></span>
+            <span class="form-dot win"></span>
+          </div>
+        </div>
+
+        <!-- Player 2 -->
+        <div class="player-card">
+          <div class="player-rank-chip">
+            <i class="fas fa-trophy"></i> #2 Overall
+          </div>
+          <div class="player-header">
+            <div class="player-avatar">SZ</div>
+            <div class="player-info">
+              <h4>Sara Zahid</h4>
+              <p>Point Guard • City Hoops Academy</p>
+            </div>
+          </div>
+          <div class="player-tags">
+            <span class="player-tag"><i class="fas fa-basketball-ball"></i>Basketball</span>
+            <span class="player-tag"><i class="fas fa-hands-helping"></i>Playmaker</span>
+          </div>
+          <div class="player-stats">
+            <div class="player-stat">
+              <div class="player-stat-label">Matches</div>
+              <div class="player-stat-value">16</div>
+            </div>
+            <div class="player-stat">
+              <div class="player-stat-label">PPG</div>
+              <div class="player-stat-value">18.4</div>
+            </div>
+            <div class="player-stat">
+              <div class="player-stat-label">Assists</div>
+              <div class="player-stat-value">7.1</div>
+            </div>
+            <div class="player-stat">
+              <div class="player-stat-label">Coach rating</div>
+              <div class="player-stat-value">9.5 / 10</div>
+            </div>
+          </div>
+          <div class="player-form">
+            Recent form:
+            <span class="form-dot win"></span>
+            <span class="form-dot win"></span>
+            <span class="form-dot loss"></span>
+            <span class="form-dot win"></span>
+            <span class="form-dot win"></span>
+          </div>
+        </div>
+
+        <!-- Player 3 -->
+        <div class="player-card">
+          <div class="player-rank-chip">
+            <i class="fas fa-trophy"></i> #3 Overall
+          </div>
+          <div class="player-header">
+            <div class="player-avatar">FK</div>
+            <div class="player-info">
+              <h4>Faizan Khan</h4>
+              <p>All-rounder • Starline Cricket Club</p>
+            </div>
+          </div>
+          <div class="player-tags">
+            <span class="player-tag"><i class="fas fa-baseball-ball"></i>Cricket</span>
+            <span class="player-tag"><i class="fas fa-burn"></i>Clutch performer</span>
+          </div>
+          <div class="player-stats">
+            <div class="player-stat">
+              <div class="player-stat-label">Matches</div>
+              <div class="player-stat-value">14</div>
+            </div>
+            <div class="player-stat">
+              <div class="player-stat-label">Runs</div>
+              <div class="player-stat-value">612</div>
+            </div>
+            <div class="player-stat">
+              <div class="player-stat-label">Wickets</div>
+              <div class="player-stat-value">19</div>
+            </div>
+            <div class="player-stat">
+              <div class="player-stat-label">Coach rating</div>
+              <div class="player-stat-value">9.3 / 10</div>
+            </div>
+          </div>
+          <div class="player-form">
+            Recent form:
+            <span class="form-dot win"></span>
+            <span class="form-dot draw"></span>
+            <span class="form-dot win"></span>
+            <span class="form-dot win"></span>
+            <span class="form-dot loss"></span>
+          </div>
+        </div>
+
+        <!-- Player 4 -->
+        <div class="player-card">
+          <div class="player-rank-chip">
+            <i class="fas fa-trophy"></i> #4 Overall
+          </div>
+          <div class="player-header">
+            <div class="player-avatar">NH</div>
+            <div class="player-info">
+              <h4>Nimra Hussain</h4>
+              <p>Midfielder • MultiSport Performance Club</p>
+            </div>
+          </div>
+          <div class="player-tags">
+            <span class="player-tag"><i class="fas fa-futbol"></i>Football</span>
+            <span class="player-tag"><i class="fas fa-hands-helping"></i>Playmaker</span>
+          </div>
+          <div class="player-stats">
+            <div class="player-stat">
+              <div class="player-stat-label">Matches</div>
+              <div class="player-stat-value">19</div>
+            </div>
+            <div class="player-stat">
+              <div class="player-stat-label">Key passes</div>
+              <div class="player-stat-value">52</div>
+            </div>
+            <div class="player-stat">
+              <div class="player-stat-label">Assists</div>
+              <div class="player-stat-value">13</div>
+            </div>
+            <div class="player-stat">
+              <div class="player-stat-label">Coach rating</div>
+              <div class="player-stat-value">9.1 / 10</div>
+            </div>
+          </div>
+          <div class="player-form">
+            Recent form:
+            <span class="form-dot win"></span>
+            <span class="form-dot win"></span>
+            <span class="form-dot draw"></span>
+            <span class="form-dot win"></span>
+            <span class="form-dot draw"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <div class="container">
+      <div class="cta-content">
+        <h2 class="cta-title">Connect your real data to these leaderboards</h2>
+        <p class="cta-subtitle">
+          Once you plug your club into ClubConnect, these rankings update automatically from your fixtures, stats and attendance.
+        </p>
+        <button class="btn btn-primary btn-lg" onclick="window.location.href='signup.html'">
+          Start with Your First Club
+        </button>
+        <p class="cta-note">Bring in teams, players and results in minutes — no spreadsheets needed.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer (same style as other pages) -->
+  <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <div class="footer-logo">
+                        <img src="logo.png" alt="ClubConnect Logo">
+                    </div>
+                    <p class="footer-tagline">
+                        ClubConnect – the unified platform for managing multi-sport clubs, academies and training centers.
+                    </p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-title">Product</h4>
+                    <ul class="footer-links">
+                        <li><a href="features.html">Features</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#">Demo</a></li>
+
+                        <li><a href="#">Mobile Apps</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-title">Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Documentation</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-title">Company</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Press Kit</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-title">Newsletter</h4>
+                    <p class="footer-newsletter-text">Stay updated with new features and success stories.</p>
+                    <form class="newsletter-form" id="newsletterForm">
+  <input
+    type="email"
+    placeholder="Enter your email"
+    class="newsletter-input"
+    id="newsletterEmail"
+  >
+  <button type="submit" class="btn btn-primary" id="newsletterBtn">
+    Subscribe
+  </button>
+  <small id="newsletterMsg" class="newsletter-msg"></small>
+</form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-copyright">
+                    &copy; 2025 ClubConnect. All rights reserved.
+                </p>
+                <div class="footer-legal">
+  <a href="privacy.html">Privacy Policy</a>
+  <a href="terms.html">Terms of Service</a>
+  <a href="cookies.html">Cookie Policy</a>
+</div>
+
+            </div>
+        </div>
+    </footer>
+  <!-- Back To Top -->
+  <button class="back-to-top" id="backToTop">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+
+  <script src="app.js"></script>
+  <script type="module">
+  import {
+    initializeApp,
+    getApps,
+    getApp
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    serverTimestamp,
+    query,
+    where,
+    getDocs
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  // 🔹 Same Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyD8mSGezxer6j46O90_IsJOpUgu5KI0HnU",
+    authDomain: "clubconnect-fc50f.firebaseapp.com",
+    projectId: "clubconnect-fc50f",
+    storageBucket: "clubconnect-fc50f.firebasestorage.app",
+    messagingSenderId: "419240671350",
+    appId: "1:419240671350:web:69f7113d686e7f3e4a8757",
+    measurementId: "G-623LVNVKBG"
+  };
+
+  // ✅ Reuse app if already initialized
+  const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  const form       = document.getElementById("newsletterForm");
+  const emailInput = document.getElementById("newsletterEmail");
+  const btn        = document.getElementById("newsletterBtn");
+  const msgEl      = document.getElementById("newsletterMsg");
+
+  function setLoading(isLoading) {
+    if (!btn || !form) return;
+    btn.disabled = isLoading;
+    form.classList.toggle("is-loading", isLoading);
+    if (isLoading) {
+      btn.dataset.originalText = btn.textContent;
+      btn.innerHTML = '<i class="fas fa-futbol spinning-ball"></i> Subscribing…';
+    } else {
+      btn.innerHTML = btn.dataset.originalText || "Subscribe";
+    }
+  }
+
+  function showNewsletterMsg(text, type = "info") {
+    if (!msgEl) return;
+    msgEl.textContent = text;
+    msgEl.classList.remove("msg-error", "msg-success");
+    if (type === "error") {
+      msgEl.classList.add("msg-error");
+    } else if (type === "success") {
+      msgEl.classList.add("msg-success");
+    }
+  }
+
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  if (form && emailInput && btn) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const emailRaw = emailInput.value.trim();
+      const email    = emailRaw.toLowerCase();   // normalize
+
+      if (!email) {
+        showNewsletterMsg("Please enter your email.", "error");
+        return;
+      }
+      if (!isValidEmail(email)) {
+        showNewsletterMsg("Please enter a valid email address.", "error");
+        return;
+      }
+
+      setLoading(true);
+      showNewsletterMsg("Checking subscription…", "info");
+
+      try {
+        // 🔍 1) Check if email already exists
+        const q = query(
+          collection(db, "newsletterSubscribers"),
+          where("email", "==", email)
+        );
+        const snap = await getDocs(q);
+
+        if (!snap.empty) {
+          // Already subscribed
+          showNewsletterMsg("This email is already subscribed.", "error");
+          setLoading(false);
+          return;
+        }
+
+        // ✅ 2) Not found → create new subscription
+        await addDoc(collection(db, "newsletterSubscribers"), {
+          email,
+          createdAt: serverTimestamp(),
+          source: "homepage"
+        });
+
+        showNewsletterMsg("You’re in! We’ll keep you updated.", "success");
+        emailInput.value = "";
+      } catch (err) {
+        console.error("Newsletter subscribe error:", err);
+        showNewsletterMsg("Could not subscribe. Please try again later.", "error");
+      } finally {
+        setLoading(false);
+      }
+    });
+  }
+</script>
+
+</body>
+</html>

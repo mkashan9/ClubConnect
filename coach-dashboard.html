@@ -1,0 +1,2377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClubConnect – Coach Dashboard</title>
+
+  <!-- Base theme (same as homepage) -->
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+   
+  <!-- Charts for performance tracker -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    .dashboard-theme {
+      --color-surface: #ffffff;
+      --color-text: #111827;
+      --color-text-secondary: #6b7280;
+      --color-card-border: rgba(15, 23, 42, 0.08);
+      --color-border: rgba(15, 23, 42, 0.08);
+
+      background-color: #f5f5f5;
+      color: var(--color-text);
+    }
+
+    body {
+      font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      min-height: calc(100vh - 72px);
+      margin-top: 4.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Sidebar */
+    .dashboard-sidebar {
+      background: linear-gradient(180deg, #155598, #1b3358);
+      color: #fff;
+      padding: 1.5rem 1.3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .sidebar-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .sidebar-title i {
+      font-size: 1.2rem;
+    }
+
+    .sidebar-user {
+      padding: 0.9rem 0.8rem;
+      border-radius: 1rem;
+      background-color: rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .sidebar-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .sidebar-user-meta {
+      font-size: 0.8rem;
+      line-height: 1.2;
+    }
+
+    .sidebar-user-meta strong {
+      display: block;
+      font-size: 0.88rem;
+    }
+
+    .sidebar-user-meta span {
+      color: rgba(255,255,255,0.8);
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .sidebar-link {
+      border-radius: 999px;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      border: 1px solid transparent;
+      cursor: pointer;
+      background-color: transparent;
+      color: rgba(255,255,255,0.88);
+      text-align: left;
+    }
+
+    .sidebar-link i {
+      font-size: 0.95rem;
+      width: 18px;
+      text-align: center;
+    }
+
+    .sidebar-link.active,
+    .sidebar-link:hover {
+      background-color: rgba(255,255,255,0.14);
+      border-color: rgba(255,255,255,0.3);
+      color: #ffffff;
+    }
+
+    /* Main */
+    .dashboard-main {
+      padding: 2rem 2.3rem;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-main {
+        padding: 1.5rem 1rem 3rem;
+      }
+    }
+
+    .view-header {
+      margin-bottom: 1.3rem;
+    }
+
+    .view-header h1 {
+      font-size: 2.1rem;
+      margin: 0 0 0.4rem;
+      color: var(--color-text);
+    }
+
+    .view-header p {
+      margin: 0;
+      font-size: 0.98rem;
+      color: var(--color-text-secondary);
+      max-width: 680px;
+    }
+
+    .dashboard-card {
+      background-color: var(--color-surface);
+      border-radius: 1.25rem;
+      border: 1px solid var(--color-card-border);
+      box-shadow: var(--shadow-sm);
+      padding: 1.8rem 2rem;
+    }
+
+    @media (max-width: 900px) {
+      .dashboard-card {
+        padding: 1.4rem 1.3rem;
+      }
+    }
+
+    .card-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .card-title-main {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .card-title-main i {
+      font-size: 1.1rem;
+      color: var(--clr-primary);
+    }
+
+    .card-title-main h2 {
+      font-size: 1.1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-text-secondary);
+      margin: 0;
+    }
+
+    .card-chip {
+      font-size: 0.78rem;
+      padding: 0.23rem 0.7rem;
+      border-radius: 999px;
+      background-color: rgba(21, 101, 192, 0.08);
+      color: var(--clr-primary);
+      white-space: nowrap;
+    }
+
+    .card-subtext {
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+      margin-bottom: 1.1rem;
+    }
+
+    .teacher-banner {
+      border-radius: 1rem;
+      padding: 0.8rem 1rem;
+      background: rgba(33, 128, 129, 0.08);
+      border: 1px solid rgba(33, 128, 129, 0.35);
+      font-size: 0.9rem;
+      color: #0f766e;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .teacher-banner i {
+      font-size: 1.1rem;
+    }
+
+    /* Forms / controls */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem 1.5rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--color-text-secondary);
+      margin-bottom: 0.18rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.55rem 0.65rem;
+      border-radius: 0.7rem;
+      border: 1px solid var(--color-border-secondary);
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .form-group textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .form-hint {
+      font-size: 0.82rem;
+      color: var(--color-text-secondary);
+      margin-top: 0.4rem;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.3rem;
+    }
+
+    .btn-pill {
+      border-radius: 999px;
+      border: 1px solid var(--color-border-secondary);
+      background-color: #ffffff;
+      padding: 0.35rem 0.9rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .btn-pill-primary {
+      border-color: var(--clr-primary);
+      background-color: var(--clr-primary);
+      color: #ffffff;
+    }
+
+    .btn-pill-danger {
+      border-color: rgba(192, 21, 47, 0.7);
+      background-color: rgba(192, 21, 47, 0.9);
+      color: #ffffff;
+    }
+
+    .btn-pill-ghost {
+      background-color: #ffffff;
+    }
+
+    /* Tables */
+    .simple-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    .simple-table th,
+    .simple-table td {
+      padding: 0.55rem 0.4rem;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    .simple-table th {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      color: var(--color-text-secondary);
+      letter-spacing: 0.06em;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+    }
+
+    .status-pill--main {
+      background-color: rgba(21, 101, 192, 0.14);
+      color: var(--clr-primary);
+    }
+
+    .status-pill--extra {
+      background-color: rgba(107,114,128,0.14);
+      color: rgb(55,65,81);
+    }
+
+    .status-pill--good {
+      background-color: rgba(34,197,94,0.14);
+      color: rgb(22,163,74);
+    }
+
+    .status-pill--needs {
+      background-color: rgba(245,158,11,0.14);
+      color: rgb(180,83,9);
+    }
+
+    /* Overview KPIs */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .kpi-card {
+      border-radius: 1rem;
+      border: 1px solid rgba(15,23,42,0.06);
+      padding: 0.9rem 1rem;
+      background-color: #f9fafb;
+    }
+
+    .kpi-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-text-secondary);
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .kpi-label i {
+      color: var(--clr-primary);
+    }
+
+    .kpi-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--color-text);
+      margin-bottom: 0.15rem;
+    }
+
+    .kpi-meta {
+      font-size: 0.8rem;
+      color: var(--color-text-secondary);
+    }
+
+    /* Performance chart */
+    .chart-wrapper {
+      margin-top: 1rem;
+      height: 260px;
+    }
+
+    .chart-wrapper canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    /* Views */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* Make header nav text visible */
+    .header,
+    .nav-link,
+    .btn-login {
+      color: black;
+    }
+    /* Floating chat button */
+.chat-toggle-btn {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 4.5rem; /* above back-to-top button */
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, #155598, #1b3358);
+  color: #ffffff;
+  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 40;
+}
+
+.chat-toggle-btn i {
+  font-size: 1.2rem;
+}
+
+/* Chat panel */
+.chat-panel {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 5.5rem;
+  width: 320px;
+  max-width: 95vw;
+  height: 420px;
+  border-radius: 1.25rem;
+  background: rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.9);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  color: #e5e7eb;
+  z-index: 50;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.chat-panel.open {
+  display: flex;
+}
+
+.chat-panel-header {
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.chat-panel-header-main {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chat-panel-header-main i {
+  color: #34d399;
+}
+
+.chat-panel-header-main h3 {
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.chat-panel-header span {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.chat-panel-close {
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+}
+
+.chat-panel-close i {
+  font-size: 1rem;
+}
+
+.chat-panel-messages {
+  flex: 1;
+  padding: 0.7rem 0.8rem;
+  overflow-y: auto;
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Single message bubble */
+.chat-msg {
+  max-width: 80%;
+  padding: 0.45rem 0.6rem;
+  border-radius: 0.8rem;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(55, 65, 81, 0.9);
+}
+
+.chat-msg.me {
+  align-self: flex-end;
+  background: linear-gradient(135deg, #155598, #1e40af);
+  border-color: rgba(191, 219, 254, 0.9);
+}
+
+.chat-msg-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.7rem;
+  margin-bottom: 0.15rem;
+  color: #cbd5f5;
+}
+
+.chat-msg-body {
+  color: #f9fafb;
+  word-wrap: break-word;
+}
+
+.chat-msg-meta {
+  font-size: 0.7rem;
+  color: #9ca3af;
+  margin-top: 0.15rem;
+}
+
+/* Input area */
+.chat-panel-input {
+  border-top: 1px solid rgba(51, 65, 85, 0.9);
+  padding: 0.55rem 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.chat-panel-input textarea {
+  resize: none;
+  min-height: 48px;
+  max-height: 90px;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(75, 85, 99, 0.9);
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+  padding: 0.45rem 0.6rem;
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.chat-panel-input-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.chat-panel-input-row span {
+  font-size: 0.7rem;
+  color: #6b7280;
+}
+
+.sidebar-link.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+.chat-send-btn {
+  border-radius: 999px;
+  padding: 0.32rem 0.9rem;
+  border: none;
+  background: #22c55e;
+  color: #022c22;
+  font-size: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  cursor: pointer;
+}
+
+.chat-send-btn i {
+  font-size: 0.8rem;
+}
+
+/* Small screen tweaks */
+@media (max-width: 768px) {
+  .chat-panel {
+    right: 0.8rem;
+    bottom: 4.8rem;
+    width: calc(100% - 1.6rem);
+    height: 60vh;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <!-- Source Code Protection -->
+  <script src="protection.js"></script>
+  <!-- Top header -->
+    <header class="header" id="header">
+  <nav class="nav container">
+    <div class="nav-logo">
+  <a href="index.html">
+      <img src="logo.png" alt="ClubConnect Logo" class="logo-img">
+  </a>
+</div>
+
+    <div class="nav-right">
+      <ul class="nav-menu" id="navMenu">
+        <li class="nav-item">
+          <a href="index.html" class="nav-link active">Home</a>
+        </li>
+        <li class="nav-item">
+          <a href="features.html" class="nav-link">Features</a>
+        </li>
+        <li class="nav-item">
+          <a href="#programs" class="nav-link">Programs</a>
+        </li>
+        <li class="nav-item">
+          <a href="teams.html" class="nav-link">Teams</a>
+        </li>
+        <li class="nav-item">
+          <a href="#pricing" class="nav-link">Pricing</a>
+        </li>
+        <li class="nav-item">
+          <a href="leaderboards.html" class="nav-link">Leaderboards</a>
+        </li>
+        <li class="nav-item">
+          <a href="contact.html" class="nav-link">Contact</a>
+        </li>
+      <button class="btn btn-login" id="coachLogoutTopBtn">Logout</button>
+      
+    </div>
+    <div class="nav-toggle" id="navToggle">
+      <i class="fas fa-bars"></i>
+    </div>
+  </nav>
+</header>
+
+  <!-- DASHBOARD LAYOUT -->
+  <div class="dashboard-layout dashboard-theme" id="coachDashboardLayout" style="display:none;">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar">
+      <div class="sidebar-title">
+        <i class="fas fa-chalkboard-teacher"></i>
+        <span>Welcome Coach!</span>
+      </div>
+
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="coachAvatarInitial">C</div>
+        <div class="sidebar-user-meta">
+          <strong id="coachUserName">Coach</strong>
+          <span id="coachEmailLabel">coach@example.com</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="sidebar-link active" data-view-target="overview">
+          <i class="fas fa-gauge"></i> Overview
+        </button>
+        <button class="sidebar-link" data-view-target="announcements">
+  <i class="fas fa-bullhorn"></i> Announcements
+</button>
+         <button class="sidebar-link" data-view-target="profile">
+          <i class="fas fa-people-group"></i> Profile
+        </button>
+       
+        <button class="sidebar-link" data-view-target="team">
+          <i class="fas fa-people-group"></i> Team Management
+        </button>
+        <button class="sidebar-link" data-view-target="players">
+          <i class="fas fa-users"></i> Players & Feedback
+        </button>
+        <button class="sidebar-link" data-view-target="club-requests">
+  <i class="fas fa-handshake"></i> Club Requests
+</button>
+
+        <button class="sidebar-link" data-view-target="training">
+          <i class="fas fa-dumbbell"></i> Training Sessions
+        </button>
+        <button class="sidebar-link" data-view-target="performance">
+          <i class="fas fa-chart-line"></i> Performance Tracker
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Main -->
+    <main class="dashboard-main">
+      <!-- OVERVIEW -->
+      <section class="view active" id="view-overview">
+        <div class="view-header">
+          <h1>Overview</h1>
+          <p>Quick glance at your squad, upcoming sessions and how your players are progressing.</p>
+        </div>
+
+        <div class="dashboard-card">
+          <!-- Teacher respect banner -->
+          <div class="teacher-banner">
+            <i class="fas fa-heart"></i>
+            <div>
+              <strong>We respect coaches & teachers.</strong><br>
+              ClubConnect does not charge any registration fee from coaches. Your focus stays on building champions.
+            </div>
+          </div>
+
+          <div class="card-title-row">
+            <div class="card-title-main">
+              <i class="fas fa-gauge-high"></i>
+              <h2>COACH OVERVIEW</h2>
+            </div>
+            <span class="card-chip">Today’s snapshot</span>
+          </div>
+
+          <div class="kpi-row">
+            <div class="kpi-card">
+              <div class="kpi-label"><i class="fas fa-users"></i> Squad size</div>
+              <div class="kpi-value">18</div>
+              <div class="kpi-meta">Players under your coaching</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label"><i class="fas fa-clipboard-check"></i> Sessions today</div>
+              <div class="kpi-value">2</div>
+              <div class="kpi-meta">Planned in training calendar</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label"><i class="fas fa-medal"></i> Form index</div>
+              <div class="kpi-value">7.9</div>
+              <div class="kpi-meta">Average rating of players (last 5 matches)</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label"><i class="fas fa-user-check"></i> Attendance</div>
+              <div class="kpi-value">92%</div>
+              <div class="kpi-meta">Last 30 days training attendance</div>
+            </div>
+          </div>
+
+          <p class="card-subtext">
+            Use the left navigation to manage team composition, send feedback, build training plans and track player performance.
+          </p>
+        </div>
+      </section>
+      <!-- ANNOUNCEMENTS -->
+<section class="view" id="view-announcements">
+  <div class="view-header">
+    <h1>Announcements</h1>
+    <p>Send quick updates to your players. They’ll appear on the players’ announcement board.</p>
+  </div>
+
+  <div class="dashboard-card">
+    <div class="card-title-row">
+      <div class="card-title-main">
+        <i class="fas fa-bullhorn"></i>
+        <h2>COACH ANNOUNCEMENTS</h2>
+      </div>
+      <span class="card-chip">Players only</span>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="coachAnnouncementTitle">Title</label>
+        <input id="coachAnnouncementTitle" type="text" placeholder="e.g. Extra fitness session">
+      </div>
+      <div class="form-group">
+        <label for="coachAnnouncementSport">Sport (optional)</label>
+        <select id="coachAnnouncementSport">
+          <option value="">All sports</option>
+          <option>Football</option>
+          <option>Cricket</option>
+          <option>Basketball</option>
+          <option>Hockey</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="coachAnnouncementMessage">Message</label>
+      <textarea id="coachAnnouncementMessage" placeholder="Details that your players should know."></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-pill btn-pill-primary" id="coachPostAnnouncementBtn">
+        <i class="fas fa-paper-plane"></i> Post announcement
+      </button>
+    </div>
+
+    <div class="form-hint">
+      In real app, this will be scoped to your team/club. For now, all players see these messages.
+    </div>
+  </div>
+</section>
+
+
+  <section class="view" id="view-club-requests">
+  <div class="view-header">
+    <h1>Club Requests</h1>
+    <p>Club owners who want you as head coach. Accept to manage their team.</p>
+  </div>
+
+  <div class="dashboard-card">
+    <div class="card-title-row">
+      <div class="card-title-main">
+        <i class="fas fa-handshake"></i>
+        <h2>PENDING REQUESTS</h2>
+      </div>
+      <span class="card-chip">Owner → Coach</span>
+    </div>
+
+    <table class="simple-table" id="coachRequestsTable">
+      <thead>
+        <tr>
+          <th>Club</th>
+          <th>Owner</th>
+          <th>When</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Filled from Firestore -->
+      </tbody>
+    </table>
+
+    <div class="form-hint">
+      Once accepted, you will become head coach of that club and can manage their team.
+    </div>
+  </div>
+</section>
+
+  <!-- COACH PROFILE -->
+<section class="view" id="view-profile">
+  <div class="view-header">
+    <h1>Coach Profile</h1>
+    <p>Update your coaching experience. Owners will see this while hiring you.</p>
+  </div>
+
+  <div class="dashboard-card">
+    <div class="card-title-row">
+      <div class="card-title-main">
+        <i class="fas fa-user-tie"></i>
+        <h2>COACH PROFILE</h2>
+      </div>
+      <span class="card-chip">Visible to owners</span>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="coachExpYearsInput">Experience (years)</label>
+        <input id="coachExpYearsInput" type="number" min="0" placeholder="e.g. 3">
+      </div>
+      <div class="form-group">
+        <label for="coachCertsInput">Certifications (optional)</label>
+        <input id="coachCertsInput" type="text" placeholder="e.g. AFC C License">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="coachBioInput">Short coaching bio</label>
+      <textarea id="coachBioInput" placeholder="Describe your coaching style, achievements, and philosophy."></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-pill btn-pill-primary" id="saveCoachProfileBtn">
+        <i class="fas fa-save"></i> Save coach profile
+      </button>
+    </div>
+
+    <div class="form-hint">
+      These details are stored in your user document and seen by club owners in the hiring list.
+    </div>
+  </div>
+</section>
+
+
+      <!-- TEAM MANAGEMENT -->
+      <section class="view" id="view-team">
+        <div class="view-header">
+          <h1>Team Management</h1>
+          <p>Decide which players are in the main squad and who stays as extra / reserve.</p>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-title-row">
+            <div class="card-title-main">
+              <i class="fas fa-people-group"></i>
+              <h2>SQUAD STRUCTURE</h2>
+            </div>
+            <span class="card-chip">Main vs Extra</span>
+          </div>
+
+          <p class="card-subtext">
+            Move players between <strong>Main Team</strong> and <strong>Extra Squad</strong>. Later this will sync with club owner and matchday lineups.
+          </p>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Main team (first XI / core)</label>
+              <table class="simple-table" id="mainTeamTable">
+                <thead>
+                  <tr>
+                    <th>Player</th>
+                    <th>Position</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Hamza Khan</td>
+                    <td>Forward</td>
+                    <td><button class="btn-pill btn-pill-ghost btn-move-to-extra"><i class="fas fa-arrow-right"></i> Move to extra</button></td>
+                  </tr>
+                  <tr>
+                    <td>Bilal Ahmed</td>
+                    <td>Goalkeeper</td>
+                    <td><button class="btn-pill btn-pill-ghost btn-move-to-extra"><i class="fas fa-arrow-right"></i> Move to extra</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="form-group">
+              <label>Extra / reserves</label>
+              <table class="simple-table" id="extraTeamTable">
+                <thead>
+                  <tr>
+                    <th>Player</th>
+                    <th>Position</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Ali Raza</td>
+                    <td>Midfielder</td>
+                    <td><button class="btn-pill btn-pill-ghost btn-move-to-main"><i class="fas fa-arrow-left"></i> Move to main</button></td>
+                  </tr>
+                  <tr>
+                    <td>Zain</td>
+                    <td>Defender</td>
+                    <td><button class="btn-pill btn-pill-ghost btn-move-to-main"><i class="fas fa-arrow-left"></i> Move to main</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="form-hint">
+            In the real app, this will store the squad role for each player in Firestore and reflect in matchday lineups.
+          </div>
+        </div>
+      </section>
+
+      <!-- PLAYERS & FEEDBACK -->
+      <section class="view" id="view-players">
+        <div class="view-header">
+          <h1>Players & Feedback</h1>
+          <p>Add / remove players and send feedback that will appear in their dashboards.</p>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-title-row">
+            <div class="card-title-main">
+              <i class="fas fa-users"></i>
+              <h2>PLAYERS & FEEDBACK</h2>
+            </div>
+            <span class="card-chip">Communication channel</span>
+          </div>
+
+          <!-- Players table -->
+          <table class="simple-table" id="coachPlayersTable">
+            <thead>
+              <tr>
+                <th>Player</th>
+                <th>Position</th>
+                <th>Last feedback</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="coachPlayersTableBody">
+              <!-- Rows loaded from Firestore -->
+            </tbody>
+          </table>
+
+          <hr style="margin:1.3rem 0; border:none; border-top:1px solid rgba(0,0,0,0.06);">
+
+          <!-- Add player (from club pool or ID) -->
+          
+            <div class="form-grid">
+  <div class="form-group">
+    <label for="registeredPlayerSelect">Add registered player to your squad</label>
+    <select id="registeredPlayerSelect">
+      <option value="">Select a player…</option>
+      <!-- options will be loaded from Firestore -->
+    </select>
+    <div class="form-hint">
+      Only players with approved & paid accounts appear here.
+    </div>
+  </div>
+</div>
+
+<div class="btn-row">
+  <button class="btn-pill btn-pill-primary" id="addPlayerBtn">
+    <i class="fas fa-user-plus"></i> Add player
+  </button>
+</div>
+
+
+          <div class="form-hint">
+            </div>
+
+          <hr style="margin:1.3rem 0; border:none; border-top:1px solid rgba(0,0,0,0.06);">
+
+          <!-- Feedback form -->
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="feedbackPlayerSelect">Send feedback to player</label>
+              <select id="feedbackPlayerSelect">
+                <option value="">Select player…</option>
+                <!-- Options loaded from Firestore -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="feedbackTypeSelect">Area</label>
+              <select id="feedbackTypeSelect">
+                <option>Overall</option>
+                <option>Fitness</option>
+                <option>Tactical</option>
+                <option>Discipline</option>
+                <option>Mindset</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="feedbackText">Feedback message</label>
+            <textarea id="feedbackText" placeholder="Specific, honest and constructive feedback the player will see."></textarea>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-pill btn-pill-primary" id="sendFeedbackBtn">
+              <i class="fas fa-paper-plane"></i> Send feedback
+            </button>
+          </div>
+
+          <div class="form-hint">
+            Later this will create a feedback entry under that player’s document so it appears in their dashboard timeline.
+          </div>
+        </div>
+      </section>
+
+      <!-- TRAINING SESSIONS -->
+      <section class="view" id="view-training">
+        <div class="view-header">
+          <h1>Training Sessions</h1>
+          <p>Create and manage sessions for fitness, tactics, drills and match preparation.</p>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-title-row">
+            <div class="card-title-main">
+              <i class="fas fa-dumbbell"></i>
+              <h2>TRAINING SCHEDULE</h2>
+            </div>
+            <span class="card-chip">Coaching plan</span>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="sessionDateInput">Session date</label>
+              <input id="sessionDateInput" type="date">
+            </div>
+            <div class="form-group">
+              <label for="sessionTimeInput">Time</label>
+              <input id="sessionTimeInput" type="time">
+            </div>
+            <div class="form-group">
+              <label for="sessionTypeSelect">Focus</label>
+              <select id="sessionTypeSelect">
+                <option>Fitness & conditioning</option>
+                <option>Tactical drills</option>
+                <option>Set-pieces</option>
+                <option>Small-sided games</option>
+                <option>Recovery session</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="sessionIntensitySelect">Intensity</label>
+              <select id="sessionIntensitySelect">
+                <option>Low</option>
+                <option>Medium</option>
+                <option>High</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="sessionNotes">Notes</label>
+            <textarea id="sessionNotes" placeholder="Add drills, targets, or special instructions."></textarea>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-pill btn-pill-primary" id="createSessionBtn">
+              <i class="fas fa-plus-circle"></i> Create session
+            </button>
+          </div>
+
+          <div class="form-hint">
+            Later this will store in Firestore and appear in both your dashboard and players’ schedules.
+          </div>
+
+          <hr style="margin:1.3rem 0; border:none; border-top:1px solid rgba(0,0,0,0.06);">
+
+          <table class="simple-table" id="sessionsTable">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Focus</th>
+                <th>Intensity</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2025-02-20</td>
+                <td>16:00</td>
+                <td>Fitness & conditioning</td>
+                <td>High</td>
+                <td><button class="btn-pill btn-pill-ghost btn-delete-session"><i class="fas fa-trash"></i> Remove</button></td>
+              </tr>
+              <tr>
+                <td>2025-02-22</td>
+                <td>17:30</td>
+                <td>Set-pieces</td>
+                <td>Medium</td>
+                <td><button class="btn-pill btn-pill-ghost btn-delete-session"><i class="fas fa-trash"></i> Remove</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PERFORMANCE TRACKER -->
+      <section class="view" id="view-performance">
+        <div class="view-header">
+          <h1>Performance Tracker</h1>
+          <p>Compare players on key metrics like fitness, form, discipline and attendance.</p>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="card-title-row">
+            <div class="card-title-main">
+              <i class="fas fa-chart-line"></i>
+              <h2>PLAYER PERFORMANCE</h2>
+            </div>
+            <span class="card-chip">Radar view</span>
+          </div>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="performancePlayerSelect">Select player</label>
+              <select id="performancePlayerSelect">
+                <option value="hamza">Hamza Khan</option>
+                <option value="ali">Ali Raza</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="chart-wrapper">
+            <canvas id="performanceChart"></canvas>
+          </div>
+
+          <div class="form-hint">
+            Metrics (0–100): Fitness, Form, Discipline, Tactics, Attendance. Later this will be calculated from real training + match data.
+          </div>
+
+          <hr style="margin:1.3rem 0; border:none; border-top:1px solid rgba(0,0,0,0.06);">
+
+          <table class="simple-table">
+            <thead>
+              <tr>
+                <th>Player</th>
+                <th>Fitness</th>
+                <th>Form</th>
+                <th>Discipline</th>
+                <th>Attendance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Hamza Khan</td>
+                <td>88</td>
+                <td>92</td>
+                <td>80</td>
+                <td>96%</td>
+              </tr>
+              <tr>
+                <td>Ali Raza</td>
+                <td>76</td>
+                <td>70</td>
+                <td>72</td>
+                <td>87%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+  <button class="chat-toggle-btn" id="chatToggleBtn">
+  <i class="fas fa-comments"></i>
+</button>
+
+<div class="chat-panel" id="teamChatPanel">
+  <div class="chat-panel-header">
+    <div class="chat-panel-header-main">
+      <i class="fas fa-users"></i>
+      <div>
+        <h3>Team Chat</h3>
+        <span>Coach &amp; players · encrypted</span>
+      </div>
+    </div>
+    <button class="chat-panel-close" id="chatCloseBtn">
+      <i class="fas fa-xmark"></i>
+    </button>
+  </div>
+
+  <div class="chat-panel-messages" id="chatMessages"></div>
+
+  <div class="chat-panel-input">
+    <textarea id="chatMessageInput" placeholder="Type a message for your team..."></textarea>
+    <div class="chat-panel-input-row">
+      <span>Messages are end-to-end encrypted in this demo.</span>
+      <button class="chat-send-btn" id="chatSendBtn">
+        <i class="fas fa-paper-plane"></i> Send
+      </button>
+    </div>
+  </div>
+</div>
+
+  <!-- Back to top -->
+  <button class="back-to-top" id="backToTop">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+
+  <script src="app.js"></script>
+  
+  <!-- Firebase auth guard + logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import {
+  getFirestore,
+  doc,
+  getDoc,
+  collection,
+  addDoc,
+  serverTimestamp,
+  query,
+  where,
+  orderBy,
+  onSnapshot,
+  updateDoc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+import CryptoJS from "https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/+esm";
+
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD8mSGezxer6j46O90_IsJOpUgu5KI0HnU",
+      authDomain: "clubconnect-fc50f.firebaseapp.com",
+      projectId: "clubconnect-fc50f",
+      storageBucket: "clubconnect-fc50f.firebasestorage.app",
+      messagingSenderId: "419240671350",
+      appId: "1:419240671350:web:69f7113d686e7f3e4a8757",
+      measurementId: "G-623LVNVKBG"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const layoutEl = document.getElementById("coachDashboardLayout");
+    const emailLabel = document.getElementById("coachEmailLabel");
+    const avatarInitial = document.getElementById("coachAvatarInitial");
+    const userNameLabel = document.getElementById("coachUserName");
+    const logoutTopBtn = document.getElementById("coachLogoutTopBtn");
+
+    const registeredPlayerSelect = document.getElementById("registeredPlayerSelect");
+let registeredPlayersCache = {}; // uid -> user data
+
+let coachPortalUnlocked = false;
+let coachClubId = null;
+
+const coachSidebarLinks = document.querySelectorAll(".sidebar-link"); // same class
+const coachViews        = document.querySelectorAll(".view");
+
+function setCoachView(target) {
+  coachViews.forEach(v => {
+    v.classList.toggle("active", v.id === "view-" + target);
+  });
+}
+
+// only these views allowed when NOT hired
+const coachAllowedWhenLocked = new Set(["club-requests", "profile"]);
+
+function applyCoachAccessGate() {
+  // Just visually mark locked tabs
+  coachSidebarLinks.forEach(link => {
+    const target = link.getAttribute("data-view-target");
+    if (!coachPortalUnlocked && !coachAllowedWhenLocked.has(target)) {
+      link.classList.add("locked");   // you already have .locked in owner CSS; reuse
+    } else {
+      link.classList.remove("locked");
+    }
+  });
+
+  // Default view
+  if (!coachPortalUnlocked) {
+    setCoachView("club-requests");
+  }
+}
+
+
+    // coach profile elements
+const coachExpYearsInput = document.getElementById("coachExpYearsInput");
+const coachCertsInput    = document.getElementById("coachCertsInput");
+const coachBioInput      = document.getElementById("coachBioInput");
+const saveCoachProfileBtn = document.getElementById("saveCoachProfileBtn");
+
+async function loadCoachProfile(userUid) {
+  try {
+    const snap = await getDoc(doc(db, "users", userUid));
+    if (!snap.exists()) return;
+    const u = snap.data();
+
+    if (coachExpYearsInput) coachExpYearsInput.value = u.experienceYears || "";
+    if (coachCertsInput)    coachCertsInput.value    = u.certifications || "";
+    if (coachBioInput)      coachBioInput.value      = u.coachBio || "";
+  } catch (err) {
+    console.error("Error loading coach profile", err);
+  }
+}
+
+if (saveCoachProfileBtn) {
+  saveCoachProfileBtn.addEventListener("click", async () => {
+    disableButton(saveCoachProfileBtn);
+    const user = auth.currentUser;
+    if (!user) {
+      enableButton(saveCoachProfileBtn);
+      return;
+    }
+
+    const years = Number(coachExpYearsInput?.value || 0);
+    const certs = coachCertsInput?.value.trim() || null;
+    const bio   = coachBioInput?.value.trim() || null;
+
+    try {
+      await updateDoc(doc(db, "users", user.uid), {
+        experienceYears: isNaN(years) ? 0 : years,
+        certifications: certs,
+        coachBio: bio
+      });
+      showNotification("Coach profile updated.", 'success');
+    } catch (err) {
+      console.error("Error saving coach profile", err);
+      showNotification("Could not save coach profile.", 'error');
+    } finally {
+      enableButton(saveCoachProfileBtn);
+    }
+  });
+}
+
+    // === Club Requests (Owner -> Coach) ===
+const coachRequestsTable = document.getElementById("coachRequestsTable");
+
+function listenForCoachRequests(coachUid) {
+  if (!coachRequestsTable) return;
+
+  const tbody = coachRequestsTable.querySelector("tbody");
+
+  // 🔁 NO orderBy here — avoids composite index requirement
+  const qRequests = query(
+    collection(db, "coachHireRequests"),
+    where("coachId", "==", coachUid),
+    where("status", "==", "pending")
+  );
+
+  onSnapshot(qRequests, (snapshot) => {
+    tbody.innerHTML = "";
+    console.log("Coach requests snapshot size:", snapshot.size);
+
+    snapshot.forEach((docSnap) => {
+      const req = docSnap.data();
+      const id = docSnap.id;
+
+      const whenStr = req.createdAt?.toDate
+        ? req.createdAt.toDate().toLocaleString()
+        : "-";
+
+      const tr = document.createElement("tr");
+      tr.dataset.requestId = id;
+      tr.dataset.ownerId = req.ownerId;
+      tr.dataset.clubId = req.clubId;
+
+      tr.innerHTML = `
+        <td>${req.clubName || "Club"}</td>
+        <td>${req.ownerName || "Club Owner"}</td>
+        <td>${whenStr}</td>
+        <td>
+          <div class="btn-row">
+            <button class="btn-pill btn-pill-primary btn-accept-request">
+              <i class="fas fa-check"></i> Accept
+            </button>
+            <button class="btn-pill btn-pill-danger btn-reject-request">
+              <i class="fas fa-times"></i> Reject
+            </button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    if (snapshot.empty) {
+      console.log("No pending requests for this coach.");
+    }
+  }, (err) => {
+    console.error("Error in listenForCoachRequests:", err);
+  });
+}
+
+
+if (coachRequestsTable) {
+  coachRequestsTable.addEventListener("click", async (e) => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+
+    const row = btn.closest("tr");
+    const reqId = row?.dataset.requestId;
+    const ownerId = row?.dataset.ownerId;
+    const clubId = row?.dataset.clubId;
+
+    if (!reqId || !ownerId || !clubId) return;
+
+    const reqRef = doc(db, "coachHireRequests", reqId);
+
+    try {
+      if (btn.classList.contains("btn-accept-request")) {
+        // 1) mark request as accepted
+        await updateDoc(reqRef, {
+          status: "accepted",
+          updatedAt: serverTimestamp()
+        });
+
+        // 2) set this coach as headCoach in that club doc
+        const clubRef = doc(db, "clubs", clubId);
+        await setDoc(
+          clubRef,
+          {
+            headCoachId: currentUserMeta.uid,
+            headCoachName: currentUserMeta.name,
+            headCoachEmail: auth.currentUser?.email || null,
+            headCoachUpdatedAt: serverTimestamp(),
+          },
+          { merge: true }
+        );
+
+        showNotification("You are now head coach of this club.", 'success');
+      } else if (btn.classList.contains("btn-reject-request")) {
+        await updateDoc(reqRef, {
+          status: "rejected",
+          updatedAt: serverTimestamp()
+        });
+      }
+    } catch (err) {
+      console.error("Error handling coach hire request", err);
+      showNotification("Could not process this request. Check console / Firestore rules.", 'error');
+    }
+  });
+}
+
+    onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.href = "login.html"; return; }
+  try {
+    const snap = await getDoc(doc(db, "users", user.uid));
+    if (!snap.exists()) { window.location.href = "login.html"; return; }
+    const data = snap.data();
+    if (data.role !== "coach") {
+      window.location.href = "login.html";
+      return;
+    }
+
+    layoutEl.style.display = "grid";
+
+    // existing labels
+    const email = user.email || "coach@example.com";
+    emailLabel.textContent = email;
+    const name = data.fullName || "Coach";
+    userNameLabel.textContent = name;
+    const init = name.split(" ").map(p => p[0]).join("").slice(0,2).toUpperCase();
+    avatarInitial.textContent = init;
+
+    // meta
+    currentUserMeta.uid   = user.uid;
+    currentUserMeta.name  = name;
+    currentUserMeta.role  = data.role || "coach";
+    currentUserMeta.sport = data.sport || "general";
+    teamRoomId            = currentUserMeta.sport || "global-room";
+
+    // load profile fields into Coach Profile tab
+    loadCoachProfile(user.uid);
+
+    // listen for clubs where this coach is head coach
+    const coachClubsQ = query(
+      collection(db, "clubs"),
+      where("headCoachId", "==", user.uid)
+    );
+    onSnapshot(coachClubsQ, (snapshot) => {
+      if (!snapshot.empty) {
+        coachPortalUnlocked = true;
+        coachClubId = snapshot.docs[0].id;
+        // Initialize club chat with coach's club
+        initClubChatForCoach(coachClubId, user.uid, data.fullName || "Coach", data.role || "coach");
+        // Listen for squad when coach is hired
+        listenForCoachSquad(user.uid, coachClubId);
+      } else {
+        coachPortalUnlocked = false;
+        coachClubId = null;
+        // Initialize chat with null (no club)
+        initClubChatForCoach(null, user.uid, data.fullName || "Coach", data.role || "coach");
+      }
+      applyCoachAccessGate();
+    });
+
+    // existing:
+    listenForCoachRequests(user.uid);
+    loadRegisteredPlayersForCoach(data);
+  } catch (err) {
+    console.error("Error loading coach profile", err);
+    window.location.href = "login.html";
+  }
+});
+
+
+  
+    function loadRegisteredPlayersForCoach(coachData) {
+  if (!registeredPlayerSelect) return;
+
+  const sport = coachData.sport || null;
+
+  // base query: only real, approved accounts
+  let qPlayers = query(
+    collection(db, "users"),
+    where("role", "==", "player"),
+    where("accountEnabled", "==", true),
+    where("registrationPaid", "==", true)
+  );
+
+  // if you want same-sport only
+  if (sport) {
+    qPlayers = query(
+      collection(db, "users"),
+      where("role", "==", "player"),
+      where("accountEnabled", "==", true),
+      where("registrationPaid", "==", true),
+      where("sport", "==", sport)
+    );
+  }
+
+  onSnapshot(qPlayers, (snapshot) => {
+    registeredPlayersCache = {};
+    registeredPlayerSelect.innerHTML = `
+      <option value="">Select a player…</option>
+    `;
+
+    snapshot.forEach((docSnap) => {
+      const u = docSnap.data();
+      const uid = docSnap.id;
+
+      registeredPlayersCache[uid] = u;
+
+      const opt = document.createElement("option");
+      opt.value = uid;
+      opt.textContent = `${u.fullName || u.email || "Player"}${
+        u.position ? " – " + u.position : ""
+      }`;
+      registeredPlayerSelect.appendChild(opt);
+    });
+
+    if (snapshot.empty) {
+      const opt = document.createElement("option");
+      opt.value = "";
+      opt.textContent = "No registered players available";
+      registeredPlayerSelect.appendChild(opt);
+    }
+  });
+}
+
+
+    async function doLogout() {
+      try {
+        await signOut(auth);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        window.location.href = "login.html";
+      }
+    }
+
+    if (logoutTopBtn) {
+      logoutTopBtn.addEventListener("click", doLogout);
+    }
+    // ====== Encrypted Team Chat (Coach) ======
+const CHAT_SECRET = "clubconnect-demo-team-secret"; // demo key; move to config/env in real app
+
+function encryptMessage(plainText) {
+  return CryptoJS.AES.encrypt(plainText, CHAT_SECRET).toString();
+}
+
+function decryptMessage(cipherText) {
+  try {
+    const bytes = CryptoJS.AES.decrypt(cipherText, CHAT_SECRET);
+    return bytes.toString(CryptoJS.enc.Utf8) || "[decryption error]";
+  } catch (e) {
+    return "[decryption error]";
+  }
+}
+
+const chatToggleBtn = document.getElementById("chatToggleBtn");
+const chatCloseBtn = document.getElementById("chatCloseBtn");
+const chatPanel = document.getElementById("teamChatPanel");
+const chatMessagesEl = document.getElementById("chatMessages");
+const chatMessageInput = document.getElementById("chatMessageInput");
+const chatSendBtn = document.getElementById("chatSendBtn");
+
+let currentUserMeta = {
+  uid: null,
+  name: "Coach",
+  role: "coach",
+  sport: "general",
+  teamId: null
+};
+
+let teamRoomId = "global-room";
+let currentClubIdForChat = null;
+let currentUserForChat = null;
+
+
+function initClubChatForCoach(clubId, userId, userName, userRole) {
+  if (!chatPanel || !chatMessagesEl) return;
+
+  // Setup close button listener (always available)
+  if (chatCloseBtn && !chatCloseBtn.dataset.listenerAttached) {
+    chatCloseBtn.addEventListener("click", () => {
+      chatPanel.classList.remove("open");
+    });
+    chatCloseBtn.dataset.listenerAttached = "true";
+  }
+
+  // Setup toggle button listener (always available)
+  if (chatToggleBtn && !chatToggleBtn.dataset.listenerAttached) {
+    chatToggleBtn.addEventListener("click", () => {
+      chatPanel.classList.toggle("open");
+      if (chatPanel.classList.contains("open")) {
+        chatMessageInput?.focus();
+        loadClubChatMessages();
+      }
+    });
+    chatToggleBtn.dataset.listenerAttached = "true";
+  }
+
+  // Check if coach is assigned to a club
+  if (!clubId) {
+    chatMessagesEl.innerHTML = `
+      <div style='padding:1.5rem;text-align:center;'>
+        <div style='font-size:2rem;margin-bottom:0.5rem;'><i class='fas fa-users' style='color:#ef4444;'></i></div>
+        <h3 style='color:#1f2937;margin:0.5rem 0;font-weight:600;'>Club Chat Not Available</h3>
+        <p style='color:#6b7280;margin:0.5rem 0 1rem;font-size:0.9rem;'>You are not assigned to any club yet.</p>
+        <div style='background:rgba(239, 68, 68, 0.1);border-left:4px solid #ef4444;padding:1rem;border-radius:0.5rem;text-align:left;'>
+          <p style='color:#7f1d1d;margin:0;font-weight:500;'><i class='fas fa-check-circle'></i> Requirements:</p>
+          <ul style='color:#7f1d1d;margin:0.5rem 0 0;padding-left:1.5rem;font-size:0.85rem;'>
+            <li>Be hired by a club owner</li>
+            <li>Accept the hiring offer</li>
+            <li>Club must have at least 2 players</li>
+          </ul>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  // Check if club has at least 2 players
+  checkClubPlayerCount(clubId, (playerCount) => {
+    if (playerCount < 2) {
+      chatMessagesEl.innerHTML = `
+        <div style='padding:1.5rem;text-align:center;'>
+          <div style='font-size:2rem;margin-bottom:0.5rem;'><i class='fas fa-users' style='color:#f97316;'></i></div>
+          <h3 style='color:#1f2937;margin:0.5rem 0;font-weight:600;'>Minimum Players Required</h3>
+          <p style='color:#6b7280;margin:0.5rem 0 1rem;font-size:0.9rem;'>Your club currently has <strong>${playerCount}</strong> player(s).</p>
+          <div style='background:rgba(249, 115, 22, 0.1);border-left:4px solid #f97316;padding:1rem;border-radius:0.5rem;text-align:left;'>
+            <p style='color:#92400e;margin:0;font-weight:500;'><i class='fas fa-check-circle'></i> Requirements:</p>
+            <ul style='color:#92400e;margin:0.5rem 0 0;padding-left:1.5rem;font-size:0.85rem;'>
+              <li>Your club needs at least 2 players</li>
+              <li>Hire or accept player requests</li>
+              <li>Chat unlocks once requirement is met</li>
+            </ul>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    // Club meets requirements - setup chat normally
+    setupCoachChat(clubId, userId, userName, userRole);
+  });
+}
+
+function checkClubPlayerCount(clubId, callback) {
+  const qPlayers = query(
+    collection(db, "clubPlayers"),
+    where("clubId", "==", clubId)
+  );
+  onSnapshot(qPlayers, (snapshot) => {
+    callback(snapshot.size);
+  });
+}
+
+function setupCoachChat(clubId, userId, userName, userRole) {
+  currentClubIdForChat = clubId;
+  currentUserForChat = { uid: userId, name: userName, role: userRole };
+
+  // Create date filter UI if not exists
+  if (!document.getElementById("chatDateFilterContainer")) {
+    const filterContainer = document.createElement("div");
+    filterContainer.id = "chatDateFilterContainer";
+    filterContainer.style.cssText = "border-bottom:1px solid rgba(51,65,85,0.9);padding:0.6rem 0.8rem;";
+    filterContainer.innerHTML = `
+      <div style="display:flex;gap:0.5rem;align-items:center;">
+        <label style="font-size:0.8rem;color:#9ca3af;">Filter by date:</label>
+        <input type="date" id="chatDateFilter" style="padding:0.4rem 0.6rem;border-radius:0.5rem;border:1px solid rgba(75,85,99,0.9);background:rgba(15,23,42,0.9);color:#e5e7eb;font-size:0.85rem;">
+      </div>
+    `;
+    chatPanel.insertBefore(filterContainer, chatPanel.querySelector(".chat-panel-messages"));
+  }
+
+  const dateInput = document.getElementById("chatDateFilter");
+  if (dateInput) {
+    const today = new Date();
+    dateInput.value = getDateString(today);
+    dateInput.addEventListener("change", loadClubChatMessages);
+  }
+
+  // Setup send button and message input listeners
+  if (chatSendBtn && !chatSendBtn.dataset.listenerAttached) {
+    chatSendBtn.addEventListener("click", sendClubChatMessage);
+    chatSendBtn.dataset.listenerAttached = "true";
+  }
+
+  if (chatMessageInput && !chatMessageInput.dataset.listenerAttached) {
+    chatMessageInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendClubChatMessage();
+      }
+    });
+    chatMessageInput.dataset.listenerAttached = "true";
+  }
+
+  // Load messages for today initially
+  loadClubChatMessages();
+}
+
+function getDateString(date) {
+  return date.toISOString().split("T")[0];
+}
+
+function isMessageFromDate(timestamp, selectedDate) {
+  if (!timestamp || !timestamp.toDate) return false;
+  const messageDate = timestamp.toDate();
+  const messageDateStr = getDateString(messageDate);
+  const selectedDateStr = getDateString(selectedDate);
+  return messageDateStr === selectedDateStr;
+}
+
+function loadClubChatMessages() {
+  if (!currentClubIdForChat || !chatMessagesEl) return;
+
+  const dateInput = document.getElementById("chatDateFilter");
+  const selectedDate = dateInput ? new Date(dateInput.value) : new Date();
+
+  console.log("Loading club chat messages for clubId:", currentClubIdForChat, "date:", getDateString(selectedDate));
+
+  const qChat = query(
+    collection(db, "clubChats"),
+    where("clubId", "==", currentClubIdForChat),
+    orderBy("createdAt", "asc")
+  );
+
+  onSnapshot(qChat, (snapshot) => {
+    console.log("Club chat snapshot received. Count:", snapshot.size);
+    chatMessagesEl.innerHTML = "";
+
+    const messagesForDate = [];
+    snapshot.forEach((docSnap) => {
+      const msg = docSnap.data();
+      if (isMessageFromDate(msg.createdAt, selectedDate)) {
+        messagesForDate.push({ id: docSnap.id, ...msg });
+      }
+    });
+
+    if (messagesForDate.length === 0) {
+      chatMessagesEl.innerHTML = "<div style='padding:1rem;text-align:center;color:#999;'><i class='fas fa-inbox'></i> No messages on this date</div>";
+      return;
+    }
+
+    messagesForDate.forEach((msg) => {
+      const plainText = decryptMessage(msg.text);
+      const isMe = msg.senderId === currentUserForChat.uid;
+
+      const msgEl = document.createElement("div");
+      msgEl.className = "chat-msg" + (isMe ? " me" : "");
+
+      const timeStr = msg.createdAt?.toDate
+        ? msg.createdAt.toDate().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+        : "";
+
+      msgEl.innerHTML = `
+        <div class="chat-msg-header">
+          <span>${msg.senderName || "Unknown"}</span>
+          <span>${msg.senderRole === "coach" ? "Coach" : "Player"}</span>
+        </div>
+        <div class="chat-msg-body">${plainText}</div>
+        <div class="chat-msg-meta">${timeStr}</div>
+      `;
+      chatMessagesEl.appendChild(msgEl);
+      chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+    });
+  }, (err) => {
+    console.error("Error loading club chat messages:", err);
+    chatMessagesEl.innerHTML = "<div style='padding:1rem;text-align:center;color:red;'><i class='fas fa-exclamation-triangle'></i> Error loading chat</div>";
+  });
+}
+
+async function sendClubChatMessage() {
+  const text = chatMessageInput.value.trim();
+  if (!text || !currentClubIdForChat || !currentUserForChat) return;
+
+  disableButton(chatSendBtn);
+  try {
+    const encrypted = encryptMessage(text);
+    await addDoc(collection(db, "clubChats"), {
+      clubId:     currentClubIdForChat,
+      senderId:   currentUserForChat.uid,
+      senderName: currentUserForChat.name,
+      senderRole: currentUserForChat.role,
+      text:       encrypted,
+      createdAt:  serverTimestamp()
+    });
+    chatMessageInput.value = "";
+    console.log("Club chat message sent successfully");
+  } catch (err) {
+    console.error("Error sending club chat message:", err);
+    showNotification("Could not send message: " + (err.code || err.message || err), 'error');
+  } finally {
+    enableButton(chatSendBtn);
+  }
+}
+
+    // Sidebar view switching
+    
+    const views = document.querySelectorAll(".view");
+
+    // Sidebar view switching (respect coach access gate)
+const sidebarLinks = document.querySelectorAll(".sidebar-link");
+
+sidebarLinks.forEach(link => {
+  link.addEventListener("click", () => {
+    const target = link.getAttribute("data-view-target");
+    if (!target) return;
+
+    // If coach is NOT admitted (no club) and trying to open a locked view → block
+    if (!coachPortalUnlocked && !coachAllowedWhenLocked.has(target)) {
+      showNotification("You will be able to use this feature after you are added as head coach of a club.", 'warning', 5000);
+      return;
+    }
+
+    // Normal switching
+    sidebarLinks.forEach(l => l.classList.remove("active"));
+    link.classList.add("active");
+    setCoachView(target); // uses the helper you already defined above
+  });
+});
+
+
+    // TEAM MANAGEMENT: move between main & extra
+    const mainTeamTable = document.getElementById("mainTeamTable");
+    const extraTeamTable = document.getElementById("extraTeamTable");
+
+    function moveRow(row, toMain) {
+      const btnCell = row.querySelector("td:last-child");
+      if (!btnCell) return;
+      if (toMain) {
+        btnCell.innerHTML = '<button class="btn-pill btn-pill-ghost btn-move-to-extra"><i class="fas fa-arrow-right"></i> Move to extra</button>';
+        mainTeamTable.querySelector("tbody").appendChild(row);
+      } else {
+        btnCell.innerHTML = '<button class="btn-pill btn-pill-ghost btn-move-to-main"><i class="fas fa-arrow-left"></i> Move to main</button>';
+        extraTeamTable.querySelector("tbody").appendChild(row);
+      }
+    }
+
+    if (mainTeamTable && extraTeamTable) {
+      mainTeamTable.addEventListener("click", (e) => {
+        const btn = e.target.closest(".btn-move-to-extra");
+        if (!btn) return;
+        const row = btn.closest("tr");
+        moveRow(row, false);
+      });
+
+      extraTeamTable.addEventListener("click", (e) => {
+        const btn = e.target.closest(".btn-move-to-main");
+        if (!btn) return;
+        const row = btn.closest("tr");
+        moveRow(row, true);
+      });
+    }
+
+    // PLAYERS & FEEDBACK logic
+    const coachPlayersTable = document.getElementById("coachPlayersTable");
+    const coachPlayersTableBody = document.getElementById("coachPlayersTableBody");
+    const addPlayerBtn = document.getElementById("addPlayerBtn");
+    const feedbackPlayerSelect = document.getElementById("feedbackPlayerSelect");
+    const feedbackTypeSelect = document.getElementById("feedbackTypeSelect");
+    const feedbackText = document.getElementById("feedbackText");
+    const sendFeedbackBtn = document.getElementById("sendFeedbackBtn");
+
+    let coachSquadDocs = [];
+
+    // Send hire request to player (coach wants to add player to squad)
+    if (addPlayerBtn) {
+      addPlayerBtn.addEventListener("click", async () => {
+        disableButton(addPlayerBtn);
+        const user = auth.currentUser;
+        if (!user) {
+          showNotification("Not logged in.", 'error');
+          enableButton(addPlayerBtn);
+          return;
+        }
+
+        if (!coachClubId) {
+          showNotification("You are not hired by any club yet.", 'warning');
+          enableButton(addPlayerBtn);
+          return;
+        }
+
+        const playerUid = registeredPlayerSelect.value;
+        if (!playerUid) {
+          showNotification("Please select a registered player.", 'warning');
+          enableButton(addPlayerBtn);
+          return;
+        }
+
+        const playerData = registeredPlayersCache[playerUid];
+        if (!playerData) {
+          showNotification("Player data not found.", 'error');
+          enableButton(addPlayerBtn);
+          return;
+        }
+
+        try {
+          // Get the club details
+          const clubSnap = await getDoc(doc(db, "clubs", coachClubId));
+          const clubData = clubSnap.exists() ? clubSnap.data() : {};
+          const clubName = clubData.clubName || "Club";
+
+          console.log("Creating hire request with data:", {
+            playerId: playerUid,
+            fromUid: user.uid,
+            fromRole: "coach",
+            clubId: coachClubId,
+            clubName: clubName,
+            playerName: playerData.fullName || "Player",
+            salaryOffered: 0,
+            status: "pending"
+          });
+
+          // Create hire request in playerHireRequests collection
+          const docRef = await addDoc(collection(db, "playerHireRequests"), {
+            playerId: playerUid,
+            fromUid: user.uid,
+            fromRole: "coach",
+            clubId: coachClubId,
+            clubName: clubName,
+            playerName: playerData.fullName || "Player",
+            salaryOffered: 0,
+            status: "pending",
+            createdAt: serverTimestamp()
+          });
+
+          console.log("Hire request created with ID:", docRef.id);
+
+          registeredPlayerSelect.value = "";
+          showNotification("Hire request sent to player. They will see it in their Requests section.", 'success', 5000);
+        } catch (err) {
+          console.error("Error sending hire request:", err);
+          showNotification("Could not send hire request. Check console / Firestore rules.", 'error');
+        } finally {
+          enableButton(addPlayerBtn);
+        }
+      });
+    }
+
+    // Listen for squad changes (clubPlayers where club matches coach's club)
+    function listenForCoachSquad(coachUid, clubId) {
+      if (!coachPlayersTableBody || !clubId) return;
+
+      // Get the club to find ownerId
+      getDoc(doc(db, "clubs", clubId)).then(clubSnap => {
+        if (!clubSnap.exists()) return;
+        
+        const clubData = clubSnap.data();
+        const ownerUid = clubData.ownerUid || clubId;
+
+        const qSquad = query(
+          collection(db, "clubPlayers"),
+          where("ownerId", "==", ownerUid)
+        );
+
+        onSnapshot(qSquad, (snapshot) => {
+          coachSquadDocs = [];
+          coachPlayersTableBody.innerHTML = "";
+          feedbackPlayerSelect.innerHTML = '<option value="">Select player…</option>';
+
+          snapshot.forEach((docSnap) => {
+            const p = docSnap.data();
+            const id = docSnap.id;
+
+            coachSquadDocs.push({
+              id,
+              playerName: p.playerName || "-",
+              status: p.status || "active"
+            });
+
+            const status = p.status || "active";
+            let statusHtml = "";
+            if (status === "active") {
+              statusHtml = `<span class="status-pill status-pill--good"><i class="fas fa-check"></i> Active</span>`;
+            } else if (status === "offer") {
+              statusHtml = `<span class="status-pill status-pill--warn"><i class="fas fa-hourglass-half"></i> Offer sent</span>`;
+            } else if (status === "fired") {
+              statusHtml = `<span class="status-pill status-pill--info"><i class="fas fa-user-slash"></i> Fired</span>`;
+            }
+
+            const tr = document.createElement("tr");
+            tr.dataset.playerDocId = id;
+            tr.dataset.playerName = p.playerName || "-";
+
+            tr.innerHTML = `
+              <td>${p.playerName || "-"}</td>
+              <td>${p.position || "-"}</td>
+              <td>-</td>
+              <td>${statusHtml}</td>
+              <td>
+                <div class="btn-row">
+                  <button class="btn-pill btn-pill-primary btn-give-feedback"><i class="fas fa-comment-dots"></i> Feedback</button>
+                </div>
+              </td>
+            `;
+            coachPlayersTableBody.appendChild(tr);
+
+            // Add to feedback dropdown
+            if (status === "active") {
+              const opt = document.createElement("option");
+              opt.value = p.playerName || "-";
+              opt.textContent = p.playerName || "-";
+              feedbackPlayerSelect.appendChild(opt);
+            }
+          });
+        });
+      });
+    }
+
+    // Handle feedback button clicks
+    if (coachPlayersTable) {
+      coachPlayersTable.addEventListener("click", (e) => {
+        const btn = e.target.closest("button");
+        if (!btn) return;
+        const row = btn.closest("tr");
+        const playerName = row?.dataset.playerName;
+
+        if (btn.classList.contains("btn-give-feedback")) {
+          if (playerName) {
+            feedbackPlayerSelect.value = playerName;
+            window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+          }
+        }
+      });
+    }
+
+    if (sendFeedbackBtn) {
+      sendFeedbackBtn.addEventListener("click", () => {
+        disableButton(sendFeedbackBtn);
+        const player = feedbackPlayerSelect.value;
+        if (!player) {
+          showNotification("Select a player to send feedback.", 'warning');
+          enableButton(sendFeedbackBtn);
+          return;
+        }
+        if (!feedbackText.value.trim()) {
+          showNotification("Write some feedback message.", 'warning');
+          enableButton(sendFeedbackBtn);
+          return;
+        }
+        showNotification("Feedback will be stored and visible in player's dashboard.", 'info', 5000);
+
+        // optionally update "last feedback" in table
+        const row = coachPlayersTable.querySelector(`tr[data-player="${player}"]`);
+        if (row) {
+          row.cells[2].textContent = feedbackText.value.slice(0, 60) + (feedbackText.value.length > 60 ? "…" : "");
+        }
+        feedbackText.value = "";
+        enableButton(sendFeedbackBtn);
+      });
+    }
+
+    // TRAINING SESSIONS
+    const createSessionBtn = document.getElementById("createSessionBtn");
+    const sessionsTable = document.getElementById("sessionsTable");
+
+    if (createSessionBtn && sessionsTable) {
+      createSessionBtn.addEventListener("click", () => {
+        disableButton(createSessionBtn);
+        const date = document.getElementById("sessionDateInput").value;
+        const time = document.getElementById("sessionTimeInput").value;
+        const focus = document.getElementById("sessionTypeSelect").value;
+        const intensity = document.getElementById("sessionIntensitySelect").value;
+        if (!date || !time) {
+          showNotification("Select date and time for the session.", 'warning');
+          enableButton(createSessionBtn);
+          return;
+        }
+        const tbody = sessionsTable.querySelector("tbody");
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${date}</td>
+          <td>${time}</td>
+          <td>${focus}</td>
+          <td>${intensity}</td>
+          <td><button class="btn-pill btn-pill-ghost btn-delete-session"><i class="fas fa-trash"></i> Remove</button></td>
+        `;
+        tbody.appendChild(row);
+        enableButton(createSessionBtn);
+      });
+
+      sessionsTable.addEventListener("click", (e) => {
+        const btn = e.target.closest(".btn-delete-session");
+        if (!btn) return;
+        const row = btn.closest("tr");
+        row.remove();
+      });
+    }
+
+    // PERFORMANCE CHART
+    const performancePlayerSelect = document.getElementById("performancePlayerSelect");
+    const perfCanvas = document.getElementById("performanceChart");
+    let perfChart = null;
+
+    const perfData = {
+      hamza: { label: "Hamza Khan", values: [88, 92, 80, 86, 96] }, // fitness, form, discipline, tactics, attendance
+      ali: { label: "Ali Raza", values: [76, 70, 72, 74, 87] }
+    };
+
+    function renderPerformanceChart(playerKey) {
+      const ctx = perfCanvas.getContext("2d");
+      const { label, values } = perfData[playerKey];
+
+      if (perfChart) perfChart.destroy();
+      perfChart = new Chart(ctx, {
+        type: "radar",
+        data: {
+          labels: ["Fitness", "Form", "Discipline", "Tactics", "Attendance"],
+          datasets: [{
+            label,
+            data: values,
+            borderColor: "#155598",
+            backgroundColor: "rgba(21,85,152,0.18)"
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            r: {
+              angleLines: { color: "rgba(0,0,0,0.06)" },
+              grid: { color: "rgba(0,0,0,0.06)" },
+              pointLabels: { color: "#4b5563" },
+              ticks: { display: false }
+            }
+          }
+        }
+      });
+    }
+
+    if (perfCanvas && performancePlayerSelect) {
+      renderPerformanceChart(performancePlayerSelect.value);
+      performancePlayerSelect.addEventListener("change", () => {
+        renderPerformanceChart(performancePlayerSelect.value);
+      });
+    }
+    // ========== Coach Announcements ==========
+const coachAnnouncementTitle = document.getElementById("coachAnnouncementTitle");
+const coachAnnouncementSport = document.getElementById("coachAnnouncementSport");
+const coachAnnouncementMessage = document.getElementById("coachAnnouncementMessage");
+const coachPostAnnouncementBtn = document.getElementById("coachPostAnnouncementBtn");
+
+let coachProfileCache = { fullName: "Coach" };
+
+
+if (coachPostAnnouncementBtn) {
+  coachPostAnnouncementBtn.addEventListener("click", async () => {
+    disableButton(coachPostAnnouncementBtn);
+    const title = coachAnnouncementTitle.value.trim();
+    const message = coachAnnouncementMessage.value.trim();
+    const sport = coachAnnouncementSport.value;
+
+    if (!title || !message) {
+      showNotification("Please fill in title and message.", 'warning');
+      enableButton(coachPostAnnouncementBtn);
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, "announcements"), {
+        title,
+        message,
+        sport: sport || null,
+        clubId: coachClubId,
+        createdByUid: user.uid,
+        createdAt: serverTimestamp(),
+        createdByName: coachProfileCache.fullName,
+        createdByRole: "coach",
+        targetRole: "player"
+      });
+
+      coachAnnouncementTitle.value = "";
+      coachAnnouncementMessage.value = "";
+      coachAnnouncementSport.value = "";
+
+      showNotification("Announcement posted for players.", 'success');
+    } catch (err) {
+      console.error("Error posting coach announcement", err);
+      showNotification("Could not post announcement. Please try again.", 'error');
+    } finally {
+      enableButton(coachPostAnnouncementBtn);
+    }
+  });
+}
+
+  </script>
+
+  <!-- Crypto Payment Modal -->
+  <div id="cryptoPaymentModal" class="modal hidden">
+    <div class="modal-content" style="width: 90%; max-width: 500px; background: rgba(15,23,42,0.98); border: 1px solid rgba(148,163,184,0.6); border-radius: 1rem; padding: 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 style="margin: 0; color: #e5e7eb;">Crypto Payment</h2>
+        <button id="cryptoModalCloseBtn" style="background: none; border: none; font-size: 1.5rem; color: #9ca3af; cursor: pointer;">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+
+      <div style="background: rgba(51,65,85,0.5); padding: 1rem; border-radius: 0.75rem; margin-bottom: 1rem;">
+        <p style="margin: 0 0 0.5rem; color: #9ca3af; font-size: 0.9rem;">Plan:</p>
+        <p id="cryptoSelectedPlanName" style="margin: 0; color: #34d399; font-weight: 600; font-size: 1.1rem;">-</p>
+      </div>
+
+      <div style="background: rgba(51,65,85,0.5); padding: 1rem; border-radius: 0.75rem; margin-bottom: 1rem;">
+        <p style="margin: 0 0 0.5rem; color: #9ca3af; font-size: 0.9rem;">Amount:</p>
+        <p id="cryptoSelectedAmount" style="margin: 0; color: #60a5fa; font-weight: 600; font-size: 1.1rem;">-</p>
+        <p style="margin: 0.5rem 0 0; color: #6b7280; font-size: 0.85rem;">Network: Sepolia Testnet (for testing)</p>
+      </div>
+
+      <div id="cryptoStatus" style="background: rgba(100,116,139,0.3); border-left: 4px solid #64748b; padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem; color: #cbd5e1; font-size: 0.9rem;">
+        Status will appear here...
+      </div>
+
+      <div style="display: flex; gap: 0.75rem; flex-direction: column;">
+        <button id="connectWalletBtn" class="btn-pill btn-pill-primary" style="width: 100%;">
+          <i class="fas fa-wallet"></i> Connect MetaMask Wallet
+        </button>
+        <button id="payWithCryptoBtn" class="btn-pill btn-pill-primary" style="width: 100%;" disabled>
+          <i class="fas fa-credit-card"></i> Pay with Crypto
+        </button>
+      </div>
+
+      <p style="margin: 1rem 0 0; color: #6b7280; font-size: 0.85rem; text-align: center;">
+        <i class="fas fa-info-circle"></i> No real money charged. Uses Sepolia testnet.
+      </p>
+    </div>
+  </div>
+
+  <!-- Modal Overlay -->
+  <style>
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal.hidden {
+      display: none;
+    }
+
+    .modal-content {
+      animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+
+</body>
+</html>
+

@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClubConnect – Live Demo</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style src="style.css">
+    .page-hero {
+      background: linear-gradient(135deg, rgba(21,85,152,0.95) 0%, rgba(9,32,63,0.98) 100%);
+      color:#fff;
+      padding:6rem 1.5rem 4rem;
+      text-align:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .page-hero::before {
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(56,189,248,0.16) 0, transparent 50%),
+        radial-gradient(circle at 90% 100%, rgba(250,204,21,0.16) 0, transparent 50%);
+      opacity:0.9;
+      pointer-events:none;
+    }
+    .page-hero-inner {
+      position:relative;
+      z-index:1;
+      max-width:900px;
+      margin:0 auto;
+    }
+    .page-hero h1 {
+      font-size:2.4rem;
+      margin:0 0 .75rem;
+      letter-spacing:0.04em;
+    }
+    .page-hero p {
+      max-width:650px;
+      margin:0 auto 1.25rem;
+      color:rgba(255,255,255,0.88);
+      font-size:1rem;
+    }
+    .page-hero-badges {
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:.75rem;
+      margin-top:1.1rem;
+      font-size:.8rem;
+    }
+    .page-hero-badge {
+      border-radius:999px;
+      padding:.25rem .8rem;
+      border:1px solid rgba(255,255,255,0.4);
+      background:rgba(15,23,42,0.25);
+      display:inline-flex;
+      align-items:center;
+      gap:.35rem;
+    }
+    .page-hero-badge i { font-size:.85rem; }
+
+    .demo-layout {
+      padding:3rem 1.5rem 4rem;
+      background:#f5f5f5;
+    }
+    .demo-container {
+      max-width:1100px;
+      margin:0 auto;
+    }
+    .demo-section-header {
+      text-align:center;
+      margin-bottom:2.5rem;
+    }
+    .demo-section-header h2 {
+      font-size:2rem;
+      margin:0 0 .6rem;
+    }
+    .demo-section-header p {
+      margin:0;
+      color:#6b7280;
+      font-size:.98rem;
+    }
+    .role-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:1.75rem;
+    }
+    .role-card {
+      background:#ffffff;
+      border-radius:1.25rem;
+      border:1px solid rgba(15,23,42,0.08);
+      box-shadow:var(--shadow-sm);
+      padding:1.6rem 1.5rem 1.5rem;
+      display:flex;
+      flex-direction:column;
+      gap:.75rem;
+    }
+    .role-chip {
+      display:inline-flex;
+      align-items:center;
+      gap:.4rem;
+      font-size:.75rem;
+      padding:.18rem .6rem;
+      border-radius:999px;
+      background:rgba(21,85,152,0.08);
+      color:#155598;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+    }
+    .role-chip i { font-size:.85rem; }
+    .role-title {
+      font-size:1.15rem;
+      margin:0;
+      display:flex;
+      align-items:center;
+      gap:.45rem;
+    }
+    .role-title i {
+      color:#155598;
+      font-size:1rem;
+    }
+    .role-sub {
+      margin:0;
+      color:#6b7280;
+      font-size:.9rem;
+    }
+    .role-mock {
+      margin-top:.4rem;
+      border-radius:1rem;
+      border:1px dashed rgba(15,23,42,0.16);
+      padding:.9rem .85rem;
+      background:linear-gradient(135deg, rgba(255,255,255,0.95), rgba(241,245,249,0.95));
+      font-size:.82rem;
+      color:#111827;
+    }
+    .role-mock-header {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:.55rem;
+    }
+    .role-mock-title {
+      font-weight:600;
+      font-size:.86rem;
+      display:flex;
+      align-items:center;
+      gap:.35rem;
+    }
+    .role-mock-pills {
+      display:flex;
+      gap:.3rem;
+      flex-wrap:wrap;
+    }
+    .role-mock-pill {
+      border-radius:999px;
+      padding:.1rem .55rem;
+      font-size:.7rem;
+      background:#e5e7eb;
+      color:#4b5563;
+    }
+    .role-mock-metrics {
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:.4rem .75rem;
+    }
+    .role-metric-label {
+      font-size:.7rem;
+      color:#6b7280;
+    }
+    .role-metric-value {
+      font-size:.9rem;
+      font-weight:600;
+      color:#111827;
+    }
+    .role-list {
+      list-style:none;
+      padding:0;
+      margin:.35rem 0 0;
+      font-size:.86rem;
+      color:#4b5563;
+    }
+    .role-list li {
+      display:flex;
+      align-items:flex-start;
+      gap:.45rem;
+      margin-bottom:.3rem;
+    }
+    .role-list li i {
+      margin-top:.15rem;
+      font-size:.8rem;
+      color:#155598;
+    }
+    .role-footer {
+      margin-top:.6rem;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:.5rem;
+      font-size:.8rem;
+      color:#6b7280;
+      flex-wrap:wrap;
+    }
+    .role-footer a {
+      font-size:.8rem;
+      color:#155598;
+      text-decoration:none;
+    }
+    .role-footer a:hover {
+      text-decoration:underline;
+    }
+
+    .demo-note {
+      margin-top:2.2rem;
+      font-size:.86rem;
+      color:#6b7280;
+      text-align:center;
+    }
+
+    @media (max-width:768px){
+      .page-hero {
+        padding-top:5rem;
+      }
+      .page-hero h1 {
+        font-size:1.8rem;
+      }
+      .demo-layout {
+        padding-top:2.5rem;
+      }
+    }
+    /* Ensure card content text is dark on white background */
+.role-card {
+  color: #111827;
+}
+
+/* Make sure titles inside cards are not white */
+.role-card h3,
+.role-title {
+  color: #111827;
+}
+
+/* Subtitle stays softer gray */
+.role-sub {
+  color: #6b7280;
+}
+
+  </style>
+</head>
+<body>
+  <!-- Source Code Protection -->
+  <script src="protection.js"></script>
+  <header class="header" id="header">
+  <nav class="nav container">
+    <div class="nav-logo">
+  <a href="index.html">
+      <img src="logo.png" alt="ClubConnect Logo" class="logo-img">
+  </a>
+</div>
+
+    <div class="nav-right">
+      <ul class="nav-menu" id="navMenu">
+        <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+        <li class="nav-item"><a href="features.html" class="nav-link">Features</a></li>
+        <li class="nav-item"><a href="index.html#programs" class="nav-link">Programs</a></li>
+        <li class="nav-item"><a href="teams.html" class="nav-link">Teams</a></li>
+        <li class="nav-item"><a href="index.html#pricing" class="nav-link">Pricing</a></li>
+        <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+      </ul>
+      <button class="btn btn-login" onclick="window.location.href='login.html'">Login</button>
+    </div>
+    <div class="nav-toggle" id="navToggle">
+      <i class="fas fa-bars"></i>
+    </div>
+  </nav>
+</header>
+
+
+  <section class="page-hero">
+    <div class="page-hero-inner">
+      <h1>Experience ClubConnect Dashboards</h1>
+      <p>Preview how Club Owners, Coaches and Players see ClubConnect – without creating an account. This is a guided demo with sample data only.</p>
+      <div class="page-hero-badges">
+        <span class="page-hero-badge"><i class="fas fa-shield-alt"></i> Club Owner view</span>
+        <span class="page-hero-badge"><i class="fas fa-chalkboard-teacher"></i> Coach view</span>
+        <span class="page-hero-badge"><i class="fas fa-user"></i> Player view</span>
+      </div>
+    </div>
+  </section>
+
+  <main class="demo-layout">
+    <div class="demo-container" id="roles">
+      <div class="demo-section-header">
+        <h2>Sample Dashboards by Role</h2>
+        <p>Each role sees a different control panel, laser-focused on what they need to do every day.</p>
+      </div>
+
+      <div class="role-grid">
+        <!-- Club Owner -->
+        <article class="role-card">
+          <span class="role-chip"><i class="fas fa-shield-alt"></i> Club Owner</span>
+          <h3 class="role-title">
+            <i class="fas fa-gem"></i> Club HQ Dashboard
+          </h3>
+          <p class="role-sub">Central hub to manage your club, staff, players and league participation.</p>
+
+          <div class="role-mock">
+            <div class="role-mock-header">
+              <div class="role-mock-title">
+                <i class="fas fa-gauge-high"></i> Snapshot
+              </div>
+              <div class="role-mock-pills">
+                <span class="role-mock-pill">3 teams</span>
+                <span class="role-mock-pill">28 players</span>
+                <span class="role-mock-pill">2 active leagues</span>
+              </div>
+            </div>
+            <div class="role-mock-metrics">
+              <div>
+                <div class="role-metric-label">Current month payouts</div>
+                <div class="role-metric-value">₨ 180k</div>
+              </div>
+              <div>
+                <div class="role-metric-label">Open challenges</div>
+                <div class="role-metric-value">4</div>
+              </div>
+              <div>
+                <div class="role-metric-label">Pending player requests</div>
+                <div class="role-metric-value">3</div>
+              </div>
+              <div>
+                <div class="role-metric-label">Staff</div>
+                <div class="role-metric-value">1 coach</div>
+              </div>
+            </div>
+          </div>
+
+          <ul class="role-list">
+            <li><i class="fas fa-check-circle"></i><span>Hire / fire coaches and players from the ClubConnect talent pool.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Enroll your club into official leagues before enrollment deadlines.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Send club-wide announcements and challenge other clubs to friendlies.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Monitor registration & league fees paid to the Super Admin.</span></li>
+          </ul>
+
+          <div class="role-footer">
+            <span>Real dashboard file: <code>club-owner-dashboard.html</code></span>
+            <a href="club-owner-dashboard.html" onclick="return false;">Full view (requires login)</a>
+          </div>
+        </article>
+
+        <!-- Coach -->
+        <article class="role-card">
+          <span class="role-chip"><i class="fas fa-chalkboard-teacher"></i> Coach</span>
+          <h3 class="role-title">
+            <i class="fas fa-route"></i> Training & Tactics Dashboard
+          </h3>
+          <p class="role-sub">Designed for coaches to manage squad, sessions and feedback without worrying about fees.</p>
+
+          <div class="role-mock">
+            <div class="role-mock-header">
+              <div class="role-mock-title">
+                <i class="fas fa-dumbbell"></i> Today’s plan
+              </div>
+              <div class="role-mock-pills">
+                <span class="role-mock-pill">2 sessions</span>
+                <span class="role-mock-pill">18 players</span>
+                <span class="role-mock-pill">92% attendance</span>
+              </div>
+            </div>
+            <div class="role-mock-metrics">
+              <div>
+                <div class="role-metric-label">Fitness focus</div>
+                <div class="role-metric-value">High</div>
+              </div>
+              <div>
+                <div class="role-metric-label">Upcoming match</div>
+                <div class="role-metric-value">Fri</div>
+              </div>
+              <div>
+                <div class="role-metric-label">Feedback items</div>
+                <div class="role-metric-value">6</div>
+              </div>
+              <div>
+                <div class="role-metric-label">Coaches fee</div>
+                <div class="role-metric-value">₨ 0</div>
+              </div>
+            </div>
+          </div>
+
+          <ul class="role-list">
+            <li><i class="fas fa-check-circle"></i><span>Drag players between main squad and extra / reserves.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Create training sessions and attach focus, intensity and notes.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Send structured feedback to each player (fitness, form, mindset).</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Track performance radar graphs powered by match & training data.</span></li>
+          </ul>
+
+          <div class="role-footer">
+            <span>Real dashboard file: <code>coach-dashboard.html</code></span>
+            <a href="coach-dashboard.html" onclick="return false;">Full view (requires login)</a>
+          </div>
+        </article>
+
+        <!-- Player -->
+        <article class="role-card">
+          <span class="role-chip"><i class="fas fa-user"></i> Player</span>
+          <h3 class="role-title">
+            <i class="fas fa-bolt"></i> Player Journey Dashboard
+          </h3>
+          <p class="role-sub">Everything a player needs: motivation, schedule, stats, badges and offers from clubs.</p>
+
+          <div class="role-mock">
+            <div class="role-mock-header">
+              <div class="role-mock-title">
+                <i class="fas fa-fire"></i> Form & schedule
+              </div>
+              <div class="role-mock-pills">
+                <span class="role-mock-pill">Form: 8.3</span>
+                <span class="role-mock-pill">5 badges</span>
+                <span class="role-mock-pill">Next match: Fri</span>
+              </div>
+            </div>
+            <div class="role-mock-metrics">
+              <div>
+                <div class="role-metric-label">Training today</div>
+                <div class="role-metric-value">17:00</div>
+              </div>
+              <div>
+                <div class="role-metric-label">League matches</div>
+                <div class="role-metric-value">2 upcoming</div>
+              </div>
+              <div>
+                <div class="role-metric-label">Pending requests</div>
+                <div class="role-metric-value">2 offers</div>
+              </div>
+              <div>
+                <div class="role-metric-label">Reg. fee</div>
+                <div class="role-metric-value">₨ 1,500</div>
+              </div>
+            </div>
+          </div>
+
+          <ul class="role-list">
+            <li><i class="fas fa-check-circle"></i><span>Unlock badges like Hustler, Playmaker, Iron Man based on performance.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>View all training sessions, league fixtures and challenge matches.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Read coach feedback, radar stats and motivational quotes on every login.</span></li>
+            <li><i class="fas fa-check-circle"></i><span>Accept or reject club / coach offers and pay registration fee securely.</span></li>
+          </ul>
+
+          <div class="role-footer">
+            <span>Real dashboard file: <code>player-dashboard.html</code></span>
+            <a href="player-dashboard.html" onclick="return false;">Full view (requires login)</a>
+          </div>
+        </article>
+      </div>
+
+      <p class="demo-note">
+        This demo uses static sample data. When you actually sign up and log in, all dashboards will be powered by your real clubs, leagues, players and payments in Firebase.
+      </p>
+    </div>
+  </main>
+
+  <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <div class="footer-logo">
+                        <img src="logo.png" alt="ClubConnect Logo">
+                    </div>
+                    <p class="footer-tagline">
+                        ClubConnect – the unified platform for managing multi-sport clubs, academies and training centers.
+                    </p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-title">Product</h4>
+                    <ul class="footer-links">
+                        <li><a href="features.html">Features</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#">Demo</a></li>
+
+                        <li><a href="#">Mobile Apps</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-title">Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Documentation</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-title">Company</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Press Kit</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4 class="footer-title">Newsletter</h4>
+                    <p class="footer-newsletter-text">Stay updated with new features and success stories.</p>
+                    <form class="newsletter-form" id="newsletterForm">
+  <input
+    type="email"
+    placeholder="Enter your email"
+    class="newsletter-input"
+    id="newsletterEmail"
+  >
+  <button type="submit" class="btn btn-primary" id="newsletterBtn">
+    Subscribe
+  </button>
+  <small id="newsletterMsg" class="newsletter-msg"></small>
+</form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-copyright">
+                    &copy; 2025 ClubConnect. All rights reserved.
+                </p>
+                <div class="footer-legal">
+  <a href="privacy.html">Privacy Policy</a>
+  <a href="terms.html">Terms of Service</a>
+  <a href="cookies.html">Cookie Policy</a>
+</div>
+
+            </div>
+        </div>
+    </footer>
+
+
+
+  <button class="back-to-top" id="backToTop">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+
+  <script src="app.js"></script>
+ <script type="module">
+  import {
+    initializeApp,
+    getApps,
+    getApp
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    serverTimestamp,
+    query,
+    where,
+    getDocs
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  // 🔹 Same Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyD8mSGezxer6j46O90_IsJOpUgu5KI0HnU",
+    authDomain: "clubconnect-fc50f.firebaseapp.com",
+    projectId: "clubconnect-fc50f",
+    storageBucket: "clubconnect-fc50f.firebasestorage.app",
+    messagingSenderId: "419240671350",
+    appId: "1:419240671350:web:69f7113d686e7f3e4a8757",
+    measurementId: "G-623LVNVKBG"
+  };
+
+  // ✅ Reuse app if already initialized
+  const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  const form       = document.getElementById("newsletterForm");
+  const emailInput = document.getElementById("newsletterEmail");
+  const btn        = document.getElementById("newsletterBtn");
+  const msgEl      = document.getElementById("newsletterMsg");
+
+  function setLoading(isLoading) {
+    if (!btn || !form) return;
+    btn.disabled = isLoading;
+    form.classList.toggle("is-loading", isLoading);
+    if (isLoading) {
+      btn.dataset.originalText = btn.textContent;
+      btn.innerHTML = '<i class="fas fa-futbol spinning-ball"></i> Subscribing…';
+    } else {
+      btn.innerHTML = btn.dataset.originalText || "Subscribe";
+    }
+  }
+
+  function showNewsletterMsg(text, type = "info") {
+    if (!msgEl) return;
+    msgEl.textContent = text;
+    msgEl.classList.remove("msg-error", "msg-success");
+    if (type === "error") {
+      msgEl.classList.add("msg-error");
+    } else if (type === "success") {
+      msgEl.classList.add("msg-success");
+    }
+  }
+
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  if (form && emailInput && btn) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const emailRaw = emailInput.value.trim();
+      const email    = emailRaw.toLowerCase();   // normalize
+
+      if (!email) {
+        showNewsletterMsg("Please enter your email.", "error");
+        return;
+      }
+      if (!isValidEmail(email)) {
+        showNewsletterMsg("Please enter a valid email address.", "error");
+        return;
+      }
+
+      setLoading(true);
+      showNewsletterMsg("Checking subscription…", "info");
+
+      try {
+        // 🔍 1) Check if email already exists
+        const q = query(
+          collection(db, "newsletterSubscribers"),
+          where("email", "==", email)
+        );
+        const snap = await getDocs(q);
+
+        if (!snap.empty) {
+          // Already subscribed
+          showNewsletterMsg("This email is already subscribed.", "error");
+          setLoading(false);
+          return;
+        }
+
+        // ✅ 2) Not found → create new subscription
+        await addDoc(collection(db, "newsletterSubscribers"), {
+          email,
+          createdAt: serverTimestamp(),
+          source: "homepage"
+        });
+
+        showNewsletterMsg("You’re in! We’ll keep you updated.", "success");
+        emailInput.value = "";
+      } catch (err) {
+        console.error("Newsletter subscribe error:", err);
+        showNewsletterMsg("Could not subscribe. Please try again later.", "error");
+      } finally {
+        setLoading(false);
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
